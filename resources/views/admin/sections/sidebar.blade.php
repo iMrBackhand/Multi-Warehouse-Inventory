@@ -5,7 +5,7 @@
                     <div id="sidebar-menu">
 
                         <div class="logo-box">
-                            <a href="index.html" class="logo logo-light">
+                            <a href="#" class="logo logo-light">
                                 <span class="logo-sm">
                                     <img src="{{ asset('backend/assets/images/logo-sm.png') }}" alt="" height="22">
                                 </span>
@@ -13,7 +13,7 @@
                                     <img src="{{ asset('backend/assets/images/logo-light.png') }}" alt="" height="24">
                                 </span>
                             </a>
-                            <a href="index.html" class="logo logo-dark">
+                            <a href="#" class="logo logo-dark">
                                 <span class="logo-sm">
                                     <img src="{{ asset('backend/assets/images/logo-sm.png') }}" alt="" height="22">
                                 </span>
@@ -28,11 +28,11 @@
                             <li class="menu-title">Menu</li>
 
                             <li>
-                                <a href="#sidebarDashboards" data-bs-toggle="collapse">
+                                <a href="{{ route('dashboard') }}" class="tp-link">
                                     <i data-feather="home"></i>
-                                    <span> Dashboard </span>
-                                    {{-- <span class="menu-arrow"></span> --}}
+                                    <span>Dashboard</span>
                                 </a>
+
                                 {{-- <div class="collapse" id="sidebarDashboards">
                                     <ul class="nav-second-level">
                                         <li>
@@ -56,7 +56,7 @@
 
                             <li>
                                 <a href="#sidebarAuth" data-bs-toggle="collapse">
-                                    <i data-feather="users"></i>
+                                    <i data-feather="tag"></i>
                                     <span> Brand Manage </span>
                                     <span class="menu-arrow"></span>
                                 </a>
@@ -71,7 +71,7 @@
 
                             <li>
                                 <a href="#sidebarError" data-bs-toggle="collapse">
-                                    <i data-feather="alert-octagon"></i>
+                                    <i data-feather="archive"></i>
                                     <span>Warehouse Manage</span>
                                     <span class="menu-arrow"></span>
                                 </a>
@@ -87,7 +87,7 @@
 
                             <li>
                                 <a href="#sidebarExpages" data-bs-toggle="collapse">
-                                    <i data-feather="file-text"></i>
+                                    <i data-feather="truck"></i>
                                     <span> Supplier Manage </span>
                                     <span class="menu-arrow"></span>
                                 </a>
@@ -102,7 +102,7 @@
                             </li>
                                                         <li>
                                 <a href="#sidebarBaseui" data-bs-toggle="collapse">
-                                    <i data-feather="package"></i>
+                                    <i data-feather="user"></i>
                                     <span> Customer Manage </span>
                                     <span class="menu-arrow"></span>
                                 </a>
@@ -114,6 +114,20 @@
                                     </ul>
                                 </div>
                             </li>
+                                <li>
+                                    <a href="#sidebarIcons" data-bs-toggle="collapse">
+                                        <i data-feather="star"></i>
+                                        <span> Reviews Setup</span>
+                                        <span class="menu-arrow"></span>
+                                    </a>
+                                    <div class="collapse" id="sidebarIcons">
+                                        <ul class="nav-second-level">
+                                            <li>
+                                                <a href="{{ route('all.review') }}" class="tp-link">All Review</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
 
 
                             <li class="menu-title mt-2">General</li>

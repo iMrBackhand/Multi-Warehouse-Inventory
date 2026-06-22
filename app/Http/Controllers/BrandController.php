@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Brand;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class BrandController extends Controller
 {
@@ -15,6 +16,79 @@ class BrandController extends Controller
                     'image'
                 ],'like','%'.$request->search.'%');
             })->orderBy('id','asc')->paginate(10);
-            return view('admin.brand',compact('brands'));
+            return view('admin.brand.brand',compact('brands'));
         }
+
+    private function deleteOldPhoto($path)
+        {
+            if ($path && Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
+        }
+
+    public function createBrand(Request $request)
+    {
+        $brand = new Brand();
+        $brand->brand_name = $request->brand_name;
+
+        if ($request->hasFile('image')) {
+            $brand->image = $request->file('image')->store('photo', 'public');
+        }
+
+        $brand->save();
+
+        return redirect()->back()->with('success', 'Brand Updated Successfully');
+    }
+
+    public function updateBrand(Request $request, $id)
+    {
+        $brand = Brand::findOrFail($id);
+
+        $brand->brand_name = $request->brand_name;
+
+        if ($request->hasFile('image')) {
+
+            $this->deleteOldPhoto($brand->image);
+
+            $brand->image = $request->file('image')
+                ->store('photo', 'public');
+        }
+
+        $brand->save();
+
+        return redirect()->route('brand')->with('success', 'Brand Updated Successfully');
+    }
+
+    public function editBrand($id)
+    {
+        $brand = Brand::findOrFail($id);
+        return view('admin.brand.edit-brand',compact('brand'));
+    }
+
+    // for the view of the brand
+    public function archiveBrand(Request $request)
+    {
+            $brands = Brand::onlyTrashed()->when($request->search,function($query)use($request){
+                return $query->whereAny([
+                    'brand_name',
+                    'image'
+                ],'like','%'.$request->search.'%');
+            })->orderBy('id','asc')->paginate(10);
+
+            return view('admin.brand.archived-brand',compact('brands'));
+    }
+
+    public function deleteBrand($id)
+    {
+        Brand::findOrFail($id)->delete();
+
+        return redirect()->route('brand');
+    }
+
+    public function restoreBrand($id)
+    {
+        Brand::withTrashed()->findOrFail($id)->restore();
+
+        return redirect()->route('brand');
+    }
 }

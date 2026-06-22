@@ -17,12 +17,13 @@ class SupplierController extends Controller
                     'address'
                 ],'like','%'.$request->search.'%');
             })->orderBy('id','asc')->paginate(10);
-            return view('admin.supplier',compact('suppliers'));
+            return view('admin.supplier.supplier',compact('suppliers'));
         }
 
     public function store(Request $request)
     {
         $supplier=new Supplier();
+
         $supplier->supplier_name=$request->supplier_name;
         $supplier->email=$request->email;
         $supplier->phone=$request->phone;
@@ -37,7 +38,7 @@ class SupplierController extends Controller
     public function edit($id)
     {
         $supplier=Supplier::findOrFail($id);
-        return view('admin.edit-supplier',compact('supplier'));
+        return view('admin.supplier.edit-supplier',compact('supplier'));
     }
 
     public function update(Request $request, $id)
@@ -71,7 +72,7 @@ class SupplierController extends Controller
                     'address'
                 ],'like','%'.$request->search.'%');
             })->orderBy('id','asc')->paginate(10);
-            return view('admin.archived-suppliers',compact('suppliers'));
+            return view('admin.supplier.archived-suppliers',compact('suppliers'));
     }
 
     public function restoreSupplier($id)

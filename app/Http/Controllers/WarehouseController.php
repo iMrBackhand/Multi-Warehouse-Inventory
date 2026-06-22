@@ -18,7 +18,7 @@ class WarehouseController extends Controller
                     'city'
                 ],'like','%'.$request->search.'%');
             })->orderBy('id','asc')->paginate(10);
-            return view('admin.warehouse',compact('warehouses'));
+            return view('admin.warehouse.warehouse',compact('warehouses'));
         }
 
 
@@ -32,13 +32,19 @@ class WarehouseController extends Controller
         $warehouse->city=$request->city;
 
         $warehouse->save();
-        return redirect()->route('warehouse');
+
+        $notification = array(
+                'message' => 'Warehouse Succesfully Added',
+                'alert-type' =>'success'
+            );
+
+        return redirect()->route('warehouse')->with($notification);
     }
 
     public function edit($id){
 
         $warehouse = Warehouse::findOrFail($id);
-        return view('admin.edit-warehouse',compact('warehouse'));
+        return view('admin.warehouse.edit-warehouse',compact('warehouse'));
     }
 
     public function update(Request $request, $id)
@@ -51,7 +57,13 @@ class WarehouseController extends Controller
         $warehouse->city=$request->city;
 
         $warehouse->update();
-        return redirect('warehouse');
+
+        $notification = array(
+                'message' => 'Warehouse Succesfully Updated',
+                'alert-type' =>'success'
+            );
+
+        return redirect('warehouse')->with($notification);
     }
 
     // controller para sa view ng mga nadalete or na archived na data
@@ -65,20 +77,28 @@ class WarehouseController extends Controller
                     'city'
                 ],'like','%'.$request->search.'%');
             })->orderBy('id','asc')->paginate(10);
-            return view('admin.archived-warehouse',compact('warehouses'));
+
+            return view('admin.warehouse.archived-warehouse',compact('warehouses'));
         }
     public function deleteWarehouse($id)
     {
         Warehouse::findOrFail($id)->delete();
+            $notification = array(
+                'message' => 'Warehouse Succesfully Archive',
+                'alert-type' =>'error'
+            );
 
-        return redirect()->route('warehouse');
+        return redirect()->route('warehouse')->with($notification);
     }
 
     public function restoreWarehouse($id)
     {
         Warehouse::withTrashed()->findOrFail($id)->restore();
-
-        return redirect()->route('warehouse');
+          $notification = array(
+                'message' => 'Warehouse Succesfully Restore',
+                'alert-type' =>'success'
+            );
+        return redirect()->route('warehouse')->with($notification);
     }
 
 }

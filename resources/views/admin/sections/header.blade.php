@@ -83,60 +83,7 @@
                                         </a>
 
                                         <!-- item-->
-                                        <a href="javascript:void(0);" class="dropdown-item notify-item text-muted link-primary">
-                                            <div class="notify-icon">
-                                                <img src="assets/images/users/user-3.jpg" class="img-fluid rounded-circle" alt="" />
-                                            </div>
-                                            <div class="notify-content">
-                                                <div class="d-flex align-items-center justify-content-between">
-                                                    <p class="notify-details">Travis Williams</p>
-                                                    <small class="text-muted">7 min ago</small>
-                                                </div>
-                                                <p class="noti-mentioned p-2 rounded-2 mb-0 mt-2"><span class="text-primary">@Patryk</span> Please make sure that you're....</p>
-                                            </div>
-                                        </a>
 
-                                        <!-- item-->
-                                        <a href="javascript:void(0);" class="dropdown-item notify-item text-muted link-primary">
-                                            <div class="notify-icon">
-                                                <img src="assets/images/users/user-8.jpg" class="img-fluid rounded-circle" alt="" />
-                                            </div>
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <p class="notify-details">Violette Lasky</p>
-                                                <small class="text-muted">5 min ago</small>
-                                            </div>
-                                            <p class="mb-0 user-msg">
-                                                <small class="fs-14">Completed <span class="text-reset">Create new components</span></small>
-                                            </p>
-                                        </a>
-
-                                        <!-- item-->
-                                        <a href="javascript:void(0);" class="dropdown-item notify-item text-muted link-primary">
-                                            <div class="notify-icon">
-                                                <img src="assets/images/users/user-5.jpg" class="img-fluid rounded-circle" alt="" />
-                                            </div>
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <p class="notify-details">Ralph Edwards</p>
-                                                <small class="text-muted">5 min ago</small>
-                                            </div>
-                                            <p class="mb-0 user-msg">
-                                                <small class="fs-14">Completed <span class="text-reset">Improve workflow in React</span></small>
-                                            </p>
-                                        </a>
-
-                                        <!-- item-->
-                                        <a href="javascript:void(0);" class="dropdown-item notify-item text-muted link-primary">
-                                            <div class="notify-icon">
-                                                <img src="assets/images/users/user-6.jpg" class="img-fluid rounded-circle" alt="" />
-                                            </div>
-                                            <div class="notify-content">
-                                                <div class="d-flex align-items-center justify-content-between">
-                                                    <p class="notify-details">Jocab jones</p>
-                                                    <small class="text-muted">7 min ago</small>
-                                                </div>
-                                                <p class="noti-mentioned p-2 rounded-2 mb-0 mt-2"><span class="text-reset">@Patryk</span> Please make sure that you're....</p>
-                                            </div>
-                                        </a>
                                     </div>
 
                                     <!-- All-->
@@ -150,36 +97,44 @@
 
                             <li class="dropdown notification-list topbar-dropdown">
                                 <a class="nav-link dropdown-toggle nav-user me-0" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                                    <img src="{{ asset('backend/assets/images/users/user-11.jpg') }}" alt="user-image" class="rounded-circle">
-                                  <span class="pro-user-name ms-1">
-                                    {{ Auth::user()->name }} <i class="mdi mdi-chevron-down"></i>
-                                 </span>
+                              <img src="{{ Auth::user()?->photo
+                                ? asset('storage/' . Auth::user()->photo)
+                                : url('upload/no_image.png') }}"
+                                alt="user-image"
+                                class="rounded-circle">
+                                <span class="pro-user-name ms-1">
+                                    {{ Auth::check() ? Auth::user()->name : 'Guest' }}
+                                    <i class="mdi mdi-chevron-down"></i>
+                                </span>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end profile-dropdown ">
                                     <!-- item-->
-                                    <div class="dropdown-header noti-title">
+                                    {{-- <div class="dropdown-header noti-title">
                                         <h6 class="text-overflow m-0">Welcome !</h6>
-                                    </div>
+                                    </div> --}}
 
                                     <!-- item-->
-                                    <a href="pages-profile.html" class="dropdown-item notify-item">
+                                    <a href="{{ route('admin.profile') }}" class="dropdown-item notify-item">
                                         <i class="mdi mdi-account-circle-outline fs-16 align-middle"></i>
-                                        <span>My Account</span>
+                                        <span>Edit Profile</span>
                                     </a>
 
                                     <!-- item-->
-                                    <a href="auth-lock-screen.html" class="dropdown-item notify-item">
+                                    {{-- <a href="auth-lock-screen.html" class="dropdown-item notify-item">
                                         <i class="mdi mdi-lock-outline fs-16 align-middle"></i>
                                         <span>Lock Screen</span>
-                                    </a>
+                                    </a> --}}
 
                                     <div class="dropdown-divider"></div>
 
                                     <!-- item-->
-                                    <a href="{{ route('admin.logout') }}" class="dropdown-item notify-item">
+                                 <form method="POST" action="{{ route('admin.logout') }}">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item notify-item">
                                         <i class="mdi mdi-location-exit fs-16 align-middle"></i>
                                         <span>Logout</span>
-                                    </a>
+                                    </button>
+                                </form>
 
                                 </div>
                             </li>

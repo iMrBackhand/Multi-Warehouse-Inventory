@@ -20,6 +20,10 @@
         <link href="{{ asset('backend/assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('backend/assets/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
 
+        {{-- for toster --}}
+         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" >
+
+
     </head>
 
     <body class="bg-white">
@@ -38,29 +42,39 @@
                                     </div>
 
                                     <div class="pt-0">
-                                        <form action="#" method="POST" class="my-4">
+                                        <form action="{{ route('login') }}" method="POST" class="my-4">
                                             @csrf
+                                            @if (session('error'))
+                                                <div class="alert alert-danger">
+                                                    {{ session('error') }}
+                                                </div>
+
+                                            @endif
                                             <div class="form-group mb-3">
                                                 <label for="emailaddress" class="form-label">Email address</label>
-                                                <input class="form-control" name="email" type="email" id="email" required="" placeholder="Enter your email">
-                                                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                                                <input class="form-control" name="email" type="email" id="email"  placeholder="Enter your email" value="{{ old('email') }}">
+                                                @error('email')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
                                             </div>
 
                                             <div class="form-group mb-3">
                                                 <label for="password" class="form-label">Password</label>
-                                                <input class="form-control" name="password" type="password" required="" id="password" placeholder="Enter your password">
-                                                <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                                                <input class="form-control" name="password" type="password"  id="password" placeholder="Enter your password">
+                                                @error('password')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
                                             </div>
 
                                             <div class="form-group d-flex mb-3">
                                                 <div class="col-sm-6">
-                                                    <div class="form-check">
+                                                    {{-- <div class="form-check">
                                                         <input type="checkbox" class="form-check-input" id="checkbox-signin" checked>
                                                         <label class="form-check-label" for="checkbox-signin">Remember me</label>
-                                                    </div>
+                                                    </div> --}}
                                                 </div>
                                                 <div class="col-sm-6 text-end">
-                                                    <a class='text-muted fs-14' href='auth-recoverpw.html'>Forgot password?</a>
+                                                    <a class='text-muted fs-14' href="{{ route('password.request') }}">Forgot password?</a>
                                                 </div>
                                             </div>
 
@@ -76,10 +90,10 @@
                                         <div class="saprator my-4"><span>or sign in with</span></div>
 
                                         <div class="text-center text-muted mb-4">
-                                            <p class="mb-0">Don't have an account ?<a class='text-primary ms-2 fw-medium' href='auth-register.html'>Sing up</a></p>
+                                            <p class="mb-0">Don't have an account ?<a class='text-primary ms-2 fw-medium' href="{{ route('register') }}">Sign up</a></p>
                                         </div>
 
-                                        <div class="row">
+                                        {{-- <div class="row">
                                             <div class="col-12">
                                                 <a class="btn text-dark border fw-normal d-flex align-items-center justify-content-center mb-3">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 48 48" class="me-2">
@@ -107,7 +121,7 @@
                                                     <span>Sign in with Apple</span>
                                                 </a>
                                             </div>
-                                        </div>
+                                        </div> --}}
 
                                     </div>
                                 </div>
@@ -167,6 +181,30 @@
 
         <!-- App js-->
         <script src="assets/js/app.js"></script>
+                 {{-- for toster --}}
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+        <script>
+ @if(Session::has('message'))
+ var type = "{{ Session::get('alert-type','info') }}"
+ switch(type){
+    case 'info':
+    toastr.info(" {{ Session::get('message') }} ");
+    break;
+
+    case 'success':
+    toastr.success(" {{ Session::get('message') }} ");
+    break;
+
+    case 'warning':
+    toastr.warning(" {{ Session::get('message') }} ");
+    break;
+
+    case 'error':
+    toastr.error(" {{ Session::get('message') }} ");
+    break;
+ }
+ @endif
+</script>
 
     </body>
 </html>
