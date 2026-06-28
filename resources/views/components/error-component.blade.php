@@ -1,10 +1,14 @@
-@if ($errors->any())
-<div class="alert alert-danger">
-    <ul>
-        @foreach ($errors->all() as $errors )
-        <li>{{ $errors }}</li>
-        @endforeach
-    </ul>
-</div>
 
-@endif
+        
+
+
+        {{-- ✅ FIXED: $error lang (singular) hindi $errors para walang conflict --}}
+                            @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                            @endif

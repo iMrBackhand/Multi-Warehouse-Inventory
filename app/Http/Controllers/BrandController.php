@@ -35,9 +35,14 @@ class BrandController extends Controller
             $brand->image = $request->file('image')->store('photo', 'public');
         }
 
+        $notification = array(
+                'message' => 'Brand Succesfully Created',
+                'alert-type' =>'success'
+            );
+
         $brand->save();
 
-        return redirect()->back()->with('success', 'Brand Updated Successfully');
+        return redirect()->back()->with($notification);
     }
 
     public function updateBrand(Request $request, $id)
@@ -50,13 +55,17 @@ class BrandController extends Controller
 
             $this->deleteOldPhoto($brand->image);
 
-            $brand->image = $request->file('image')
-                ->store('photo', 'public');
+            $brand->image = $request->file('image')->store('photo', 'public');
         }
+
+        $notification = array(
+            'message' => 'Brand Succesfully Updated',
+            'alert-type' =>'success'
+        );
 
         $brand->save();
 
-        return redirect()->route('brand')->with('success', 'Brand Updated Successfully');
+        return redirect()->route('brand')->with($notification);
     }
 
     public function editBrand($id)

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
+use App\Models\Slider;
 use App\Models\Supplier;
 use App\Models\User;
 use App\Models\Warehouse;
@@ -16,6 +17,8 @@ class DashboardController extends Controller
             'totalSuppliers' => Supplier::count(),
             'totalBrands' => Brand::count(),
             'totalWarehouses' => Warehouse::count(),
+
+            
         ]);
     }
 }

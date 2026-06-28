@@ -66,13 +66,13 @@
                                         Edit
                                     </a>
 
-                      <form action="{{ route('brand.delete', $brand->id) }}" method="POST" class="m-0">
-                        @csrf
-                        @method('DELETE')
-                        <button type="button" class="btn btn-sm btn-danger archive-form">
-                            Archive
-                        </button>
-                    </form>
+                                <form action="{{ route('brand.delete', $brand->id) }}" method="POST" class="m-0">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" class="btn btn-sm btn-danger archive-form">
+                                        Archive
+                                    </button>
+                                </form>
                                 </div>
                             </td>
                                     </tr>
@@ -131,17 +131,16 @@
                     <div class="mb-3">
                         <label class="form-label">Brand Image</label>
 
-                        <input type="file"
+                       <input type="file"
                             name="image"
-                            class="form-control"
-                            id="image">
+                            class="form-control imageInput"
+                            accept="image/*">
 
-                        <div class="mt-2">
-                            <img id="showImage"
-                                src="#"
-                                width="100"
-                                alt="Preview">
-                        </div>
+                        <img class="showImage"
+                            src=""
+                            width="100"
+                            style="object-fit:cover; display:none;"
+                            alt="Preview">
                     </div>
 
                 </div>
@@ -168,15 +167,26 @@
 </div>
 
 <script>
-document.getElementById('image').addEventListener('change', function(e) {
+document.querySelector('.imageInput').addEventListener('change', function(e) {
 
-    let reader = new FileReader();
+    const file = e.target.files[0];
 
-    reader.onload = function(e) {
-        document.getElementById('showImage').src = e.target.result;
+    if(file){
+
+        const reader = new FileReader();
+
+        reader.onload = function(e){
+
+            let image = document.querySelector('.showImage');
+
+            image.src = e.target.result;
+            image.style.display = 'block';
+
+        }
+
+        reader.readAsDataURL(file);
+
     }
-
-    reader.readAsDataURL(e.target.files[0]);
 
 });
 </script>

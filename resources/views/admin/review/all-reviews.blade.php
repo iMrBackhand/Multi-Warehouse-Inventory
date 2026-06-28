@@ -32,6 +32,7 @@
                         <th>Name</th>
                         <th>Position</th>
                         <th>Message</th>
+                        <th>Ratings</th>
                         <th>Image</th>
                         <th>Action</th>
                     </tr>
@@ -42,9 +43,10 @@
                         <tr>
                             <td>{{ $review->name }}</td>
                             <td>{{ $review->position }}</td>
-                            <td style="white-space: normal; word-break: break-word; max-width: 300px;">
-                                {{ $review->message }}
-                            </td>
+                        <td style="max-width:300px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                            {{ $review->message }}
+                        </td>
+                        <td>{{ $review->rating }}</td>
                           <td>
                             <div class="img-box">
                                 <img src="{{ asset('storage/'.$review->image) }}">
@@ -108,6 +110,17 @@
                         <div class="col-md-6 mb-3">
                             <label>Position</label>
                             <input type="text" name="position" class="form-control" required>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label>Rating</label>
+                            <select name="rating" class="form-control" required>
+                                <option value="">Select Rating</option>
+                                <option value="1">1 Star</option>
+                                <option value="2">2 Stars</option>
+                                <option value="3">3 Stars</option>
+                                <option value="4">4 Stars</option>
+                                <option value="5">5 Stars</option>
+                            </select>
                         </div>
 
                         <div class="col-md-12 mb-3">

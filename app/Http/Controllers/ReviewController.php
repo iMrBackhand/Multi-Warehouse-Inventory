@@ -29,6 +29,7 @@ class ReviewController extends Controller
         $review = new Review();
         $review->name=$request->name;
         $review->position=$request->position;
+        $review->rating=$request->rating;
 
         if($request->hasFile('image'))
             {
@@ -99,12 +100,12 @@ class ReviewController extends Controller
 
         $review->name=$request->name;
         $review->position=$request->position;
+         $review->rating=$request->rating;
 
         if($request->hasFile('image'))
             {
                 $this->deleteOldPhoto($review->image);
-                $review->image = $request->file('image')
-                ->store('photo','public');
+                $review->image = $request->file('image')->store('photo','public');
             }
         $review->message=$request->message;
         $review->save();

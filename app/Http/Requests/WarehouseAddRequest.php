@@ -22,8 +22,17 @@ class WarehouseAddRequest extends FormRequest
      */
     public function rules(): array
     {
+         return [
+            'warehouse_name' => 'required|string|max:255|unique:warehouses,warehouse_name',
+            'email'          => 'required|email|unique:warehouses,email',
+                
+            'city'           => 'required|string|max:255',
+        ];
+    }
+    public function messages()
+    {
         return [
-            'email' => 'required|email|unique:warehouses,email'
+            'warehouse_name.unique' => 'Warehouse is already listed.',
         ];
     }
 }

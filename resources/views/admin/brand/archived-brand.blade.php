@@ -57,7 +57,7 @@
                                             @csrf
                                             @method('PUT')
 
-                                            <button type="submit" class="btn btn-sm btn-success restore-form" id="restore-btn">
+                                            <button type="submit" class="btn btn-sm btn-success restore-form" id="restore-btn" data-item="Brand">
                                                 Restore
                                             </button>
                                         </form>

@@ -38,7 +38,7 @@
                                             <br>
                                             <div class="col-12">
                                                 <a href="{{ route('warehouse') }}"class="btn btn-danger">Back</a>
-                                                <button class="btn btn-primary" type="submit">Submit form</button>
+                                                <button class="btn btn-primary" type="submit">Update</button>
                                             </div>
                                         </form>
                                     </div> <!-- end card-body -->

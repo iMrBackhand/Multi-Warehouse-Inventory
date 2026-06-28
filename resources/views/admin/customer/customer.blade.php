@@ -15,6 +15,10 @@
                 style="background-color: #6f42c1; color: #fff;">
                     + Add Customer
                 </a>
+                <!-- Import Excel Button -->
+                <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#importCustomerModal">
+                    Import Excel
+                </button>
                  <a href="{{ route('deleted.customer') }}" class="btn btn-sm text-white" style="background-color:#6c757d;">
                         InActive Customer
                 </a>
@@ -53,21 +57,17 @@
                                     <td>{{ $customer->email }}</td>
                                     <td>{{ $customer->phone }}</td>
                                     <td>{{ $customer->address }}</td>
-                                 <td>
-                                    <a href="{{ route('edit.customer',$customer->id) }}" class="btn btn-sm btn-success">
-                                        Edit
-                                    </a>
+                                    <td>
+                                        {{-- component --}}
+                                        <x-button.edit href="{{ route('edit.customer', $customer->id) }}">
+                                            Edit
+                                        </x-button.edit>
 
-                                    <form action="{{ route('archive.customer',$customer->id) }}" method="POST"  style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-
-                                        <button type="submit" class="btn btn-sm btn-danger archive-form">
+                                        <x-button.archive action="{{ route('archive.customer', $customer->id) }}">
                                             Archive
-                                        </button>
-                                    </form>
-                                </td>
-                                </tr>
+                                        </x-button.archive>
+                                    </td>
+                                    </tr>
                             @empty
                                 <tr>
                                     <td colspan="6" class="text-center">
@@ -85,52 +85,101 @@
           <!-- container-fluid -->
         </div>
         <!-- ADD CUSTOMER MODAL -->
-<div class="modal fade" id="addCustomerModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
+        <div class="modal fade" id="addCustomerModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
 
-            <div class="modal-header">
-                <h5 class="modal-title">Add Customer</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-
-            <form action="{{ route('store.customer') }}" method="POST">
-                @csrf
-
-                <div class="modal-body">
-                    <div class="row">
-
-                        <div class="col-md-6 mb-3">
-                            <label>Customer Name</label>
-                            <input type="text" name="customer_name" class="form-control" required>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label>Email</label>
-                            <input type="email" name="email" class="form-control">
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label>Phone</label>
-                            <input type="text" name="phone" class="form-control">
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label>Address</label>
-                            <input type="text" name="address" class="form-control">
-                        </div>
-
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Customer</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
+
+                    <form action="{{ route('store.customer') }}" method="POST">
+                        @csrf
+
+                        <div class="modal-body">
+
+                        <x-error-component />
+
+                            <div class="row">
+
+                                <div class="col-md-6 mb-3">
+                                    <label>Customer Name</label>
+                                    {{-- ✅ FIXED: old() para hindi mabura ang nilagay --}}
+                                    <input type="text" name="customer_name" class="form-control" value="{{ old('customer_name') }}">
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label>Email</label>
+                                    <input type="email" name="email" class="form-control" value="{{ old('email') }}">
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label>Phone</label>
+                                    <input type="text" name="phone" class="form-control" value="{{ old('phone') }}">
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label>Address</label>
+                                    <input type="text" name="address" class="form-control" value="{{ old('address') }}">
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-danger btn-sm" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary btn-sm">Save Customer</button>
+                        </div>
+
+                    </form>
+
                 </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-danger btn-sm" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary btn-sm">Save Customer</button>
-                </div>
-
-            </form>
-
+            </div>
         </div>
-    </div>
-</div>
+
+        {{-- import modal --}}
+        <div class="modal fade" id="importCustomerModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">Import Customers (Excel)</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <form action="{{ route('import.customer') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label>Select Excel File</label>
+                                <input type="file" name="file" class="form-control" >
+                            </div>
+
+                            <small class="text-muted">
+                                Columns must be: customer_name, email, phone, address
+                            </small>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary btn-sm">Import</button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        {{-- ✅ FIXED: Auto-open modal kapag may validation errors --}}
+        @if ($errors->any())
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                new bootstrap.Modal(document.getElementById('addCustomerModal')).show();
+            });
+        </script>
+        @endif
+
 @endsection

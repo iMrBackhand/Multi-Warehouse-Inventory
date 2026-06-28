@@ -52,11 +52,14 @@
                     <td>{{ $warehouse->phone }}</td>
                     <td>{{ $warehouse->city }}</td>
                     <td>
-                      <form action="{{ route('restore.warehouse' ,$warehouse->id) }}" method="POST">
+                     <form action="{{ route('restore.warehouse', $warehouse->id) }}" method="POST" style="display: inline">
                         @csrf
                         @method('PUT')
-                        <button type="submit" class="btn btn-sm btn-success restore-form">Restore</button>
-                      </form>
+
+                        <button type="submit" class="btn btn-sm btn-success restore-form" id="restore-btn" data-item="Warehouse">
+                            Restore
+                        </button>
+                    </form>
                     </td>
                   </tr>
                 @empty

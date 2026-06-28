@@ -6,7 +6,7 @@
   <div class="container-xxl">
 
     <!-- Header -->
-    <x-error-component />
+
 
 
     <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
@@ -52,18 +52,15 @@
                     <td>{{ $warehouse->phone }}</td>
                     <td>{{ $warehouse->city }}</td>
                     <td class="d-flex align-items-center gap-1">
-                        <a href="{{ route('edit.warehouse',$warehouse->id) }}"
-                            class="btn btn-sm btn-success">
-                            Edit
-                        </a>
 
-                        <form action="{{ route('delete.warehouse',$warehouse->id) }}" method="POST" class="m-0">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger archive-form"">
+                        {{-- using reusbale button --}}
+                        <x-button.edit href="{{ route('edit.warehouse',$warehouse->id) }}">
+                            Edit
+                        </x-button.edit>
+
+                        <x-button.archive action="{{ route('delete.warehouse', $warehouse->id) }}">
                             Archive
-                            </button>
-                        </form>
+                        </x-button.archive>
                         </td>
                   </tr>
                 @empty
@@ -97,25 +94,34 @@
         @csrf
 
         <div class="modal-body">
+          <x-error-component />
 
           <div class="mb-2">
             <label>Warehouse Name</label>
-            <input type="text" name="warehouse_name" class="form-control" required>
+            <input type="text" name="warehouse_name"
+                   class="form-control"
+                   value="{{ old('warehouse_name') }}">
           </div>
 
           <div class="mb-2">
             <label>Email</label>
-            <input type="email" name="email" class="form-control">
+            <input type="email" name="email"
+                   class="form-control"
+                   value="{{ old('email') }}">
           </div>
 
           <div class="mb-2">
             <label>Phone</label>
-            <input type="text" name="phone" class="form-control">
+            <input type="text" name="phone"
+                   class="form-control"
+                   value="{{ old('phone') }}">
           </div>
 
           <div class="mb-2">
             <label>City</label>
-            <input type="text" name="city" class="form-control">
+            <input type="text" name="city"
+                   class="form-control"
+                   value="{{ old('city') }}">
           </div>
 
         </div>
@@ -130,5 +136,12 @@
     </div>
   </div>
 </div>
-
+        {{-- ✅ FIXED: Auto-open modal kapag may validation errors --}}
+        @if ($errors->any())
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                new bootstrap.Modal(document.getElementById('addWarehouseModal')).show();
+            });
+        </script>
+        @endif
 @endsection

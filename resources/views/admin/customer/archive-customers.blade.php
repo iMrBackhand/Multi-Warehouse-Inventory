@@ -54,13 +54,13 @@
                                     <td>{{ $customer->phone }}</td>
                                     <td>{{ $customer->address }}</td>
                                  <td>
-
-
-                                    <form action="{{ route('restore.customers',$customer->id) }}" method="POST">
+                                     <form action="{{ route('restore.customers',$customer->id) }}" method="POST" style="display: inline">
                                         @csrf
                                         @method('PUT')
 
-                                        <button type="submit" class="btn btn-sm btn-success restore-form">Restore</button>
+                                        <button type="submit" class="btn btn-sm btn-success restore-form" id="restore-btn" data-item="Customer">
+                                            Restore
+                                        </button>
                                     </form>
                                 </tr>
                             @empty

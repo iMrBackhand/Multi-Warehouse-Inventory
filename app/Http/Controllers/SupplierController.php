@@ -30,7 +30,11 @@ class SupplierController extends Controller
         $supplier->address=$request->address;
 
         $supplier->save();
-        return redirect()->route('suppliers');
+        $notification = array(
+            'message' => 'Supplier Succesfully Added',
+            'alert-type' =>'success'
+            );
+        return redirect()->route('suppliers')->with($notification);
 
     }
 
@@ -51,7 +55,11 @@ class SupplierController extends Controller
         $supplier->address=$request->address;
 
         $supplier->save();
-        return redirect('suppliers');
+        $notification = array(
+            'message' => 'Supplier Succesfully Updated',
+            'alert-type' =>'success'
+            );
+        return redirect('suppliers')->with($notification);
 
     }
 
@@ -59,7 +67,11 @@ class SupplierController extends Controller
     public function archive($id)
     {
         Supplier::findOrFail($id)->delete();
-        return redirect()->route('suppliers');
+        $notification = array(
+            'message' => 'Supplier Succesfully Archive',
+            'alert-type' =>'success'
+            );
+        return redirect()->route('suppliers')->with($notification);
     }
 
     public function archiveSuppliers(Request $request)
@@ -78,6 +90,10 @@ class SupplierController extends Controller
     public function restoreSupplier($id)
     {
         Supplier::withTrashed()->findOrFail($id)->restore();
-        return redirect()->route('suppliers');
+        $notification = array(
+            'message' => 'Supplier Succesfully Restore',
+            'alert-type' =>'success'
+            );
+        return redirect()->route('suppliers')->with($notification);
     }
 }

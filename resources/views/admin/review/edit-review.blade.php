@@ -32,10 +32,44 @@
                                                 <label for="position" class="form-label">Position</label>
                                                 <input type="position" class="form-control" name="position" id="position" value="{{ $review->position }}">
 
+                                                <div class="col-md-12 mb-3">
+                                                    <label>Rating</label>
+                                                 <select name="rating" class="form-control" required>
+                                                    <option value="">Select Rating</option>
+
+                                                    <option value="1" {{ $review->rating == 1 ? 'selected' : '' }}>
+                                                        1 Star
+                                                    </option>
+
+                                                    <option value="2" {{ $review->rating == 2 ? 'selected' : '' }}>
+                                                        2 Stars
+                                                    </option>
+
+                                                    <option value="3" {{ $review->rating == 3 ? 'selected' : '' }}>
+                                                        3 Stars
+                                                    </option>
+
+                                                    <option value="4" {{ $review->rating == 4 ? 'selected' : '' }}>
+                                                        4 Stars
+                                                    </option>
+
+                                                    <option value="5" {{ $review->rating == 5 ? 'selected' : '' }}>
+                                                        5 Stars
+                                                    </option>
+
+                                                </select>
+                                                </div>
+
                                                <label for="image" class="form-label">Image</label>
                                                 <input type="file" class="form-control" name="image" id="image" accept="image/*" onchange="previewImage(event)">
 
-                                                <img id="imagePreview" style="margin-top:10px; max-width:150px; display:none;">
+                                                <div>
+                                                    <img id="imagePreview"
+                                                    src="{{ !empty($review->image) ? asset('storage/' . $review->image) : asset('upload/no_image.jpg') }}"
+                                                    style="max-width: 80px; width: 80px; height: 80px; object-fit: cover;"
+                                                    alt="Review Image">
+                                                </div>
+
 
                                                 {{-- this is for preview image --}}
                                                 <script>

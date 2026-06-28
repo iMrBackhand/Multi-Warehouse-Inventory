@@ -5,11 +5,16 @@ use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FeaturesController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProductCategoriesController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\SliderController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\WarehouseController;
+use App\Models\ProductCategory;
 use Illuminate\Support\Facades\Route;
 
 // ito para pag open ng http://127.0.0.1:8000/ ito lalabas
@@ -100,6 +105,7 @@ Route::middleware(['auth'])->group(function(){
     Route::delete('customer/archive/{id}',[CustomerController::class,'deleteCustomer'])->name('archive.customer');
     Route::get('customer/archive',[CustomerController::class,'archiveCustomer'])->name('deleted.customer');
     Route::put('customer/restore/{id}',[CustomerController::class,'restoreCustomer'])->name('restore.customers');
+    Route::post('customer/import', [CustomerController::class, 'importCustomer'])->name('import.customer');
 });
 
 
@@ -116,4 +122,33 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
-    // Route::post('review/add','addReview')->name('add.review');
+Route::middleware(['auth'])->group(function () {
+    Route::get('finances',[SliderController::class,'editSlider'])->name('finances');
+    Route::put('finances/edit/{id}',[SliderController::class, 'updateSlider'])->name('finances.update');
+    Route::get('features/edit/{id}',[FeaturesController::class,'editFeatures'])->name('features.edit');
+    Route::get('features',[FeaturesController::class,'index'])->name('features');
+    Route::post('feature/add',[FeaturesController::class, 'createFeature'])->name('add.features');
+    Route::put('feature/update/{id}',[FeaturesController::class, 'updateFeature'])->name('update.feature');
+    Route::get('feature/deleted/',[FeaturesController::class, 'deletedFeatures'])->name('deleted.features');
+    Route::delete('feture/delete/{id}',[FeaturesController::class, 'deleteFeatures'])->name('delete.features');
+    Route::put('feature/restor/{id}',[FeaturesController::class, 'restoreFeature'])->name('restore.features');
+});
+
+
+Route::middleware(['auth'])->group(function () {
+
+    // categories
+    Route::get('categories',[ProductCategoriesController::class, 'index'])->name('categories');
+    Route::post('categories/add',[ProductCategoriesController::class,'createCategory'])->name('add.categories');
+    Route::put('categories/update/{id}',[ProductCategoriesController::class,'updateCategory'])->name('update.categories');
+    Route::delete('categories/delete/{id}',[ProductCategoriesController::class,'deleteCategory'])->name('delete.categories');
+    Route::get('categories/archive',[ProductCategoriesController::class, 'archivedCategories'])->name('archive.categories');
+    Route::put('categories/restore/{id}',[ProductCategoriesController::class, 'restoreCategory'])->name('restore.categories');
+
+    Route::get('product',[ProductController::class, 'index'])->name('product');
+    Route::post('product/add',[ProductController::class,'store'])->name('add.product');
+    Route::put('product/update/{id}',[ProductController::class,'update'])->name('update.product');
+    Route::delete('product/delete/{id}',[ProductController::class,'deleteProduct'])->name('delete.product');
+    Route::get('product/archive',[ProductController::class,'archiveProduct'])->name('archive.product');
+    Route::put('product/restore/{id}',[ProductController::class,'restoreProduct'])->name('restore.product');
+});

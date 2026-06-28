@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CustomerAddRequest;
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use App\Imports\CustomersImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CustomerController extends Controller
 {
@@ -20,7 +23,7 @@ class CustomerController extends Controller
             return view('admin.customer.customer',compact('customers'));
         }
 
-        public function store(Request $request)
+        public function store(CustomerAddRequest $request)
         {
             $customer = new Customer();
 
@@ -85,6 +88,26 @@ class CustomerController extends Controller
         public function restoreCustomer($id)
         {
             Customer::withTrashed()->findOrFail($id)->restore();
-            return redirect()->route('customers');
+            $notification = array(
+                'message' => 'Customer Succesfully restore',
+                'alert-type' =>'success'
+            );
+
+            return redirect()->route('customers')->with($notification);
         }
+
+        public function importCustomer(Request $request)
+            {
+                $request->validate([
+                    'file' => 'required|mimes:xlsx,xls,csv'
+                ]);
+
+                Excel::import(new CustomersImport, $request->file('file'));
+
+                $notification = array(
+                    'message' => 'Customers Successfully Uploaded',
+                    'alert-type' => 'success'
+                );
+                return redirect()->route('customers')->with($notification);
+            }
 }

@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Brand extends Model
 {
     use SoftDeletes;
+
+    public function product()
+    {
+        return $this->hasMany(Product::class,'brand_id');
+    }
 }

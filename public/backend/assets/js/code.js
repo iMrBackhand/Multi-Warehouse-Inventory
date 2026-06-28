@@ -1,6 +1,5 @@
 $(document).on("click", ".archive-form", function (e) {
     e.preventDefault();
-
     let form = $(this).closest("form");
 
     Swal.fire({
@@ -13,7 +12,7 @@ $(document).on("click", ".archive-form", function (e) {
         confirmButtonText: "Yes, archive it!",
     }).then((result) => {
         if (result.isConfirmed) {
-            form.submit();
+            form[0].submit(); // ✅ fix
         }
     });
 });
@@ -22,10 +21,11 @@ $(document).on("click", ".restore-form", function (e) {
     e.preventDefault();
 
     let form = $(this).closest("form");
+    let itemName = $(this).data("item");
 
     Swal.fire({
-        title: "Restore Brand?",
-        text: "This brand will be moved back to active.",
+        title: `Restore ${itemName}?`,
+        text: `This ${itemName.toLowerCase()} will be moved back to active.`,
         icon: "question",
         showCancelButton: true,
         confirmButtonColor: "#28a745",

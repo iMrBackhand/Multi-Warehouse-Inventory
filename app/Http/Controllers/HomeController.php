@@ -2,15 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Feature;
 use App\Models\Review;
-use Illuminate\Http\Request;
+use App\Models\Slider;
 
 class HomeController extends Controller
-{
-     public function index()
+ {
+    public function index()
     {
-        $reviews = Review::latest()->get();
+        return view('home.index', [
+            'slider' => $this->getSlider(),
+            'reviews' => $this->getReviews(),
+            'features' => $this->getFeatures(),
+        ]);
+    }
 
-        return view('home.index', compact('reviews'));
+       private function getSlider()
+    {
+        return Slider::find(1);
+    }
+
+       private function getReviews()
+    {
+        return Review::latest()->get();
+    }
+
+    private function getFeatures()
+    {
+        return Feature::all();
     }
 }

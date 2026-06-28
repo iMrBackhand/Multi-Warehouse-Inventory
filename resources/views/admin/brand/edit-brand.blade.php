@@ -54,7 +54,7 @@
                             <!-- Preview -->
                             <div class="mt-2">
                                 <img id="showImage"
-                                    src="{{ !empty($brand->image) ? asset($brand->image) : asset('upload/no_image.jpg') }}"
+                                    src="{{ !empty($brand->image) ? asset('storage/' . $brand->image) : asset('upload/no_image.jpg') }}"
                                     width="100"
                                     class="rounded"
                                     alt="Brand Image">

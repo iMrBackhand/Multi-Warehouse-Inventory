@@ -30,6 +30,8 @@
 
   <link rel="stylesheet" href="{{ asset('frontend/assets/css/main.css') }}">
   <link rel="stylesheet" href="{{ asset('frontend/assets/css/app.min.css') }}">
+
+
 </head>
 
 <body>

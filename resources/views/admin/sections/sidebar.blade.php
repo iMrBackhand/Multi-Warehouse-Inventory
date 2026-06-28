@@ -18,7 +18,7 @@
                                     <img src="{{ asset('backend/assets/images/logo-sm.png') }}" alt="" height="22">
                                 </span>
                                 <span class="logo-lg">
-                                    <img src="{{ asset('backend/assets/images/logo-dark.png') }}" alt="" height="24">
+                                    <img src="{{ asset('backend/assets/images/11g.png') }}" alt="" height="60">
                                 </span>
                             </a>
                         </div>
@@ -58,7 +58,7 @@
                                 <a href="#sidebarAuth" data-bs-toggle="collapse">
                                     <i data-feather="tag"></i>
                                     <span> Brand Manage </span>
-                                    <span class="menu-arrow"></span>
+                                    {{-- <span class="menu-arrow"></span> --}}
                                 </a>
                                 <div class="collapse" id="sidebarAuth">
                                     <ul class="nav-second-level">
@@ -70,12 +70,12 @@
                             </li>
 
                             <li>
-                                <a href="#sidebarError" data-bs-toggle="collapse">
+                                <a href="#sidebarWarehouse" data-bs-toggle="collapse">
                                     <i data-feather="archive"></i>
                                     <span>Warehouse Manage</span>
-                                    <span class="menu-arrow"></span>
+                                    {{-- <span class="menu-arrow"></span> --}}
                                 </a>
-                                <div class="collapse" id="sidebarError">
+                                <div class="collapse" id="sidebarWarehouse">
                                     <ul class="nav-second-level">
                                         <li>
                                             <a href="{{ route('warehouse') }}" class="tp-link">All Warehouse</a>
@@ -86,25 +86,25 @@
                             </li>
 
                             <li>
-                                <a href="#sidebarExpages" data-bs-toggle="collapse">
-                                    <i data-feather="truck"></i>
-                                    <span> Supplier Manage </span>
-                                    <span class="menu-arrow"></span>
-                                </a>
-                                <div class="collapse" id="sidebarExpages">
-                                    <ul class="nav-second-level">
-                                        <li>
-                                            <a href="{{ route('suppliers') }}" class="tp-link">All Supplier</a>
-                                        </li>
+                                    <a href="#sidebarSuppliers" data-bs-toggle="collapse">
+                                        <i data-feather="truck"></i>
+                                        <span> Supplier Manage </span>
+                                        {{-- <span class="menu-arrow"></span> --}}
+                                    </a>
 
-                                    </ul>
-                                </div>
-                            </li>
-                                                        <li>
+                                    <div class="collapse" id="sidebarSuppliers">
+                                        <ul class="nav-second-level">
+                                            <li>
+                                                <a href="{{ route('suppliers') }}" class="tp-link">All Supplier</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            <li>
                                 <a href="#sidebarBaseui" data-bs-toggle="collapse">
                                     <i data-feather="user"></i>
                                     <span> Customer Manage </span>
-                                    <span class="menu-arrow"></span>
+                                    {{-- <span class="menu-arrow"></span> --}}
                                 </a>
                                 <div class="collapse" id="sidebarBaseui">
                                     <ul class="nav-second-level">
@@ -114,21 +114,140 @@
                                     </ul>
                                 </div>
                             </li>
-                                <li>
-                                    <a href="#sidebarIcons" data-bs-toggle="collapse">
+                            <li>
+                                <a href="#sidebarProduct" data-bs-toggle="collapse">
+                                    <i data-feather="shopping-bag"></i>
+                                    <span> Product Manage </span>
+                                    {{-- <span class="menu-arrow"></span> --}}
+                                </a>
+                                <div class="collapse" id="sidebarProduct">
+                                    <ul class="nav-second-level">
+                                        <li>
+                                            <a href="{{ route('categories') }}" class="tp-link">All Category</a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ route('product') }}" class="tp-link">All Product</a>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                            </li>
+                            <li>
+                                <a href="#sidebarPurchase" data-bs-toggle="collapse">
+                                    <i data-feather="shopping-cart"></i>
+                                    <span> Purchase Manage </span>
+                                    {{-- <span class="menu-arrow"></span> --}}
+                                </a>
+                                <div class="collapse" id="sidebarPurchase">
+                                    <ul class="nav-second-level">
+                                        <li>
+                                            <a href="#" class="tp-link">All Customer</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li>
+                                <a href="#sidebarSale" data-bs-toggle="collapse">
+                                    <i data-feather="dollar-sign"></i>
+                                    <span> Sale Manage </span>
+                                    {{-- <span class="menu-arrow"></span> --}}
+                                </a>
+                                <div class="collapse" id="sidebarSale">
+                                    <ul class="nav-second-level">
+                                        <li>
+                                            <a href="#" class="tp-link">All Customer</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li>
+                                <a href="#sidebarDue" data-bs-toggle="collapse">
+                                    <i data-feather="alert-circle"></i>
+                                    <span> Due Setup </span>
+                                    {{-- <span class="menu-arrow"></span> --}}
+                                </a>
+                                <div class="collapse" id="sidebarDue">
+                                    <ul class="nav-second-level">
+                                        <li>
+                                            <a href="#" class="tp-link">All Customer</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li>
+                                <a href="#sidebarTransfer" data-bs-toggle="collapse">
+                                    <i data-feather="repeat"></i>
+                                    <span> Transfer Setup </span>
+                                    {{-- <span class="menu-arrow"></span> --}}
+                                </a>
+                                <div class="collapse" id="sidebarTransfer">
+                                    <ul class="nav-second-level">
+                                        <li>
+                                            <a href="#" class="tp-link">All Customer</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li>
+                                <a href="#sidebarReport" data-bs-toggle="collapse">
+                                    <i data-feather="file-text"></i>
+                                    <span> Report Setup </span>
+                                </a>
+                                <div class="collapse" id="sidebarReport">
+                                    <ul class="nav-second-level">
+                                        <li>
+                                            <a href="#" class="tp-link">All Customer</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            {{-- this is for review --}}
+                                {{-- <li>
+                                    <a href="#sidebarReview" data-bs-toggle="collapse">
                                         <i data-feather="star"></i>
                                         <span> Reviews Setup</span>
-                                        <span class="menu-arrow"></span>
                                     </a>
-                                    <div class="collapse" id="sidebarIcons">
+                                    <div class="collapse" id="sidebarReview">
                                         <ul class="nav-second-level">
                                             <li>
                                                 <a href="{{ route('all.review') }}" class="tp-link">All Review</a>
                                             </li>
                                         </ul>
                                     </div>
-                                </li>
+                                </li> --}}
 
+                                {{-- This is for slider --}}
+                                {{-- <li>
+                                    <a href="#sidebarSlider" data-bs-toggle="collapse">
+                                        <i data-feather="image"></i>
+                                        <span> Slider Setup </span>
+                                    </a>
+
+                                    <div class="collapse" id="sidebarSlider">
+                                        <ul class="nav-second-level">
+                                            <li>
+                                                <a href="{{ route('finances') }}" class="tp-link">Get Slider</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li> --}}
+
+                                {{-- this is for feature --}}
+                                 {{-- <li>
+                                    <a href="#sidebarFeature" data-bs-toggle="collapse">
+                                        <i data-feather="image"></i>
+                                        <span>Feature Setup</span>
+                                    </a>
+
+                                    <div class="collapse" id="sidebarFeature">
+                                        <ul class="nav-second-level">
+                                            <li>
+                                                <a href="{{ route('features') }}" class="tp-link">All Features</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li> --}}
 
                             <li class="menu-title mt-2">General</li>
 
@@ -165,23 +284,7 @@
                                 </div>
                             </li>
 
-                            <li>
-                                <a href="#sidebarIcons" data-bs-toggle="collapse">
-                                    <i data-feather="award"></i>
-                                    <span> Icons </span>
-                                    <span class="menu-arrow"></span>
-                                </a>
-                                <div class="collapse" id="sidebarIcons">
-                                    <ul class="nav-second-level">
-                                        <li>
-                                            <a href="icons-feather.html" class="tp-link">Feather Icons</a>
-                                        </li>
-                                        <li>
-                                            <a href="icons-mdi.html" class="tp-link">Material Design Icons</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
+
 
                             <li>
                                 <a href="#sidebarForms" data-bs-toggle="collapse">
