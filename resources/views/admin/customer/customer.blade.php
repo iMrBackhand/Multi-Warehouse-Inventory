@@ -56,7 +56,12 @@
                                     <td>{{ $customer->customer_name }}</td>
                                     <td>{{ $customer->email }}</td>
                                     <td>{{ $customer->phone }}</td>
-                                    <td>{{ $customer->address }}</td>
+                                    <td>
+                                        <div style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                                            title="{{ $customer->address }}">
+                                            {{ $customer->address }}
+                                        </div>
+                                    </td>
                                     <td>
                                         {{-- component --}}
                                         <x-button.edit href="{{ route('edit.customer', $customer->id) }}">

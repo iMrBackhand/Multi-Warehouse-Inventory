@@ -99,7 +99,7 @@
                                 <a class="nav-link dropdown-toggle nav-user me-0" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
                               <img src="{{ Auth::user()?->photo
                                 ? asset('storage/' . Auth::user()->photo)
-                                : url('upload/no_image.png') }}"
+                                : url('upload/user-12.jpg') }}"
                                 alt="user-image"
                                 class="rounded-circle">
                                 <span class="pro-user-name ms-1">

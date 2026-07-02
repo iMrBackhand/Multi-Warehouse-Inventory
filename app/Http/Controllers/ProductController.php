@@ -29,7 +29,7 @@ class ProductController extends Controller
             ], 'like', '%' . $request->search . '%');
         })
         ->orderBy('id', 'asc')
-        ->paginate(10);
+        ->get();
 
         $warehouses = Warehouse::all();
         $suppliers  = Supplier::all();
@@ -186,4 +186,18 @@ class ProductController extends Controller
 
         return redirect()->back()->with($notification);
     }
+    // End of Method
+
+    public function view($id)
+{
+    $product = Product::with([
+        'warehouse',
+        'supplier',
+        'category',
+        'brand',
+        'images'
+    ])->findOrFail($id);
+
+    return view('admin.product.view-product', compact('product'));
+}
 }

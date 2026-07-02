@@ -19,7 +19,7 @@ class CustomerController extends Controller
                     'phone',
                     'address'
                 ],'like','%'.$request->search.'%');
-            })->orderBy('id','desc')->paginate(10);
+            })->orderBy('id','desc')->get();
             return view('admin.customer.customer',compact('customers'));
         }
 

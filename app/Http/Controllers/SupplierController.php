@@ -16,7 +16,7 @@ class SupplierController extends Controller
                     'phone',
                     'address'
                 ],'like','%'.$request->search.'%');
-            })->orderBy('id','asc')->paginate(10);
+            })->orderBy('id','asc')->get();
             return view('admin.supplier.supplier',compact('suppliers'));
         }
 

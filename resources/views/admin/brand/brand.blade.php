@@ -53,11 +53,14 @@
                                         <td>{{ $brand->id }}</td>
                                         <td>{{ $brand->brand_name }}</td>
 
-                                        <td>
-                                            @if ($brand->image)
-                                                <img src="{{ asset('storage/' . $brand->image) }}" width="50">
-                                            @endif
-                                        </td>
+                                    <td>
+                                        @if ($brand->image)
+                                            <img src="{{ asset('storage/' . $brand->image) }}"
+                                                width="50"
+                                                height="50"
+                                                style="object-fit: cover; border-radius: 4px;">
+                                        @endif
+                                    </td>
 
                              <td class="text-nowrap">
                                 <div class="d-flex gap-2">

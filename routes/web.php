@@ -10,6 +10,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductCategoriesController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SliderController;
 use App\Http\Controllers\SupplierController;
@@ -151,4 +152,16 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('product/delete/{id}',[ProductController::class,'deleteProduct'])->name('delete.product');
     Route::get('product/archive',[ProductController::class,'archiveProduct'])->name('archive.product');
     Route::put('product/restore/{id}',[ProductController::class,'restoreProduct'])->name('restore.product');
+    Route::get('/product/view/{id}', [ProductController::class, 'view'])->name('product.view');
+
+    // Purchase
+    Route::get('purchase',[PurchaseController::class,'index'])->name('purchase');
+    Route::get('purchase/add',[PurchaseController::class,'addPurchase'])->name('purchase.add');
+    Route::post('purchase/store',[PurchaseController::class,'store'])->name('store.purchase');
+
+    Route::get('purchase/product/search',[PurchaseController::class,'PurchaseProductSearch'])->name('purchase.product.search');
+    Route::get('/admin/dashboard/purchase-chart/{year}',[DashboardController::class,'purchaseChart']);
+    Route::get('/admin/dashboard/purchase-summary/{year}', [DashboardController::class, 'purchaseSummary']);
+    Route::get('/purchase/edit/{id}', [PurchaseController::class, 'edit'])->name('purchase.edit');
+    Route::put('/purchase/update/{id}', [PurchaseController::class, 'update'])->name('purchase.update');
 });

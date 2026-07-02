@@ -1,4 +1,4 @@
-    @extends('admin.admin_master')
+@extends('admin.admin_master')
     @section('admin')
 
         @if (session('success'))
@@ -37,14 +37,17 @@
                     </div>
                 </div>
 
-                <!-- Datatables -->
+                {{-- Datatables --}}
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header"></div>
+                            <div class="card-header">
+                            </div>
                             <div class="card-body">
-                                <table id="datatable"
-                                    class="table table-bordered dt-responsive table-responsive nowrap">
+                                <table
+                                    id="datatable"
+                                    class="table table-bordered dt-responsive table-responsive nowrap"
+                                    >
                                     <thead>
                                         <tr>
                                             <th>SI</th>
@@ -60,7 +63,6 @@
                                         @forelse ($products as $index => $product)
                                             <tr>
                                                 <td>{{ $index + 1 }}</td>
-                                                {{-- for the image --}}
                                                 <td>
                                                     @if ($product->images->count())
                                                         <img src="{{ asset('storage/' . $product->images->first()->image) }}"
@@ -75,35 +77,25 @@
                                                 <td>{{ $product->warehouse->warehouse_name ?? '—' }}</td>
                                                 <td>Php:{{ number_format($product->price, 2) }}</td>
                                                 <td>
-                                                    <span class="badge"
-                                                        style="background:#8B5CF6; color:#fff; padding:8px 12px; border-radius:4px; font-size:13px; font-weight:600;">
+                                                    <span class="badge" style="background:#8B5CF6; color:#fff; padding:8px 12px; border-radius:4px; font-size:13px; font-weight:600;">
                                                         {{ $product->product_quantity }}
                                                     </span>
                                                 </td>
                                                 <td>
-                                                {{-- View --}}
-                                                <a href="#" class="btn btn-sm" style="background-color:#0dcaf0;" title="View">
-                                                    <i data-feather="eye" style="width:14px; height:14px; color:#fff;"></i>
-                                                </a>
-
-                                                {{-- Edit --}}
-                                            <a href="#"
-                                                    class="btn btn-sm btn-success"
-                                                    title="Edit"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#editProductModal{{ $product->id }}">
-                                                    <i data-feather="edit" style="width:14px; height:14px; color:#fff;"></i>
-                                                </a>
-
-                                                {{-- Archive --}}
-                                                <form method="POST" action="{{ route('delete.product',$product->id) }}" style="display:inline;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger archive-form" title="Archive">
-                                                        <i data-feather="archive" style="width:14px; height:14px; color:#fff;"></i>
-                                                    </button>
-                                                </form>
-                                            </td>
+                                                    <a href="{{ route('product.view',$product->id) }}" class="btn btn-sm" style="background-color:#0dcaf0; padding:4px 6px;" title="View">
+                                                        <i data-feather="eye" style="width:10px; height:10px; color:#fff;"></i>
+                                                    </a>
+                                                    <a href="#" class="btn btn-sm btn-success" style="padding:4px 6px;" title="Edit" data-bs-toggle="modal" data-bs-target="#editProductModal{{ $product->id }}">
+                                                        <i data-feather="edit" style="width:10px; height:10px; color:#fff;"></i>
+                                                    </a>
+                                                    <form method="POST" action="{{ route('delete.product',$product->id) }}" style="display:inline;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-danger archive-form" style="padding:4px 6px;" title="Archive">
+                                                            <i data-feather="archive" style="width:10px; height:10px; color:#fff;"></i>
+                                                        </button>
+                                                    </form>
+                                                </td>
                                             </tr>
                                         @empty
                                             <tr>
@@ -112,6 +104,7 @@
                                         @endforelse
                                     </tbody>
                                 </table>
+
                             </div>
                         </div>
                     </div>
@@ -156,7 +149,7 @@
 
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Category <span class="text-danger">*</span></label>
-                                            <select name="category_id" class="form-select" required>
+                                            <select name="category_id" class="form-select">
                                                 <option value="">Select Category</option>
                                                 @foreach ($categories as $category)
                                                     <option value="{{ $category->id }}"
@@ -169,7 +162,7 @@
 
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Brand <span class="text-danger">*</span></label>
-                                            <select name="brand_id" class="form-select" required>
+                                            <select name="brand_id" class="form-select">
                                                 <option value="">Select Brand</option>
                                                 @foreach ($brands as $brand)
                                                     <option value="{{ $brand->id }}"

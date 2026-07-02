@@ -141,7 +141,10 @@
                                 <div class="collapse" id="sidebarPurchase">
                                     <ul class="nav-second-level">
                                         <li>
-                                            <a href="#" class="tp-link">All Customer</a>
+                                            <a href="{{ route('purchase') }}" class="tp-link">All Purchase</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="tp-link">Purchase Return</a>
                                         </li>
                                     </ul>
                                 </div>

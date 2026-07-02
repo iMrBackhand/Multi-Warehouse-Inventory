@@ -51,7 +51,12 @@
                                 <td>{{ $supplier->supplier_name }}</td>
                                 <td>{{ $supplier->email }}</td>
                                 <td>{{ $supplier->phone }}</td>
-                                <td>{{ $supplier->address }}</td>
+                                <td>
+                                        <div style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                                            title="{{ $supplier->address }}">
+                                            {{ $supplier->address }}
+                                        </div>
+                                </td>
                                 <td>
                                     <a href="{{ route('edit.supplier',$supplier->id) }}"
                                     class="btn btn-sm btn-success">
