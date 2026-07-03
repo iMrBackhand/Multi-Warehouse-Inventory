@@ -22,9 +22,9 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/', function () {
 //     return view('home.index');
 // });
-Route::get('/', [HomeController::class, 'index'])->name('home');
+// Route::get('/', [HomeController::class, 'index'])->name('home');
 
-
+Route::redirect('/', '/login');
     // kapag naglog in ang user dito rerekta
     // Route::get('/dashboard', function () {
     //     return view('admin.index');
@@ -164,4 +164,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/dashboard/purchase-summary/{year}', [DashboardController::class, 'purchaseSummary']);
     Route::get('/purchase/edit/{id}', [PurchaseController::class, 'edit'])->name('purchase.edit');
     Route::put('/purchase/update/{id}', [PurchaseController::class, 'update'])->name('purchase.update');
+    Route::get('/purchase/view/{id}', [PurchaseController::class, 'ViewPurchase'])
+    ->name('purchase.view');
 });

@@ -15,6 +15,8 @@ document.addEventListener("DOMContentLoaded", function () {
     let grandTotalHidden = document.querySelector('input[name="grand_total"]');
 
     let form = document.querySelector("form");
+    let selectedWarehouse = "";
+    let warehouseLocked = false;
 
     // ============================
     // SEARCH PRODUCT
@@ -38,21 +40,24 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // disable search kapag walang warehouse pinili
     warehouseDropdown.addEventListener("change", function () {
-        if (this.value) {
-            warehouseError.classList.add("d-none");
+        if (warehouseLocked && this.value !== selectedWarehouse) {
+            this.value = selectedWarehouse;
 
-            // kung may laman na yung search box, mag-search ulit gamit ang bagong warehouse
-            let query = productSearchInput.value.trim();
-            if (query.length > 1) {
-                fetchProduct(query, this.value);
-            } else {
-                product_list.innerHTML = "";
-            }
-        } else {
-            product_list.innerHTML = "";
+            Swal.fire({
+                icon: "warning",
+                title: "Warehouse Locked",
+                text: "You cannot change the warehouse after adding products. Please remove all products first if you want to select another warehouse.",
+                confirmButtonText: "OK",
+            });
+
+            return;
         }
+
+        selectedWarehouse = this.value;
+
+        warehouseError.classList.add("d-none");
+        product_list.innerHTML = "";
     });
 
     function fetchProduct(query, warehouse_id) {
@@ -78,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         item.dataset.name = product.product_name;
                         item.dataset.cost = product.price;
                         item.dataset.stock = product.product_quantity;
-                        item.dataset.discount = product.discount; // ⬅️ FIX: kunin ang discount mula sa response
+                        item.dataset.discount = product.discount;
                         item.innerHTML = `<span class="mdi mdi-text-search"></span> ${product.code} - ${product.product_name}`;
 
                         product_list.appendChild(item);
@@ -126,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let code = el.dataset.code;
         let cost = parseFloat(el.dataset.cost) || 0;
         let stock = parseFloat(el.dataset.stock) || 0;
-        let discount = parseFloat(el.dataset.discount) || 0; // ⬅️ FIX: gamitin ang discount mula sa dataset
+        let discount = parseFloat(el.dataset.discount) || 0;
 
         let row = document.createElement("tr");
         row.setAttribute("data-id", id);
@@ -193,10 +198,12 @@ document.addEventListener("DOMContentLoaded", function () {
         </button>
     </td>
 `;
+        if (!warehouseLocked) {
+            selectedWarehouse = warehouseDropdown.value;
+            warehouseLocked = true;
+        }
 
         orderItemsTableBody.appendChild(row);
-
-        // ⬅️ FIX: i-compute agad ang subtotal (kasama ang discount) bago i-total
         updateRowSubtotal(row);
         calculateTotals();
 
@@ -233,7 +240,14 @@ document.addEventListener("DOMContentLoaded", function () {
         let removeBtn = e.target.closest(".remove-item");
         if (removeBtn) {
             removeBtn.closest("tr").remove();
+
             calculateTotals();
+
+            if (orderItemsTableBody.querySelectorAll("tr").length === 0) {
+                selectedWarehouse = "";
+                warehouseLocked = false;
+            }
+
             return;
         }
 
@@ -298,12 +312,11 @@ document.addEventListener("DOMContentLoaded", function () {
     function calculateTotals() {
         let rows = orderItemsTableBody.querySelectorAll("tr");
         let itemsTotal = 0;
-        let itemDiscountsTotal = 0; // ⬅️ bagong variable, total ng lahat ng item discounts
+        let itemDiscountsTotal = 0;
 
         rows.forEach((row) => {
             itemsTotal += parseFloat(row.dataset.subtotal || 0);
 
-            // ⬅️ kunin ang discount ng kada row at idagdag sa total
             let rowDiscountInput = row.querySelector(".discount-input");
             itemDiscountsTotal += parseFloat(rowDiscountInput.value) || 0;
         });
@@ -311,13 +324,12 @@ document.addEventListener("DOMContentLoaded", function () {
         let orderDiscount = parseFloat(inputDiscount.value) || 0;
         let shipping = parseFloat(inputShipping.value) || 0;
 
-        // ⬅️ pinagsama ang item discounts + order-level discount
         let combinedDiscount = itemDiscountsTotal + orderDiscount;
 
         let grandTotal = itemsTotal - orderDiscount + shipping;
         if (grandTotal < 0) grandTotal = 0;
 
-        displayDiscount.textContent = "Php " + combinedDiscount.toFixed(2); // ⬅️ ipinapakita na ang total
+        displayDiscount.textContent = "Php " + combinedDiscount.toFixed(2);
         shippingDisplay.textContent = "Php " + shipping.toFixed(2);
         grandTotalDisplay.textContent = "Php " + grandTotal.toFixed(2);
         grandTotalHidden.value = grandTotal.toFixed(2);
@@ -326,6 +338,14 @@ document.addEventListener("DOMContentLoaded", function () {
     inputDiscount.addEventListener("input", calculateTotals);
     inputShipping.addEventListener("input", calculateTotals);
 
+    // ============================
+    // INITIALIZE EXISTING ROWS (EDIT PAGE)
+    // ============================
+    orderItemsTableBody.querySelectorAll("tr").forEach((row) => {
+        updateRowSubtotal(row);
+    });
+
+    calculateTotals();
     // ============================
     // VALIDATE BEFORE SUBMIT
     // ============================

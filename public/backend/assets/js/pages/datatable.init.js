@@ -1,7 +1,9 @@
 "use strict";
 $(document).ready(function () {
     $("#datatable").DataTable({
-        responsive: false,
+        responsive: true,
+        autoWidth: false,
+        scrollX: true,
     });
 
     var a = $("#datatable-buttons").DataTable({

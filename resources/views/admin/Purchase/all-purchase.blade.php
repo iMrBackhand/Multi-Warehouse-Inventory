@@ -22,9 +22,11 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header"></div>
-                            <div class="card-body">
+                          <div class="card-body">
+
+                            <div class="table-responsive">
                                 <table id="datatable"
-                                    class="table table-bordered dt-responsive table-responsive nowrap">
+                                    class="table table-bordered table-striped nowrap w-100">
                                     <thead>
                                         <tr>
                                             <th>SI</th>
@@ -51,13 +53,20 @@
                                                 </span>
                                             </td>
                                             <td>Php {{ number_format($purchase->grand_total, 2) }}</td>
-                                            <td>{{-- Payment info dito, kulang pa detalye --}}</td>
+                                            <td>
+                                                <span class="badge bg-success">Cash</span>
+                                            </td>
                                             <td>{{ $purchase->purchase_date->format('M d, Y') }}</td>
                                            <td>
-                                                <a href="#" class="btn btn-sm" style="background-color:#0dcaf0; padding:4px 6px;" title="View">
+                                                <a href="{{ route('purchase.view',$purchase->id) }}" class="btn btn-sm" style="background-color:#0dcaf0; padding:4px 6px;" title="View">
                                                     <i data-feather="eye" style="width:10px; height:10px; color:#fff;"></i>
                                                 </a>
-
+                                                <a href="#"
+                                                    class="btn btn-sm"
+                                                    style="background-color:#6f42c1; padding:4px 6px;"
+                                                    title="Download PDF">
+                                                        <i data-feather="file-text" style="width:10px; height:10px; color:#fff;"></i>
+                                                </a>
                                                 <a href="{{ route('purchase.edit',$purchase->id) }}" class="btn btn-sm btn-success" style="padding:4px 6px;" title="Edit">
                                                     <i data-feather="edit" style="width:10px; height:10px; color:#fff;"></i>
                                                 </a>

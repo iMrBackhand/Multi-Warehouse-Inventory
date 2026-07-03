@@ -35,6 +35,16 @@
 
                     <form action="{{ route('store.purchase') }}" method="POST" enctype="multipart/form-data">
                         @csrf
+                         @if ($errors->any())
+        <div class="alert alert-danger">
+            <strong>May problema sa pag-save:</strong>
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
                         <div class="row">
                             <div class="col-xl-12">
@@ -128,32 +138,34 @@
                                             </div>
                                         </div>
 
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <label class="form-label">
-                                                    Order Items:
-                                                    <span class="text-danger">*</span>
-                                                </label>
+                               <div class="row">
+    <div class="col-md-12">
+        <label class="form-label">
+            Order Items:
+            <span class="text-danger">*</span>
+        </label>
 
-                                                <table class="table table-striped table-bordered">
-                                                    <thead>
-        <tr>
-            <th style="width:25%">Product</th>
-            <th style="width:10%">Cost</th>
-            <th style="width:8%">Stock</th>
-            <th style="width:12%">Qty</th>
-            <th style="width:10%">Discount</th>
-            <th style="width:10%">Subtotal</th>
-            <th style="width:5%">Action</th>
-        </tr>
-    </thead>
+        <div class="table-responsive">
+            <table id="purchaseTable" class="table table-striped table-bordered w-100">
+                <thead>
+                    <tr>
+                        <th style="width:25%">Product</th>
+                        <th style="width:10%">Cost</th>
+                        <th style="width:8%">Stock</th>
+                        <th style="width:12%">Qty</th>
+                        <th style="width:10%">Discount</th>
+                        <th style="width:10%">Subtotal</th>
+                        <th style="width:5%">Action</th>
+                    </tr>
+                </thead>
 
-                                                    <tbody>
+                <tbody>
 
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
                                         <div class="row">
                                             <div class="col-md-6 ms-auto">
@@ -174,15 +186,15 @@
                                                                 </tr>
 
                                                          <tr>
-    <td class="text-primary">
-        Grand Total:
-    </td>
+                                                            <td class="text-primary">
+                                                                Grand Total:
+                                                            </td>
 
-    <td class="text-primary">
-        <span id="grandTotal">Php 0.00</span>
-        <input type="hidden" name="grand_total" value="0">
-    </td>
-</tr>
+                                                            <td class="text-primary">
+                                                                <span id="grandTotal">Php 0.00</span>
+                                                                <input type="hidden" name="grand_total" value="0">
+                                                            </td>
+                                                        </tr>
 
                                                                 <tr class="d-none">
                                                                     <td>Paid Amount</td>
