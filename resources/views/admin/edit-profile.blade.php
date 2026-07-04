@@ -16,7 +16,7 @@
                                                     alt="image profile">
 
                                                     <div class="overflow-hidden ms-4">
-                                                        <h4 class="m-0 text-dark fs-20">{{ $profileData->name }}</h4>
+                                                        <h4 class="m-0 text-dark fs-20">{{ $profileData->name }}({{ $profileData->role }})</h4>
                                                         <p class="my-1 text-muted fs-16">{{ $profileData->email }}</p>
 
                                                     </div>

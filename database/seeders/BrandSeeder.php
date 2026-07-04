@@ -13,6 +13,24 @@ class BrandSeeder extends Seeder
      */
     public function run(): void
     {
-        Brand::factory()->count(10)->create();
+        $brands = [
+            'Nike',
+            'Adidas',
+            'Puma',
+            'New Balance',
+            'Converse',
+            'Vans',
+            'Reebok',
+            'ASICS',
+            'Under Armour',
+            'Fila',
+        ];
+
+        foreach ($brands as $brand) {
+            Brand::create([
+                'brand_name' => $brand,
+                'image' => 'brands/default.jpg',
+            ]);
+        }
     }
 }

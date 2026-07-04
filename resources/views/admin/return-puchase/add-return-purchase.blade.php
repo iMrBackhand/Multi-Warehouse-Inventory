@@ -24,7 +24,7 @@
         <div class="container-fluid my-4">
 
             <div class="d-md-flex align-items-center justify-content-between">
-                <h3 class="mb-0">Create Purchase</h3>
+                <h3 class="mb-0">Return Purchase</h3>
                 <div class="text-end my-2 mt-md-0">
                     <a class="btn btn-sm btn-outline-primary" href="{{ route('return.purchase') }}">Back</a>
                 </div>
@@ -33,18 +33,18 @@
             <div class="card">
                 <div class="card-body">
 
-                    <form action="{{ route('store.purchase') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('store.return.purchase') }}" method="POST">
                         @csrf
                          @if ($errors->any())
-        <div class="alert alert-danger">
-            <strong>May problema sa pag-save:</strong>
-            <ul class="mb-0">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+                        <div class="alert alert-danger">
+                            <strong>May problema sa pag-save:</strong>
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
 
                         <div class="row">
                             <div class="col-xl-12">
@@ -138,34 +138,34 @@
                                             </div>
                                         </div>
 
-                               <div class="row">
-    <div class="col-md-12">
-        <label class="form-label">
-            Order Items:
-            <span class="text-danger">*</span>
-        </label>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <label class="form-label">
+                                                    Order Items:
+                                                    <span class="text-danger">*</span>
+                                                </label>
 
-        <div class="table-responsive">
-            <table id="purchaseTable" class="table table-striped table-bordered w-100">
-                <thead>
-                    <tr>
-                        <th style="width:25%">Product</th>
-                        <th style="width:10%">Cost</th>
-                        <th style="width:8%">Stock</th>
-                        <th style="width:12%">Qty</th>
-                        <th style="width:10%">Discount</th>
-                        <th style="width:10%">Subtotal</th>
-                        <th style="width:5%">Action</th>
-                    </tr>
-                </thead>
+                                                <div class="table-responsive">
+                                                    <table id="purchaseTable" class="table table-striped table-bordered w-100">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="width:25%">Product</th>
+                                                                <th style="width:10%">Cost</th>
+                                                                <th style="width:8%">Stock</th>
+                                                                <th style="width:12%">Qty</th>
+                                                                <th style="width:10%">Discount</th>
+                                                                <th style="width:10%">Subtotal</th>
+                                                                <th style="width:5%">Action</th>
+                                                            </tr>
+                                                        </thead>
 
-                <tbody>
+                                                        <tbody>
 
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
 
                                         <div class="row">
                                             <div class="col-md-6 ms-auto">
@@ -267,12 +267,13 @@
                                                         <span class="text-danger">*</span>
                                                     </label>
 
-                                                <select name="status" id="status" class="form-control form-select" required>
-                                                    <option value="">Select Status</option>
-                                                    <option value="Received">Received</option>
-                                                    <option value="Pending">Pending</option>
-                                                    <option value="Ordered">Ordered</option>
-                                                </select>
+                                             <select name="status" id="status" class="form-control form-select" required>
+                                                <option value="">Select Status</option>
+                                                <option value="Pending">Pending</option>
+                                                <option value="Approved">Approved</option>
+                                                <option value="Returned">Returned</option>
+                                                <option value="Cancelled">Cancelled</option>
+                                            </select>
 
                                                     @error('status')
                                                         <span class="text-danger">
