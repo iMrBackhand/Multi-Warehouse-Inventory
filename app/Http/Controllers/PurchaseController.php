@@ -2,6 +2,7 @@
 
     namespace App\Http\Controllers;
 
+use App\Http\Requests\PurchaseAddRequest;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
@@ -48,17 +49,8 @@ use Illuminate\Http\Request;
         }
         // End of method
 
-        public function store(Request $request)
+        public function store(PurchaseAddRequest $request)
         {
-            $request->validate([
-                'purchase_date' => 'required|date',
-                'warehouse_id'  => 'required',
-                'supplier_id'   => 'required',
-                'status'        => 'required',
-                'product_id'    => 'required|array',
-                'quantity'      => 'required|array',
-                'unit_cost'     => 'required|array',
-            ]);
 
             $purchase = new Purchase();
 
@@ -182,9 +174,6 @@ use Illuminate\Http\Request;
             // Save old status
             $oldStatus = $purchase->status;
 
-            // ======================
-            // UPDATE PURCHASE HEADER
-            // ======================
             $purchase->purchase_date = $request->purchase_date;
             $purchase->shipping      = $request->shipping;
             $purchase->discount      = $request->discount;
@@ -194,9 +183,6 @@ use Illuminate\Http\Request;
 
             $purchase->save();
 
-            // ======================
-            // UPDATE ITEMS
-            // ======================
             if ($request->has('purchase_item_id')) {
 
                 foreach ($request->purchase_item_id as $key => $itemId) {
@@ -217,11 +203,6 @@ use Illuminate\Http\Request;
                 }
             }
 
-            // ======================
-            // STOCK ROLLBACK SYSTEM
-            // ======================
-
-            // STEP 1: IF OLD WAS RECEIVED → REVERSE STOCK FIRST
             if ($oldStatus === 'Received') {
 
                 foreach ($purchase->purchaseItems as $item) {
@@ -235,7 +216,6 @@ use Illuminate\Http\Request;
                 }
             }
 
-            // STEP 2: IF NEW STATUS IS RECEIVED → APPLY STOCK AGAIN
             if ($purchase->status === 'Received') {
 
                 foreach ($purchase->purchaseItems as $item) {
@@ -266,6 +246,40 @@ use Illuminate\Http\Request;
             return view('admin.purchase.view-purchase', compact('purchase'));
         }
 
+        public function deletePurchase($id)
+        {
+            Purchase::findOrFail($id)->delete();
+             $notification = array(
+                'message' => 'Purchase Succesfully Archive',
+                'alert-type' =>'error'
+            );
+            return redirect()->route('purchase')->with($notification);
+        }
+
+         public function archivedPurchase(Request $request)
+        {
+            $purchases = Purchase::with('warehouse')
+                ->onlyTrashed()
+                ->when($request->search, function ($query) use ($request) {
+                    $query->whereHas('warehouse', function ($q) use ($request) {
+                        $q->where('warehouse_name', 'like', '%' . $request->search . '%');
+                    });
+                })
+                ->orderBy('id', 'asc')
+                ->get();
+
+            return view('admin.purchase.archive-purchase', compact('purchases'));
+        }
+
+        public function restorePurchase($id)
+        {
+            Purchase::withTrashed()->findOrFail($id)->restore();
+            $notification = array(
+                    'message' => 'Purchase Succesfully Restore',
+                    'alert-type' =>'success'
+                );
+            return redirect()->route('purchase')->with($notification);
+        }
 
 
     }

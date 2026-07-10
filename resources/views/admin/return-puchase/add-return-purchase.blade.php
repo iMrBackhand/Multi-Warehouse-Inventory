@@ -35,16 +35,7 @@
 
                     <form action="{{ route('store.return.purchase') }}" method="POST">
                         @csrf
-                         @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <strong>May problema sa pag-save:</strong>
-                            <ul class="mb-0">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
+                       <x-error-component />
 
                         <div class="row">
                             <div class="col-xl-12">
@@ -100,7 +91,7 @@
                                                         <span class="text-danger">*</span>
                                                     </label>
 
-                                                    <select name="supplier_id" id="supplier_id" class="form-control form-select" required>
+                                                    <select name="supplier_id" id="supplier_id" class="form-control form-select" >
                                                         <option value="">Select Supplier</option>
 
                                                         @foreach ($suppliers as $supplier)
@@ -109,10 +100,6 @@
                                                             </option>
                                                         @endforeach
                                                     </select>
-
-                                                    @error('supplier_id')
-                                                        <span class="text-danger">{{ $message }}</span>
-                                                    @enderror
                                                 </div>
                                             </div>
                                         </div>
@@ -267,7 +254,7 @@
                                                         <span class="text-danger">*</span>
                                                     </label>
 
-                                             <select name="status" id="status" class="form-control form-select" required>
+                                             <select name="status" id="status" class="form-control form-select">
                                                 <option value="">Select Status</option>
                                                 <option value="Pending">Pending</option>
                                                 <option value="Approved">Approved</option>

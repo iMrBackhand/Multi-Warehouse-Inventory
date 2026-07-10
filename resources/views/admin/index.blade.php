@@ -164,10 +164,8 @@
 
         </div>
 
-<!-- RECENT PURCHASES + LOW STOCK -->
         <div class="row g-3 mt-1">
 
-            <!-- RECENT PURCHASES -->
             <div class="col-xl-7">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center">

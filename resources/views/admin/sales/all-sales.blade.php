@@ -6,16 +6,13 @@
 
                 <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
                     <div class="flex-grow-1">
-                        <h4 class="fs-18 fw-semibold m-0">All Purchase</h4>
+                        <h4 class="fs-18 fw-semibold m-0">All Sales</h4>
                     </div>
 
                     <div class="text-end">
-                        <a href="{{ route('purchase.add') }}" class="btn btn-sm"
+                        <a href="{{ route('add.sales') }}" class="btn btn-sm"
                             style="background-color: #6f42c1; color: #fff;">
-                            Add Purchase
-                        </a>
-                           <a href="{{ route('archived.purchase') }}" class="btn btn-sm text-white" style="background-color:#6c757d;">
-                                InActive Purchase
+                            Add Sales
                         </a>
                     </div>
                 </div>
@@ -36,46 +33,49 @@
                                             <th>Warehouse</th>
                                             <th>Status</th>
                                             <th>Grand Total</th>
-                                            <th>Payment</th>
-                                            <th>Purchase Date</th>
+                                            <th>Amount Paid</th>
+                                            <th>Due Amount</th>
+                                            <th>Created</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($allData as $index => $purchase)
+                                        @forelse ($sales as $sale)
                                             <tr>
-                                                <td>{{ $index + 1 }}</td>
-                                                <td>{{ $purchase->warehouse->warehouse_name ?? 'N/A' }}</td>
+                                                <td>{{ $loop->iteration }}</td>
+
+                                                <td>{{ $sale->warehouse->warehouse_name ?? 'N/A' }}</td>
+
                                                 <td>
-                                                    <span class="badge
-                                                        @if($purchase->status == 'Received') bg-success
-                                                        @elseif($purchase->status == 'Pending') bg-warning
-                                                        @else bg-secondary
-                                                        @endif">
-                                                        {{ $purchase->status }}
+                                                    <span class="badge bg-{{ $sale->status == 'Completed' ? 'success' : ($sale->status == 'Pending' ? 'warning' : 'secondary') }}">
+                                                        {{ $sale->status }}
                                                     </span>
                                                 </td>
-                                                <td>Php {{ number_format($purchase->grand_total, 2) }}</td>
-                                                <td>
-                                                    <span class="badge bg-success">Cash</span>
-                                                </td>
-                                                <td>{{ $purchase->purchase_date->format('M d, Y') }}</td>
-                                                <td class="text-nowrap">
-                                                    <a href="{{ route('purchase.view', $purchase->id) }}"
+
+                                                <td>₱{{ number_format($sale->grand_total, 2) }}</td>
+
+                                                <td>₱{{ number_format($sale->paid_amount, 2) }}</td>
+
+                                                <td>₱{{ number_format($sale->due_amount, 2) }}</td>
+
+                                                <td>{{ $sale->created_at->format('M d, Y') }}</td>
+
+                                               <td class="text-nowrap">
+                                                    <a href="#"
                                                         class="btn btn-sm"
                                                         style="background-color:#0dcaf0; padding:4px 6px;"
                                                         title="View">
                                                         <i data-feather="eye" style="width:10px; height:10px; color:#fff;"></i>
                                                     </a>
 
-                                                    <a href="{{ route('purchase.edit', $purchase->id) }}"
+                                                    <a href="#"
                                                         class="btn btn-sm btn-success"
                                                         style="padding:4px 6px;"
                                                         title="Edit">
                                                         <i data-feather="edit" style="width:10px; height:10px; color:#fff;"></i>
                                                     </a>
 
-                                                    <form action="{{ route('delete.purchase',$purchase->id) }}" method="POST" style="display:inline;">
+                                                    <form action="#" method="POST" style="display:inline;">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit"
@@ -89,7 +89,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="7" class="text-center">No purchases found.</td>
+                                                <td colspan="7" class="text-center">No records found.</td>
                                             </tr>
                                         @endforelse
                                     </tbody>

@@ -17,10 +17,11 @@ document.addEventListener("DOMContentLoaded", function () {
     let form = document.querySelector("form");
     let selectedWarehouse = "";
     let warehouseLocked = false;
+    let paidAmountInput = document.querySelector('input[name="paid_amount"]');
+    let dueAmountDisplay = document.getElementById("dueAmount");
+    let dueAmountHidden = document.querySelector('input[name="due_amount"]');
+    let fullPaidInput = document.getElementById("fullPaidInput");
 
-    // ============================
-    // SEARCH PRODUCT
-    // ============================
     productSearchInput.addEventListener("keyup", function () {
         let query = this.value.trim();
         let warehouse_id = warehouseDropdown.value;
@@ -107,13 +108,9 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
-    // ============================
-    // ADD PRODUCT TO ORDER TABLE
-    // ============================
     function addProductToTable(el) {
         let id = el.dataset.id;
 
-        // if product already added, just increase qty instead of duplicating
         let existingRow = orderItemsTableBody.querySelector(
             `tr[data-id="${id}"]`,
         );
@@ -137,67 +134,67 @@ document.addEventListener("DOMContentLoaded", function () {
         row.setAttribute("data-id", id);
 
         row.innerHTML = `
-    <td>
-        ${code} - ${name}
-        <input type="hidden" name="product_id[]" value="${id}">
-    </td>
+        <td>
+            ${code} - ${name}
+            <input type="hidden" name="product_id[]" value="${id}">
+        </td>
 
-    <td>
-        <input
-            type="number"
-            class="form-control cost-input"
-            name="unit_cost[]"
-            value="${cost.toFixed(2)}"
-            min="0"
-            step="0.01">
-    </td>
-
-    <td class="stock-cell">
-        ${stock}
-    </td>
-
-    <td>
-        <div class="input-group input-group-sm" style="width:120px">
-
-            <button type="button" class="btn btn-outline-secondary qty-minus">
-                -
-            </button>
-
+        <td>
             <input
                 type="number"
-                class="form-control text-center qty-input"
-                name="quantity[]"
-                value="1"
-                min="1"
-                readonly>
+                class="form-control cost-input"
+                name="unit_cost[]"
+                value="${cost.toFixed(2)}"
+                min="0"
+                step="0.01">
+        </td>
 
-            <button type="button" class="btn btn-outline-secondary qty-plus">
-                +
+        <td class="stock-cell">
+            ${stock}
+        </td>
+
+        <td>
+            <div class="input-group input-group-sm" style="width:120px">
+
+                <button type="button" class="btn btn-outline-secondary qty-minus">
+                    -
+                </button>
+
+                <input
+                    type="number"
+                    class="form-control text-center qty-input"
+                    name="quantity[]"
+                    value="1"
+                    min="1"
+                    readonly>
+
+                <button type="button" class="btn btn-outline-secondary qty-plus">
+                    +
+                </button>
+
+            </div>
+        </td>
+
+        <td>
+            <input
+                type="number"
+                class="form-control discount-input"
+                name="item_discount[]"
+                value="${discount.toFixed(2)}"
+                min="0"
+                step="0.01">
+        </td>
+
+        <td class="subtotal-cell">
+            Php ${cost.toFixed(2)}
+        </td>
+
+        <td>
+            <button type="button" class="btn btn-sm btn-danger remove-item">
+                <i class="fas fa-trash"></i>
             </button>
-
-        </div>
-    </td>
-
-    <td>
-        <input
-            type="number"
-            class="form-control discount-input"
-            name="item_discount[]"
-            value="${discount.toFixed(2)}"
-            min="0"
-            step="0.01">
-    </td>
-
-    <td class="subtotal-cell">
-        Php ${cost.toFixed(2)}
-    </td>
-
-    <td>
-        <button type="button" class="btn btn-sm btn-danger remove-item">
-            <i class="fas fa-trash"></i>
-        </button>
-    </td>
-`;
+        </td>
+    `;
         if (!warehouseLocked) {
             selectedWarehouse = warehouseDropdown.value;
             warehouseLocked = true;
@@ -211,9 +208,6 @@ document.addEventListener("DOMContentLoaded", function () {
         productSearchInput.value = "";
     }
 
-    // ============================
-    // ROW EVENTS (qty / cost / discount change, remove row)
-    // ============================
     orderItemsTableBody.addEventListener("input", function (e) {
         if (
             e.target.classList.contains("qty-input") ||
@@ -234,9 +228,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     orderItemsTableBody.addEventListener("click", function (e) {
-        // ===========================
-        // REMOVE ITEM
-        // ===========================
         let removeBtn = e.target.closest(".remove-item");
         if (removeBtn) {
             removeBtn.closest("tr").remove();
@@ -251,9 +242,6 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // ===========================
-        // PLUS BUTTON
-        // ===========================
         let plusBtn = e.target.closest(".qty-plus");
         if (plusBtn) {
             let row = plusBtn.closest("tr");
@@ -263,18 +251,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
             let qty = parseInt(qtyInput.value) || 1;
 
-            if (qty < stock) {
-                qtyInput.value = qty + 1;
-                updateRowSubtotal(row);
-                calculateTotals();
-            }
+            qtyInput.value = qty + 1;
+
+            updateRowSubtotal(row);
+            calculateTotals();
 
             return;
         }
 
-        // ===========================
-        // MINUS BUTTON
-        // ===========================
         let minusBtn = e.target.closest(".qty-minus");
         if (minusBtn) {
             let row = minusBtn.closest("tr");
@@ -306,9 +290,6 @@ document.addEventListener("DOMContentLoaded", function () {
         row.dataset.subtotal = subtotal;
     }
 
-    // ============================
-    // CALCULATE GRAND TOTAL
-    // ============================
     function calculateTotals() {
         let rows = orderItemsTableBody.querySelectorAll("tr");
         let itemsTotal = 0;
@@ -333,22 +314,31 @@ document.addEventListener("DOMContentLoaded", function () {
         shippingDisplay.textContent = "Php " + shipping.toFixed(2);
         grandTotalDisplay.textContent = "Php " + grandTotal.toFixed(2);
         grandTotalHidden.value = grandTotal.toFixed(2);
+
+        let paid = parseFloat(paidAmountInput.value) || 0;
+
+        let due = grandTotal - paid;
+
+        if (due < 0) {
+            due = 0;
+        }
+
+        dueAmountDisplay.textContent = "Php " + due.toFixed(2);
+        dueAmountHidden.value = due.toFixed(2);
+
+        fullPaidInput.value = paid >= grandTotal ? "Yes" : "No";
     }
 
     inputDiscount.addEventListener("input", calculateTotals);
     inputShipping.addEventListener("input", calculateTotals);
+    paidAmountInput.addEventListener("input", calculateTotals);
 
-    // ============================
-    // INITIALIZE EXISTING ROWS (EDIT PAGE)
-    // ============================
     orderItemsTableBody.querySelectorAll("tr").forEach((row) => {
         updateRowSubtotal(row);
     });
 
     calculateTotals();
-    // ============================
-    // VALIDATE BEFORE SUBMIT
-    // ============================
+
     form.addEventListener("submit", function (e) {
         if (orderItemsTableBody.querySelectorAll("tr").length === 0) {
             e.preventDefault();

@@ -12,22 +12,15 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\ReturnPurchaseController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SliderController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\WarehouseController;
 use Illuminate\Support\Facades\Route;
 
-// ito para pag open ng http://127.0.0.1:8000/ ito lalabas
-// Route::get('/', function () {
-//     return view('home.index');
-// });
-// Route::get('/', [HomeController::class, 'index'])->name('home');
+
 
 Route::redirect('/', '/login');
-    // kapag naglog in ang user dito rerekta
-    // Route::get('/dashboard', function () {
-    //     return view('admin.index');
-    // })->middleware(['auth', 'verified'])->name('dashboard');
 
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
@@ -133,6 +126,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('purchase',[PurchaseController::class,'index'])->name('purchase');
     Route::get('purchase/add',[PurchaseController::class,'addPurchase'])->name('purchase.add');
     Route::post('purchase/store',[PurchaseController::class,'store'])->name('store.purchase');
+    Route::delete('delete/purchase/{id}',[PurchaseController::class, 'deletePurchase'])->name('delete.purchase');
+    Route::get('archive/purchase',[PurchaseController::class,'archivedPurchase'])->name('archived.purchase');
+    Route::put('restore/purchase/{id}',[PurchaseController::class, 'restorePurchase'])->name('restore.purchase');
 
     Route::get('purchase/product/search',[PurchaseController::class,'PurchaseProductSearch'])->name('purchase.product.search');
     Route::get('/admin/dashboard/purchase-chart/{year}',[DashboardController::class,'purchaseChart']);
@@ -150,4 +146,9 @@ Route::middleware(['auth'])->group(function () {
     Route::put('return/purchase/update/{id}', [ReturnPurchaseController::class, 'updateReturnPurchase'])->name('return.purchase.update');
      Route::get('return/purchase/view/{id}', [ReturnPurchaseController::class, 'ViewReturnPurchase'])
     ->name('return.purchase.view');
+
+    // Sales
+    Route::get('all/sales',[SaleController::class,'index'])->name('all.sales');
+    Route::get('add/sales',[SaleController::class, 'addSale'])->name('add.sales');
+    Route::post('store/sales',[SaleController::class, 'storeSale'])->name('store.sale');
 });

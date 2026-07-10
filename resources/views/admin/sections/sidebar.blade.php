@@ -153,12 +153,14 @@
                                 <a href="#sidebarSale" data-bs-toggle="collapse">
                                     <i data-feather="dollar-sign"></i>
                                     <span> Sale Manage </span>
-                                    {{-- <span class="menu-arrow"></span> --}}
                                 </a>
                                 <div class="collapse" id="sidebarSale">
                                     <ul class="nav-second-level">
                                         <li>
-                                            <a href="#" class="tp-link">All Customer</a>
+                                            <a href="{{ route('all.sales') }}" class="tp-link">All Sales</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="tp-link">Sale Return</a>
                                         </li>
                                     </ul>
                                 </div>

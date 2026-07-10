@@ -24,16 +24,16 @@
         <div class="container-fluid my-4">
 
             <div class="d-md-flex align-items-center justify-content-between">
-                <h3 class="mb-0">Create Purchase</h3>
+                <h3 class="mb-0">Create Sales</h3>
                 <div class="text-end my-2 mt-md-0">
-                    <a class="btn btn-sm btn-outline-primary" href="{{ route('return.purchase') }}">Back</a>
+                    <a class="btn btn-sm btn-outline-primary" href="{{ route('all.sales') }}">Back</a>
                 </div>
             </div>
 
             <div class="card">
                 <div class="card-body">
 
-                    <form action="{{ route('store.purchase') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('store.sale') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <x-error-component />
                         <div class="row">
@@ -51,8 +51,8 @@
 
                                                 <input
                                                     type="date"
-                                                    name="purchase_date"
-                                                    value="{{ old('purchase_date', date('Y-m-d')) }}"
+                                                    name="sale_date"
+                                                    value="{{ old('sale_date', date('Y-m-d')) }}"
                                                     class="form-control">
 
                                             </div>
@@ -84,17 +84,17 @@
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group w-100">
                                                     <label class="form-label">
-                                                        Supplier :
+                                                        Customer :
                                                         <span class="text-danger">*</span>
                                                     </label>
 
-                                                 <select name="supplier_id" id="supplier_id" class="form-control form-select">
-                                                    <option value="">Select Supplier</option>
+                                                 <select name="customer_id" id="customer_id" class="form-control form-select">
+                                                    <option value="">Select Customer</option>
 
-                                                    @foreach ($suppliers as $supplier)
-                                                        <option value="{{ $supplier->id }}"
-                                                            {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>
-                                                            {{ $supplier->supplier_name }}
+                                                    @foreach ($customers as $customer)
+                                                        <option value="{{ $customer->id }}"
+                                                            {{ old('customer_id') == $customer->id ? 'selected' : '' }}>
+                                                            {{ $customer->customer_name }}
                                                         </option>
                                                     @endforeach
                                                 </select>
@@ -123,34 +123,34 @@
                                             </div>
                                         </div>
 
-                               <div class="row">
-    <div class="col-md-12">
-        <label class="form-label">
-            Order Items:
-            <span class="text-danger">*</span>
-        </label>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <label class="form-label">
+                                                    Order Items:
+                                                    <span class="text-danger">*</span>
+                                                </label>
 
-        <div class="table-responsive">
-            <table id="purchaseTable" class="table table-striped table-bordered w-100">
-                <thead>
-                    <tr>
-                        <th style="width:25%">Product</th>
-                        <th style="width:10%">Cost</th>
-                        <th style="width:8%">Stock</th>
-                        <th style="width:12%">Qty</th>
-                        <th style="width:10%">Discount</th>
-                        <th style="width:10%">Subtotal</th>
-                        <th style="width:5%">Action</th>
-                    </tr>
-                </thead>
+                                                <div class="table-responsive">
+                                                    <table id="purchaseTable" class="table table-striped table-bordered w-100">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="width:25%">Product</th>
+                                                                <th style="width:10%">Cost</th>
+                                                                <th style="width:8%">Stock</th>
+                                                                <th style="width:12%">Qty</th>
+                                                                <th style="width:10%">Discount</th>
+                                                                <th style="width:10%">Subtotal</th>
+                                                                <th style="width:5%">Action</th>
+                                                            </tr>
+                                                        </thead>
 
-                <tbody>
+                                                        <tbody>
 
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                          </div>
 
                                         <div class="row">
                                             <div class="col-md-6 ms-auto">
@@ -181,7 +181,7 @@
                                                             </td>
                                                         </tr>
 
-                                                                <tr class="d-none">
+                                                                <tr>
                                                                     <td>Paid Amount</td>
                                                                     <td>
                                                                         <input
@@ -203,11 +203,11 @@
                                                                     </td>
                                                                 </tr>
 
-                                                                <tr class="d-none">
+                                                                <tr>
                                                                     <td>Due Amount</td>
 
                                                                     <td>
-                                                                        <span id="dueAmount">TK 0.00</span>
+                                                                        <span id="dueAmount">Php 0.00</span>
                                                                         <input type="hidden" name="due_amount">
                                                                     </td>
                                                                 </tr>
@@ -254,7 +254,7 @@
 
                                             <select name="status" id="status" class="form-control form-select">
                                                 <option value="">Select Status</option>
-                                                <option value="Received" {{ old('status') == 'Received' ? 'selected' : '' }}>Received</option>
+                                                <option value="Sale" {{ old('status') == 'Sale' ? 'selected' : '' }}>Sale</option>
                                                 <option value="Pending" {{ old('status') == 'Pending' ? 'selected' : 'selected' }}>Pending</option>
                                                 <option value="Ordered" {{ old('status') == 'Ordered' ? 'selected' : '' }}>Ordered</option>
                                             </select>
@@ -284,7 +284,7 @@
                         <div class="col-xl-12">
                             <div class="d-flex justify-content-end gap-2 mt-4">
 
-                                <a href="{{ route('purchase.add') }}" class="btn btn-sm btn-secondary">
+                                <a href="{{ route('add.sales') }}" class="btn btn-sm btn-secondary">
                                     Cancel
                                 </a>
 

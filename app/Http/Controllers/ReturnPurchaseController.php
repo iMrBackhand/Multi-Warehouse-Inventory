@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ReturnAddRequest;
+use App\Http\Requests\ReturnUpdateRequest;
 use App\Models\Product;
 use App\Models\ReturnPurchase;
 use App\Models\ReturnPurchaseItem;
@@ -42,22 +44,12 @@ class ReturnPurchaseController extends Controller
         {
             $suppliers = Supplier::all();
             $warehouses = Warehouse::all();
-            // $products = Product::all();
 
             return view('admin.return-puchase.add-return-purchase',compact('suppliers','warehouses'));
         }
 
-        public function StoreReturnPurchase(Request $request)
+        public function StoreReturnPurchase(ReturnAddRequest $request)
     {
-        $request->validate([
-            'purchase_date' => 'required|date',
-            'warehouse_id'  => 'required',
-            'supplier_id'   => 'required',
-            'status'        => 'required',
-            'product_id'    => 'required|array',
-            'quantity'      => 'required|array',
-            'unit_cost'     => 'required|array',
-        ]);
 
         /**
          * Check stock first before saving anything
@@ -181,77 +173,109 @@ class ReturnPurchaseController extends Controller
         }
         // End of Method
 
-public function updateReturnPurchase(Request $request, $id)
-{
-    $purchase = ReturnPurchase::with('returnPurchaseItems')->findOrFail($id);
+    public function updateReturnPurchase(ReturnUpdateRequest $request, $id)
+    {
+        $purchase  = ReturnPurchase::with('returnPurchaseItems')->findOrFail($id);
+        $oldStatus = $purchase->status;
+        $newStatus = $request->status;
 
-    $oldStatus = $purchase->status;
-    $newStatus = $request->status;
+        // Lock completed records — no further edits allowed once "Returned"
+        if ($oldStatus === 'Returned') {
+            return redirect()->route('return.purchase')->with([
+                'message'    => 'This return purchase is already completed and locked.',
+                'alert-type' => 'error',
+            ]);
+        }
 
-    // ======================
-    // LOCK IF FINAL
-    // ======================
-    if ($oldStatus === 'Returned') {
-        return redirect()->route('return.purchase')->with([
-            'message' => 'This return purchase is already completed and locked.',
-            'alert-type' => 'error',
-        ]);
+        // Enforce strict status flow: Pending -> Approved -> Returned
+        $allowedTransitions = [
+            'Pending'  => ['Approved'],
+            'Approved' => ['Returned'],
+        ];
+
+        if (!in_array($newStatus, $allowedTransitions[$oldStatus] ?? [])) {
+            return back()->with([
+                'message'    => "Invalid status change: {$oldStatus} → {$newStatus}. Follow proper flow (Pending → Approved → Returned).",
+                'alert-type' => 'error',
+            ]);
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $this->applyPurchaseDetails($purchase, $request, $newStatus);
+            $this->syncPurchaseItems($purchase, $request);
+
+            // Only deduct stock on the final Approved -> Returned transition
+            if ($oldStatus === 'Approved' && $newStatus === 'Returned') {
+                $this->deductStockForReturn($purchase->returnPurchaseItems);
+            }
+
+            DB::commit();
+
+            return redirect()->route('return.purchase')->with([
+                'message'    => 'Return Purchase Successfully Updated',
+                'alert-type' => 'success',
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return back()->with([
+                'message'    => $e->getMessage(),
+                'alert-type' => 'error',
+            ]);
+        }
     }
 
-    // ======================
-    // STRICT FLOW VALIDATION
-    // ======================
-    $allowedTransitions = [
-        'Pending'  => ['Approved'],
-        'Approved' => ['Returned'],
-    ];
+/**
+ * Update the main return purchase record.
+ */
+        private function applyPurchaseDetails(ReturnPurchase $purchase, Request $request, string $newStatus): void
+        {
+            $purchase->purchase_date = $request->purchase_date;
+            $purchase->shipping      = $request->shipping;
+            $purchase->discount      = $request->discount;
+            $purchase->note          = $request->note;
+            $purchase->grand_total   = $request->grand_total;
+            $purchase->status        = $newStatus;
+            $purchase->save();
+        }
 
-    if (!in_array($newStatus, $allowedTransitions[$oldStatus] ?? [])) {
-        return back()->with([
-            'message' => "Invalid status change: {$oldStatus} → {$newStatus}. Follow proper flow (Pending → Approved → Returned).",
-            'alert-type' => 'error',
-        ]);
-    }
+/**
+ * Sync line items (quantity, discount, cost, subtotal) from the request.
+ */
+        private function syncPurchaseItems(ReturnPurchase $purchase, Request $request): void
+        {
+            if (!$request->has('purchase_item_id')) {
+                return;
+            }
 
-    DB::beginTransaction();
-
-    try {
-
-        // UPDATE PURCHASE
-        $purchase->purchase_date = $request->purchase_date;
-        $purchase->shipping      = $request->shipping;
-        $purchase->discount      = $request->discount;
-        $purchase->note          = $request->note;
-        $purchase->grand_total   = $request->grand_total;
-        $purchase->status        = $newStatus;
-        $purchase->save();
-
-        // UPDATE ITEMS
-        if ($request->has('purchase_item_id')) {
             foreach ($request->purchase_item_id as $key => $itemId) {
                 $purchaseItem = ReturnPurchaseItem::find($itemId);
-                if (!$purchaseItem) continue;
+
+                if (!$purchaseItem) {
+                    continue;
+                }
 
                 $purchaseItem->quantity      = $request->quantity[$key];
                 $purchaseItem->discount      = $request->item_discount[$key];
                 $purchaseItem->net_unit_cost = $request->unit_cost[$key];
-                $purchaseItem->subtotal =
-                    ($purchaseItem->net_unit_cost * $purchaseItem->quantity)
-                    - $purchaseItem->discount;
+                $purchaseItem->subtotal      = ($purchaseItem->net_unit_cost * $purchaseItem->quantity) - $purchaseItem->discount;
                 $purchaseItem->save();
             }
+
+            $purchase->load('returnPurchaseItems');
         }
 
-        $purchase->load('returnPurchaseItems');
-
-        // STOCK LOGIC — Approved → Returned ONLY, ISANG BESES lang
-        if ($oldStatus !== 'Returned' && $newStatus === 'Returned') {
-            \Log::info('ENTERED STOCK BLOCK', ['count' => $purchase->returnPurchaseItems->count()]);
-
-            foreach ($purchase->returnPurchaseItems as $item) {
+        /**
+         * Deduct returned quantities from product stock.
+         * Throws if any product does not have enough stock.
+         */
+        private function deductStockForReturn($items): void
+        {
+            foreach ($items as $item) {
                 $product = Product::findOrFail($item->product_id);
-
-                \Log::info('ITEM', ['product_id' => $item->product_id, 'qty' => $item->quantity]);
 
                 if ($product->product_quantity < $item->quantity) {
                     throw new \Exception('Insufficient stock for ' . $product->product_name);
@@ -259,28 +283,10 @@ public function updateReturnPurchase(Request $request, $id)
 
                 $product->product_quantity -= $item->quantity;
                 $product->save();
-
-                \Log::info('AFTER SAVE', ['new_qty' => $product->product_quantity]);
             }
         }
 
-        DB::commit();
-
-        return redirect()->route('return.purchase')->with([
-            'message' => 'Return Purchase Successfully Updated',
-            'alert-type' => 'success',
-        ]);
-
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return back()->with([
-            'message' => $e->getMessage(),
-            'alert-type' => 'error',
-        ]);
-    }
-}
-
-             public function ViewReturnPurchase($id)
+        public function ViewReturnPurchase($id)
         {
             $purchase = ReturnPurchase::with([
                 'warehouse',
