@@ -6,6 +6,7 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FeaturesController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductCategoriesController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
@@ -144,11 +145,16 @@ Route::middleware(['auth'])->group(function () {
     Route::post('purchase//return',[ReturnPurchaseController::class,'StoreReturnPurchase'])->name('store.return.purchase');
     Route::get('/purchase/return/edit/{id}', [ReturnPurchaseController::class, 'edit'])->name('purchase.return.edit');
     Route::put('return/purchase/update/{id}', [ReturnPurchaseController::class, 'updateReturnPurchase'])->name('return.purchase.update');
-     Route::get('return/purchase/view/{id}', [ReturnPurchaseController::class, 'ViewReturnPurchase'])
+    Route::get('return/purchase/view/{id}', [ReturnPurchaseController::class, 'ViewReturnPurchase'])
     ->name('return.purchase.view');
+    Route::delete('delete/return/purchase/{id}',[ReturnPurchaseController::class, 'deleteReturnPurchase'])->name('delete.returnPurchase');
+    Route::get('inactive/return/purchase',[ReturnPurchaseController::class,'inactiveReturn'])->name('inactive.return');
+    Route::put('restore/return/{id}',[ReturnPurchaseController::class,'restoreReturn'])->name('restore.return');
 
     // Sales
     Route::get('all/sales',[SaleController::class,'index'])->name('all.sales');
     Route::get('add/sales',[SaleController::class, 'addSale'])->name('add.sales');
     Route::post('store/sales',[SaleController::class, 'storeSale'])->name('store.sale');
+
+
 });

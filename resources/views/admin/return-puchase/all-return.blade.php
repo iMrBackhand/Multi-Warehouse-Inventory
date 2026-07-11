@@ -12,7 +12,10 @@
                     <div class="text-end">
                         <a href="{{ route('return.purchase.add') }}" class="btn btn-sm"
                             style="background-color: #6f42c1; color: #fff;">
-                            Add Return Purchase
+                             Return Purchase
+                        </a>
+                          <a href="{{ route('inactive.return') }}" class="btn btn-sm text-white" style="background-color:#6c757d;">
+                                InActive Purchase
                         </a>
                     </div>
                 </div>
@@ -72,7 +75,7 @@
                                                         <i data-feather="edit" style="width:10px; height:10px; color:#fff;"></i>
                                                     </a>
 
-                                                    <form action="#" method="POST" style="display:inline;">
+                                                    <form action="{{ route('delete.returnPurchase',$purchase->id) }}" method="POST" style="display:inline;">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit"

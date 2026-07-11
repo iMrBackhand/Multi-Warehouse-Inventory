@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ReturnAddRequest;
 use App\Http\Requests\ReturnUpdateRequest;
 use App\Models\Product;
+use App\Models\Purchase;
 use App\Models\ReturnPurchase;
 use App\Models\ReturnPurchaseItem;
 use App\Models\Supplier;
@@ -295,5 +296,41 @@ class ReturnPurchaseController extends Controller
             ])->findOrFail($id);
 
             return view('admin.return-puchase.view-return', compact('purchase'));
+        }
+        // End Method
+
+        public function inactiveReturn(Request $request)
+        {
+            $purchases = ReturnPurchase::with('warehouse')
+                ->onlyTrashed()
+                ->when($request->search, function ($query) use ($request) {
+                    $query->whereHas('warehouse', function ($q) use ($request) {
+                        $q->where('warehouse_name', 'like', '%' . $request->search . '%');
+                    });
+                })
+                ->orderBy('id', 'asc')
+                ->get();
+
+            return view('admin.return-puchase.archive-return', compact('purchases'));
+        }
+
+        public function deleteReturnPurchase($id)
+        {
+            ReturnPurchase::findOrFail($id)->delete();
+             $notification = array(
+                'message' => 'Return Purchase Succesfully Archive',
+                'alert-type' =>'warning'
+            );
+            return redirect()->route('return.purchase')->with($notification);
+        }
+
+        public function restoreReturn($id)
+        {
+             ReturnPurchase::withTrashed()->findOrFail($id)->restore();
+            $notification = array(
+                    'message' => 'Purchase Succesfully Restore',
+                    'alert-type' =>'success'
+                );
+            return redirect()->route('return.purchase')->with($notification);
         }
 }

@@ -60,15 +60,15 @@
                                             <td>{{ $purchase->purchase_date->format('M d, Y') }}</td>
                                             <td>{{ optional($purchase->deleted_at)->format('M d, Y') ?? 'N/A' }}</td>
                                             <td>
-                                        <form action="{{ route('restore.purchase',$purchase->id) }}" method="POST" style="display: inline">
-                                            @csrf
-                                            @method('PUT')
+                                            <form action="{{ route('restore.purchase',$purchase->id) }}" method="POST" style="display: inline">
+                                                @csrf
+                                                @method('PUT')
 
-                                            <button type="submit" class="btn btn-sm btn-success restore-form" id="restore-btn" data-item="Purchase">
-                                                Restore
-                                            </button>
-                                        </form>
-                                    </td>
+                                                <button type="submit" class="btn btn-sm btn-success restore-form" id="restore-btn" data-item="Purchase">
+                                                    Restore
+                                                </button>
+                                            </form>
+                                            </td>
 
                                         </tr>
                                     @empty
