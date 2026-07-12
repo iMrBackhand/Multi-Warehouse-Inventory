@@ -6,19 +6,19 @@
 
                 <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
                     <div class="flex-grow-1">
-                        <h4 class="fs-18 fw-semibold m-0">All Return Purchase</h4>
+                        <h4 class="fs-18 fw-semibold m-0">All Sales</h4>
                     </div>
 
                     <div class="text-end">
 
-                          <a href="{{ route('return.purchase') }}" class="btn btn-sm text-white" style="background-color:#6c757d;">
+                        <a href="{{ route('all.sales') }}" class="btn btn-sm text-white" style="background-color:#6c757d;">
                                 Back
                         </a>
                     </div>
                 </div>
 
                 <!-- Datatables -->
-            <div class="row">
+                <div class="row">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header"></div>
@@ -33,44 +33,55 @@
                                             <th>Warehouse</th>
                                             <th>Status</th>
                                             <th>Grand Total</th>
-                                            <th>Payment</th>
-                                            <th>Purchase Date</th>
+                                            <th>Amount Paid</th>
+                                            <th>Due Amount</th>
+                                            <th>Created</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($purchases as $index => $purchase)
+                                        @forelse ($sales as $sale)
                                             <tr>
-                                                <td>{{ $index + 1 }}</td>
-                                                <td>{{ $purchase->warehouse->warehouse_name ?? 'N/A' }}</td>
+                                                <td>{{ $loop->iteration }}</td>
+
+                                                <td>{{ $sale->warehouse->warehouse_name ?? 'N/A' }}</td>
+
                                                 <td>
-                                                    <span class="badge
-                                                        @if($purchase->status == 'Received') bg-success
-                                                        @elseif($purchase->status == 'Pending') bg-warning
-                                                        @else bg-secondary
-                                                        @endif">
-                                                        {{ $purchase->status }}
+                                                    <span class="badge bg-{{ $sale->status == 'Completed' ? 'success' : ($sale->status == 'Pending' ? 'warning' : 'secondary') }}">
+                                                        {{ $sale->status }}
                                                     </span>
                                                 </td>
-                                                <td>Php {{ number_format($purchase->grand_total, 2) }}</td>
+
+                                                <td>₱{{ number_format($sale->grand_total, 2) }}</td>
+
                                                 <td>
-                                                    <span class="badge bg-success">Cash</span>
+                                                    <span class="badge bg-success">
+                                                        ₱{{ number_format($sale->paid_amount, 2) }}
+                                                    </span>
                                                 </td>
-                                                <td>{{ $purchase->purchase_date->format('M d, Y') }}</td>
+
                                                 <td>
-                                                    <form action="{{ route('restore.return' , $purchase->id) }}" method="POST" style="display: inline">
+                                                    <span class="badge text-white" style="background-color: #6f42c1;">
+                                                        ₱{{ number_format($sale->due_amount, 2) }}
+                                                    </span>
+                                                </td>
+
+                                                <td>{{ $sale->created_at->format('M d, Y') }}</td>
+
+                                                <td>
+                                                    <form action="{{ route('restore.sale', $sale->id) }}" method="POST" style="display: inline">
                                                         @csrf
                                                         @method('PUT')
 
-                                                        <button type="submit" class="btn btn-sm btn-success restore-form" id="restore-btn" data-item="Purchase">
+                                                        <button type="submit" class="btn btn-sm btn-success restore-form" id="restore-btn" data-item="Sale">
                                                             Restore
                                                         </button>
                                                     </form>
                                                 </td>
-                                                </tr>
+                                            </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="7" class="text-center">No purchases found.</td>
+                                                <td colspan="8" class="text-center">No records found.</td>
                                             </tr>
                                         @endforelse
                                     </tbody>

@@ -24,19 +24,19 @@
         <div class="container-fluid my-4">
 
             <div class="d-md-flex align-items-center justify-content-between">
-                <h3 class="mb-0">Add Return Purchase</h3>
+                <h3 class="mb-0">Edit Sales</h3>
                 <div class="text-end my-2 mt-md-0">
-                    <a class="btn btn-sm btn-outline-primary" href="{{ route('return.purchase') }}">Back</a>
+                    <a class="btn btn-sm btn-outline-primary" href="{{ route('all.sales') }}">Back</a>
                 </div>
             </div>
 
             <div class="card">
                 <div class="card-body">
 
-                    <form action="{{ route('store.return.purchase') }}" method="POST">
+                    <form action="{{ route('update.sale', $sales->id) }}" method="POST">
                         @csrf
-                       <x-error-component />
-
+                        @method('PUT')
+                        <x-error-component />
                         <div class="row">
                             <div class="col-xl-12">
 
@@ -52,11 +52,11 @@
 
                                                 <input
                                                     type="date"
-                                                    name="purchase_date"
-                                                    value="{{ date('Y-m-d') }}"
-                                                    class="form-control">
+                                                    name="sale_date"
+                                                    class="form-control"
+                                                    value="{{ old('sale_date', \Carbon\Carbon::parse($sales->sale_date)->format('Y-m-d')) }}">
 
-                                                @error('date')
+                                                @error('sale_date')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
                                             </div>
@@ -68,11 +68,12 @@
                                                         <span class="text-danger">*</span>
                                                     </label>
 
-                                                    <select name="warehouse_id" id="warehouse_id" class="form-control form-select">
+                                                    <select name="warehouse_id" id="warehouse_id" class="form-control form-select" disabled>
                                                         <option value="">Select Warehouse</option>
 
                                                         @foreach ($warehouses as $warehouse)
-                                                            <option value="{{ $warehouse->id }}">
+                                                            <option value="{{ $warehouse->id }}"
+                                                                {{ $sales->warehouse_id == $warehouse->id ? 'selected' : '' }}>
                                                                 {{ $warehouse->warehouse_name }}
                                                             </option>
                                                         @endforeach
@@ -87,19 +88,24 @@
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group w-100">
                                                     <label class="form-label">
-                                                        Supplier :
+                                                        Customer :
                                                         <span class="text-danger">*</span>
                                                     </label>
 
-                                                    <select name="supplier_id" id="supplier_id" class="form-control form-select" >
-                                                        <option value="">Select Supplier</option>
+                                                    <select name="customer_id" id="customer_id" class="form-control form-select" disabled>
+                                                        <option value="">Select Customer</option>
 
-                                                        @foreach ($suppliers as $supplier)
-                                                            <option value="{{ $supplier->id }}">
-                                                                {{ $supplier->supplier_name }}
+                                                        @foreach ($customers as $customer)
+                                                            <option value="{{ $customer->id }}"
+                                                                {{ $sales->customer_id == $customer->id ? 'selected' : '' }}>
+                                                                {{ $customer->customer_name }}
                                                             </option>
                                                         @endforeach
                                                     </select>
+
+                                                    @error('customer_id')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
                                                 </div>
                                             </div>
                                         </div>
@@ -147,12 +153,96 @@
                                                         </thead>
 
                                                         <tbody>
+                                                            @forelse ($sales->saleItems as $item)
+                                                            <tr data-id="{{ $item->product_id }}" data-subtotal="{{ $item->subtotal }}">
 
+                                                                <td>
+                                                                    {{ $item->product->code }} - {{ $item->product->product_name }}
+
+                                                                    <input type="hidden"
+                                                                        name="product_id[]"
+                                                                        value="{{ $item->product_id }}">
+
+                                                                    <input type="hidden"
+                                                                        name="sale_item_id[]"
+                                                                        value="{{ $item->id }}">
+                                                                </td>
+
+                                                                <td>
+                                                                    <input
+                                                                        type="number"
+                                                                        class="form-control cost-input"
+                                                                        name="unit_cost[]"
+                                                                        value="{{ $item->net_unit_cost }}"
+                                                                        min="0"
+                                                                        step="0.01">
+                                                                </td>
+
+                                                                <td class="stock-cell">
+                                                                    {{ $item->stock }}
+                                                                </td>
+
+                                                                <td>
+                                                                    <div class="input-group input-group-sm" style="width:120px">
+
+                                                                        <button
+                                                                            type="button"
+                                                                            class="btn btn-outline-secondary qty-minus">
+                                                                            -
+                                                                        </button>
+
+                                                                        <input
+                                                                            type="number"
+                                                                            class="form-control text-center qty-input"
+                                                                            name="quantity[]"
+                                                                            value="{{ $item->quantity }}"
+                                                                            min="1"
+                                                                            readonly>
+
+                                                                        <button
+                                                                            type="button"
+                                                                            class="btn btn-outline-secondary qty-plus">
+                                                                            +
+                                                                        </button>
+
+                                                                    </div>
+                                                                </td>
+
+                                                                <td>
+                                                                    <input
+                                                                        type="number"
+                                                                        class="form-control discount-input"
+                                                                        name="item_discount[]"
+                                                                        value="{{ $item->discount }}"
+                                                                        min="0"
+                                                                        step="0.01">
+                                                                </td>
+
+                                                                <td class="subtotal-cell">
+                                                                    Php {{ number_format($item->subtotal, 2) }}
+                                                                </td>
+
+                                                                <td>
+                                                                    <button
+                                                                        type="button"
+                                                                        class="btn btn-sm btn-danger remove-item">
+                                                                        <i class="fas fa-trash"></i>
+                                                                    </button>
+                                                                </td>
+
+                                                            </tr>
+                                                            @empty
+                                                            <tr>
+                                                                <td colspan="7" class="text-center">
+                                                                    No products found.
+                                                                </td>
+                                                            </tr>
+                                                            @endforelse
                                                         </tbody>
                                                     </table>
                                                 </div>
                                             </div>
-                                        </div>
+                                          </div>
 
                                         <div class="row">
                                             <div class="col-md-6 ms-auto">
@@ -164,12 +254,12 @@
 
                                                                 <tr>
                                                                     <td>Discount:</td>
-                                                                    <td id="displayDiscount">Php 0.00</td>
+                                                                    <td id="displayDiscount">Php {{ $sales->discount }}</td>
                                                                 </tr>
 
                                                                 <tr>
                                                                     <td>Shipping:</td>
-                                                                    <td id="shippingDisplay">Php 0.00</td>
+                                                                    <td id="shippingDisplay">Php {{ $sales->shipping }}</td>
                                                                 </tr>
 
                                                          <tr>
@@ -178,18 +268,23 @@
                                                             </td>
 
                                                             <td class="text-primary">
-                                                                <span id="grandTotal">Php 0.00</span>
-                                                                <input type="hidden" name="grand_total" value="0">
+                                                                <span id="grandTotal">Php {{ $sales->grand_total }}</span>
+                                                                <input
+                                                                    type="hidden"
+                                                                    id="grandTotalInput"
+                                                                    name="grand_total"
+                                                                    value="{{ $sales->grand_total }}">
                                                             </td>
                                                         </tr>
 
-                                                                <tr class="d-none">
+                                                                <tr>
                                                                     <td>Paid Amount</td>
                                                                     <td>
                                                                         <input
                                                                             type="text"
                                                                             name="paid_amount"
                                                                             class="form-control"
+                                                                            value="{{ old('paid_amount', $sales->paid_amount) }}"
                                                                             placeholder="Enter amount paid">
                                                                     </td>
                                                                 </tr>
@@ -205,12 +300,12 @@
                                                                     </td>
                                                                 </tr>
 
-                                                                <tr class="d-none">
+                                                                <tr>
                                                                     <td>Due Amount</td>
 
                                                                     <td>
-                                                                        <span id="dueAmount">TK 0.00</span>
-                                                                        <input type="hidden" name="due_amount">
+                                                                        <span id="dueAmount">Php {{ number_format($sales->grand_total - $sales->paid_amount, 2) }}</span>
+                                                                        <input type="hidden" name="due_amount" value="{{ $sales->grand_total - $sales->paid_amount }}">
                                                                     </td>
                                                                 </tr>
 
@@ -232,7 +327,7 @@
                                                     name="discount"
                                                     id="inputDiscount"
                                                     class="form-control"
-                                                    value="0.00">
+                                                    value="{{ old('discount', $sales->discount) }}">
                                             </div>
 
                                             <div class="col-md-4">
@@ -243,7 +338,7 @@
                                                     name="shipping"
                                                     id="inputShipping"
                                                     class="form-control"
-                                                    value="0.00">
+                                                    value="{{ old('shipping', $sales->shipping) }}">
                                             </div>
 
                                             <div class="col-md-4">
@@ -254,20 +349,16 @@
                                                         <span class="text-danger">*</span>
                                                     </label>
 
-                                             <select name="status" id="status" class="form-control form-select">
+                                            <select name="status" id="status" class="form-control form-select" required>
                                                 <option value="">Select Status</option>
-                                                <option value="Pending">Pending</option>
-                                                <option value="Approved">Approved</option>
-                                                <option value="Returned">Returned</option>
-                                                <option value="Cancelled">Cancelled</option>
+                                                <option value="Sale" {{ old('status', $sales->status) == 'Sale' ? 'selected' : '' }}>Sale</option>
+                                                <option value="Pending" {{ old('status', $sales->status) == 'Pending' ? 'selected' : '' }}>Pending</option>
+                                                <option value="Ordered" {{ old('status', $sales->status) == 'Ordered' ? 'selected' : '' }}>Ordered</option>
                                             </select>
 
                                                     @error('status')
-                                                        <span class="text-danger">
-                                                            {{ $message }}
-                                                        </span>
+                                                        <span class="text-danger">{{ $message }}</span>
                                                     @enderror
-
                                                 </div>
                                             </div>
 
@@ -280,7 +371,7 @@
                                                     name="note"
                                                     rows="3"
                                                     class="form-control"
-                                                    placeholder="Enter Notes"></textarea>
+                                                    placeholder="Enter Notes">{{ old('note', $sales->note) }}</textarea>
                                             </div>
 
                                         </div>
@@ -293,12 +384,12 @@
                         <div class="col-xl-12">
                             <div class="d-flex justify-content-end gap-2 mt-4">
 
-                                <a href="{{ route('purchase.add') }}" class="btn btn-sm btn-secondary">
+                                <a href="{{ route('all.sales') }}" class="btn btn-sm btn-secondary">
                                     Cancel
                                 </a>
 
                                 <button type="submit" class="btn btn-sm btn-primary">
-                                    Save
+                                    Update
                                 </button>
 
                             </div>

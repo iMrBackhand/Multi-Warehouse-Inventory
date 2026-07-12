@@ -160,7 +160,7 @@
                                             <a href="{{ route('all.sales') }}" class="tp-link">All Sales</a>
                                         </li>
                                         <li>
-                                            <a href="#" class="tp-link">Sale Return</a>
+                                            <a href="{{ route('allreturn.sales') }}" class="tp-link">Sale Return</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -207,56 +207,8 @@
                                 </div>
                             </li>
 
-                            {{-- this is for review --}}
-                                {{-- <li>
-                                    <a href="#sidebarReview" data-bs-toggle="collapse">
-                                        <i data-feather="star"></i>
-                                        <span> Reviews Setup</span>
-                                    </a>
-                                    <div class="collapse" id="sidebarReview">
-                                        <ul class="nav-second-level">
-                                            <li>
-                                                <a href="{{ route('all.review') }}" class="tp-link">All Review</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li> --}}
-
-                                {{-- This is for slider --}}
-                                {{-- <li>
-                                    <a href="#sidebarSlider" data-bs-toggle="collapse">
-                                        <i data-feather="image"></i>
-                                        <span> Slider Setup </span>
-                                    </a>
-
-                                    <div class="collapse" id="sidebarSlider">
-                                        <ul class="nav-second-level">
-                                            <li>
-                                                <a href="{{ route('finances') }}" class="tp-link">Get Slider</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li> --}}
-
-                                {{-- this is for feature --}}
-                                 {{-- <li>
-                                    <a href="#sidebarFeature" data-bs-toggle="collapse">
-                                        <i data-feather="image"></i>
-                                        <span>Feature Setup</span>
-                                    </a>
-
-                                    <div class="collapse" id="sidebarFeature">
-                                        <ul class="nav-second-level">
-                                            <li>
-                                                <a href="{{ route('features') }}" class="tp-link">All Features</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li> --}}
 
                             <li class="menu-title mt-2">General</li>
-
-
 
                             <li>
                                 <a href="widgets.html" class="tp-link">

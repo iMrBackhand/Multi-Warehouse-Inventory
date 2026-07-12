@@ -33,8 +33,9 @@
             <div class="card">
                 <div class="card-body">
 
-                    <form action="{{ route('store.return.purchase') }}" method="POST">
+                    <form action="{{ route('storereturn.sale') }}" method="POST">
                         @csrf
+                        @method('PUT')
                        <x-error-component />
 
                         <div class="row">
@@ -52,7 +53,7 @@
 
                                                 <input
                                                     type="date"
-                                                    name="purchase_date"
+                                                    name="sale_date"
                                                     value="{{ date('Y-m-d') }}"
                                                     class="form-control">
 
@@ -87,16 +88,16 @@
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group w-100">
                                                     <label class="form-label">
-                                                        Supplier :
+                                                        Customer :
                                                         <span class="text-danger">*</span>
                                                     </label>
 
-                                                    <select name="supplier_id" id="supplier_id" class="form-control form-select" >
-                                                        <option value="">Select Supplier</option>
+                                                    <select name="customer_id" id="customer_id" class="form-control form-select" >
+                                                        <option value="">Select Customer</option>
 
-                                                        @foreach ($suppliers as $supplier)
-                                                            <option value="{{ $supplier->id }}">
-                                                                {{ $supplier->supplier_name }}
+                                                        @foreach ($customers as $customer)
+                                                            <option value="{{ $customer->id }}">
+                                                                {{ $customer->customer_name }}
                                                             </option>
                                                         @endforeach
                                                     </select>
@@ -171,7 +172,24 @@
                                                                     <td>Shipping:</td>
                                                                     <td id="shippingDisplay">Php 0.00</td>
                                                                 </tr>
+                                                                 <tr>
+                                                                    <td>Paid Amount:</td>
+                                                                    <td>
+                                                                        <input
+                                                                            type="text"
+                                                                            name="paid_amount"
+                                                                            class="form-control"
+                                                                            placeholder="Enter amount paid">
+                                                                    </td>
+                                                                </tr>
+                                                                    <tr>
+                                                                    <td>Remaining Balance:</td>
 
+                                                                    <td>
+                                                                        <span id="dueAmount">TK 0.00</span>
+                                                                        <input type="hidden" name="due_amount">
+                                                                    </td>
+                                                                </tr>
                                                          <tr>
                                                             <td class="text-primary">
                                                                 Grand Total:
@@ -183,16 +201,7 @@
                                                             </td>
                                                         </tr>
 
-                                                                <tr class="d-none">
-                                                                    <td>Paid Amount</td>
-                                                                    <td>
-                                                                        <input
-                                                                            type="text"
-                                                                            name="paid_amount"
-                                                                            class="form-control"
-                                                                            placeholder="Enter amount paid">
-                                                                    </td>
-                                                                </tr>
+
 
                                                                 <tr class="d-none">
                                                                     <td>Full Paid</td>
@@ -205,14 +214,7 @@
                                                                     </td>
                                                                 </tr>
 
-                                                                <tr class="d-none">
-                                                                    <td>Due Amount</td>
 
-                                                                    <td>
-                                                                        <span id="dueAmount">TK 0.00</span>
-                                                                        <input type="hidden" name="due_amount">
-                                                                    </td>
-                                                                </tr>
 
                                                             </tbody>
                                                         </table>
@@ -254,13 +256,12 @@
                                                         <span class="text-danger">*</span>
                                                     </label>
 
-                                             <select name="status" id="status" class="form-control form-select">
-                                                <option value="">Select Status</option>
-                                                <option value="Pending">Pending</option>
-                                                <option value="Approved">Approved</option>
-                                                <option value="Returned">Returned</option>
-                                                <option value="Cancelled">Cancelled</option>
-                                            </select>
+                                                <select name="status" id="status" class="form-control form-select">
+                                                    <option value="">Select Status</option>
+                                                    <option value="return">Return</option>
+                                                    <option value="Pending">Pending</option>
+                                                    <option value="Ordered">Ordered</option>
+                                                </select>
 
                                                     @error('status')
                                                         <span class="text-danger">

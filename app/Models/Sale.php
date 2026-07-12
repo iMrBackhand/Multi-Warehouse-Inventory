@@ -10,7 +10,7 @@ class Sale extends Model
     use SoftDeletes;
     protected $casts = [
     'purchase_date' => 'date',
-];
+    ];
     public function customer()
     {
         return $this->belongsTo(Customer::class);

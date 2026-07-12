@@ -49,7 +49,7 @@ class ReturnPurchaseController extends Controller
             return view('admin.return-puchase.add-return-purchase',compact('suppliers','warehouses'));
         }
 
-        public function StoreReturnPurchase(ReturnAddRequest $request)
+    public function StoreReturnPurchase(ReturnAddRequest $request)
     {
 
         /**

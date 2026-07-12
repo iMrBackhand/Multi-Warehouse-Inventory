@@ -139,4 +139,139 @@ class SaleController extends Controller
             return redirect()->route('all.sales')->with($notification);
         }
 
+        public function deleteSales($id)
+        {
+            Sale::findOrFail($id)->delete();
+             $notification = array(
+                'message' => 'Sale Succesfully Archive',
+                'alert-type' =>'error'
+            );
+            return redirect()->route('all.sales')->with($notification);
+        }
+
+        public function inactiveSales(Request $request)
+        {
+            $sales = Sale::with('warehouse')
+                ->onlyTrashed()
+                ->when($request->search, function ($query) use ($request) {
+                    $query->whereHas('warehouse', function ($q) use ($request) {
+                        $q->where('warehouse_name', 'like', '%' . $request->search . '%');
+                    });
+                })
+                ->orderBy('id', 'asc')
+                ->get();
+
+            return view('admin.sales.inactive-sales',compact('sales'));
+        }
+
+        public function restoreSales($id)
+        {
+            Sale::withTrashed()->findOrFail($id)->restore();
+            $notification = array(
+                    'message' => 'Purchase Succesfully Restore',
+                    'alert-type' =>'success'
+                );
+            return redirect()->route('all.sales')->with($notification);
+        }
+
+        public function editSales($id)
+        {
+            $sales   = Sale::with('saleItems.product')->findOrFail($id);
+            $warehouses = Warehouse::all();
+            $customers  = Customer::all();
+
+            return view('admin.sales.edit-sale',compact('sales','warehouses','customers'));
+        }
+
+        public function updateSales(Request $request, $id)
+        {
+
+            $sale = Sale::with('saleItems')->findOrFail($id);
+
+            // Lock kapag Sale na (naibenta na / naibawas na sa stock)
+            if ($sale->status === 'Sale') {
+                return redirect()->route('all.sales')->with([
+                    'message' => 'This sale has already been completed and can no longer be edited.',
+                    'alert-type' => 'error'
+                ]);
+            }
+
+            // Save old status
+            $oldStatus = $sale->status;
+
+            $sale->sale_date    = $request->sale_date;
+            $sale->shipping     = $request->shipping;
+            $sale->discount     = $request->discount;
+            $sale->status       = $request->status;
+            $sale->note         = $request->note;
+            $sale->grand_total  = $request->grand_total;
+            $sale->paid_amount  = $request->paid_amount;
+            $sale->due_amount   = $request->grand_total - $request->paid_amount;
+
+            $sale->save();
+
+            if ($request->has('sale_item_id')) {
+
+                foreach ($request->sale_item_id as $key => $itemId) {
+
+                    $saleItem = SaleItem::find($itemId);
+
+                    if (!$saleItem) continue;
+
+                    $saleItem->quantity      = $request->quantity[$key];
+                    $saleItem->discount      = $request->item_discount[$key];
+                    $saleItem->net_unit_cost = $request->unit_cost[$key];
+
+                    $saleItem->subtotal =
+                        ($saleItem->net_unit_cost * $saleItem->quantity)
+                        - $saleItem->discount;
+
+                    $saleItem->save();
+                }
+            }
+
+            // Kung na-"Sale" na dati pero binago na sa ibang status, ibalik ang stock
+            if ($oldStatus === 'Sale') {
+
+                foreach ($sale->saleItems as $item) {
+
+                    $product = Product::find($item->product_id);
+
+                    if ($product) {
+                        $product->product_quantity += $item->quantity;
+                        $product->save();
+                    }
+                }
+            }
+
+            // Kung naging "Sale" na ngayon, ibawas sa stock
+            if ($sale->status === 'Sale') {
+
+                foreach ($sale->saleItems as $item) {
+
+                    $product = Product::find($item->product_id);
+
+                    if (!$product) continue;
+
+                    $product->product_quantity -= $item->quantity;
+                    $product->save();
+                }
+            }
+
+            return redirect()->route('all.sales')->with([
+                'message' => 'Sale Successfully Updated',
+                'alert-type' => 'success'
+            ]);
+        }
+
+        public function viewSales($id)
+        {
+            $sale = Sale::with([
+                'warehouse',
+                'customer',
+                'SaleItems.product'
+            ])->findOrFail($id);
+
+            return view('admin.sales.view-sale',compact('sale'));
+        }
 }

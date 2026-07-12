@@ -102,10 +102,10 @@
                                 : url('upload/user-12.jpg') }}"
                                 alt="user-image"
                                 class="rounded-circle">
-                                <span class="pro-user-name ms-1">
-                                    {{ Auth::check() ? Auth::user()->name : 'Guest' }}
-                                    <i class="mdi mdi-chevron-down"></i>
-                                </span>
+                             <span class="pro-user-name ms-1" style="color: #8458D3;">
+                                {{ Auth::check() ? Auth::user()->name : 'Guest' }}
+                                <i class="mdi mdi-chevron-down"></i>
+                            </span>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end profile-dropdown ">
                                     <!-- item-->

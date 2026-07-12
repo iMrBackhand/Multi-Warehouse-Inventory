@@ -12445,7 +12445,7 @@ body {
 #sidebar-menu > ul > li > a:active,
 #sidebar-menu > ul > li > a:focus,
 #sidebar-menu > ul > li > a:hover {
-    color: #537aef;
+    color: #8458d3;
     text-decoration: none;
 }
 #sidebar-menu > ul > li > a:active svg,
@@ -12477,10 +12477,10 @@ body {
 }
 #sidebar-menu .menuitem-active .active,
 #sidebar-menu .menuitem-active > a {
-    color: #537aef;
+    color: #8458d3;
 }
 #sidebar-menu .menuitem-active .tp-link.active {
-    background-color: #537aef1a;
+    background-color: #8458d3 1a;
     transition: color 0.2s ease;
     border-radius: 0.475rem;
 }
@@ -12494,7 +12494,7 @@ body {
 }
 .nav-second-level li a:focus,
 .nav-second-level li a:hover {
-    color: #537aef;
+    color: #8458d3;
 }
 .nav-second-level li.active > a {
     color: #537aef;

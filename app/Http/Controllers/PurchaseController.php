@@ -151,7 +151,6 @@ use Illuminate\Http\Request;
 
         public function edit($id)
         {
-            // $purchase   = Purchase::findOrFail($id);
             $editData   = Purchase::with('purchaseItems.product')->findOrFail($id);
             $warehouses = Warehouse::all();
             $suppliers  = Supplier::all();
@@ -256,7 +255,7 @@ use Illuminate\Http\Request;
             return redirect()->route('purchase')->with($notification);
         }
 
-         public function archivedPurchase(Request $request)
+        public function archivedPurchase(Request $request)
         {
             $purchases = Purchase::with('warehouse')
                 ->onlyTrashed()

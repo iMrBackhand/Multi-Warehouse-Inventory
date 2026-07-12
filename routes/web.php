@@ -14,6 +14,7 @@ use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\ReturnPurchaseController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SaleController;
+use App\Http\Controllers\SaleReturnController;
 use App\Http\Controllers\SliderController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\WarehouseController;
@@ -155,6 +156,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('all/sales',[SaleController::class,'index'])->name('all.sales');
     Route::get('add/sales',[SaleController::class, 'addSale'])->name('add.sales');
     Route::post('store/sales',[SaleController::class, 'storeSale'])->name('store.sale');
+    Route::delete('delete/sales/{id}',[SaleController::class,'deleteSales'])->name('delete.sales');
+    Route::get('inactive/sales',[SaleController::class,'inactiveSales'])->name('inactive.sales');
+    Route::put('restore/sales/{id}',[SaleController::class, 'restoreSales'])->name('restore.sale');
+    Route::get('edit/sales/{id}',[SaleController::class, 'editSales'])->name('edit.sale');
+    Route::put('update/sales/{id}',[SaleController::class, 'updateSales'])->name('update.sale');
+    Route::get('view/sale/{id}', [SaleController::class, 'viewSales'])->name('view.sale');
 
-
+    // Sale Return
+    Route::get('all/return/sales',[SaleReturnController::class, 'index'])->name('allreturn.sales');
+    Route::get('add/return/sales',[SaleReturnController::class, 'addReturnSales'])->name('addreturn.sale');
+    Route::put('store/return/sales',[SaleReturnController::class,'storeSaleReturn'])->name('storereturn.sale');
+    Route::get('edit/return/sale/{id}',[SaleReturnController::class,'editReturnSales'])->name('editreturn.sales');
+    Route::put('update/return/sale/{id}',[SaleReturnController::class,'updateReturnSales'])->name('update.return.sales');
+    Route::get('return-sales/{id}/view', [SaleReturnController::class, 'view'])->name('viewreturn.sales');
 });

@@ -14,6 +14,9 @@
                             style="background-color: #6f42c1; color: #fff;">
                             Add Sales
                         </a>
+                             <a href="{{ route('inactive.sales') }}" class="btn btn-sm text-white" style="background-color:#6c757d;">
+                                InActive Sale
+                        </a>
                     </div>
                 </div>
 
@@ -34,7 +37,7 @@
                                             <th>Status</th>
                                             <th>Grand Total</th>
                                             <th>Amount Paid</th>
-                                            <th>Due Amount</th>
+                                            <th>Remaining Balance</th>
                                             <th>Created</th>
                                             <th>Action</th>
                                         </tr>
@@ -54,28 +57,36 @@
 
                                                 <td>₱{{ number_format($sale->grand_total, 2) }}</td>
 
-                                                <td>₱{{ number_format($sale->paid_amount, 2) }}</td>
+                                                <td>
+                                                    <span class="badge bg-success">
+                                                        ₱{{ number_format($sale->paid_amount, 2) }}
+                                                    </span>
+                                                </td>
 
-                                                <td>₱{{ number_format($sale->due_amount, 2) }}</td>
+                                                <td>
+                                                    <span class="badge text-white" style="background-color: #6f42c1;">
+                                                        ₱{{ number_format($sale->due_amount, 2) }}
+                                                    </span>
+                                                </td>
 
                                                 <td>{{ $sale->created_at->format('M d, Y') }}</td>
 
                                                <td class="text-nowrap">
-                                                    <a href="#"
+                                                    <a href="{{ route('view.sale',$sale->id) }}"
                                                         class="btn btn-sm"
                                                         style="background-color:#0dcaf0; padding:4px 6px;"
                                                         title="View">
                                                         <i data-feather="eye" style="width:10px; height:10px; color:#fff;"></i>
                                                     </a>
 
-                                                    <a href="#"
+                                                    <a href="{{ route('edit.sale', $sale->id) }}"
                                                         class="btn btn-sm btn-success"
                                                         style="padding:4px 6px;"
                                                         title="Edit">
                                                         <i data-feather="edit" style="width:10px; height:10px; color:#fff;"></i>
                                                     </a>
 
-                                                    <form action="#" method="POST" style="display:inline;">
+                                                    <form action="{{ route('delete.sales', $sale->id) }}" method="POST" style="display:inline;">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit"
