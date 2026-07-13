@@ -91,6 +91,15 @@ class SaleReturnController extends Controller
             $subtotal - $orderDiscount + $purchase->shipping
         );
 
+        // Paid Amount / Remaining Balance
+        $paidAmount = floatval($request->paid_amount ?? 0);
+
+        // Don't let paid amount exceed the grand total
+        $paidAmount = min($paidAmount, $purchase->grand_total);
+
+        $purchase->paid_amount = $paidAmount;
+        $purchase->due_amount  = max(0, $purchase->grand_total - $paidAmount);
+
         // Save Return Purchase
         $purchase->save();
 
@@ -212,6 +221,13 @@ class SaleReturnController extends Controller
                         $subtotal - $orderDiscount + $saleReturn->shipping
                     );
 
+                    // Paid Amount / Remaining Balance
+                    $paidAmount = floatval($request->paid_amount ?? $saleReturn->paid_amount ?? 0);
+                    $paidAmount = min($paidAmount, $saleReturn->grand_total);
+
+                    $saleReturn->paid_amount = $paidAmount;
+                    $saleReturn->due_amount  = max(0, $saleReturn->grand_total - $paidAmount);
+
                     $saleReturn->save();
 
                     // Remove old items
@@ -273,5 +289,3 @@ class SaleReturnController extends Controller
                     return view('admin.return-sale.view-return-sale', compact('sale'));
                 }
     }
-
-
