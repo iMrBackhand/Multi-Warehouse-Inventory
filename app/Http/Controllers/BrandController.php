@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BrandValidation;
 use App\Models\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -26,7 +27,7 @@ class BrandController extends Controller
             }
         }
 
-    public function createBrand(Request $request)
+    public function createBrand(BrandValidation $request)
     {
         $brand = new Brand();
         $brand->brand_name = $request->brand_name;
@@ -45,7 +46,7 @@ class BrandController extends Controller
         return redirect()->back()->with($notification);
     }
 
-    public function updateBrand(Request $request, $id)
+    public function updateBrand(BrandValidation $request, $id)
     {
         $brand = Brand::findOrFail($id);
 

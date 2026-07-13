@@ -319,16 +319,18 @@
 
                                         <div class="row">
 
-                                            <div class="col-md-4">
-                                                <label class="form-label">Discount</label>
+                                       <div class="col-md-4">
+                                            <label class="form-label">Discount</label>
 
-                                                <input
-                                                    type="number"
-                                                    name="discount"
-                                                    id="inputDiscount"
-                                                    class="form-control"
-                                                    value="{{ old('discount', $sales->discount) }}">
-                                            </div>
+                                            <input
+                                                type="number"
+                                                name="discount"
+                                                id="inputDiscount"
+                                                class="form-control"
+                                                value="{{ old('discount', $sales->discount) }}"
+                                                min="0"
+                                                step="0.01">
+                                        </div>
 
                                             <div class="col-md-4">
                                                 <label class="form-label">Shipping</label>
@@ -338,7 +340,9 @@
                                                     name="shipping"
                                                     id="inputShipping"
                                                     class="form-control"
-                                                    value="{{ old('shipping', $sales->shipping) }}">
+                                                    value="{{ old('shipping', $sales->shipping) }}"
+                                                    min="0"
+                                                    step="0.01">
                                             </div>
 
                                             <div class="col-md-4">

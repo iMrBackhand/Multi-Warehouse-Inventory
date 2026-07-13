@@ -131,6 +131,10 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('delete/purchase/{id}',[PurchaseController::class, 'deletePurchase'])->name('delete.purchase');
     Route::get('archive/purchase',[PurchaseController::class,'archivedPurchase'])->name('archived.purchase');
     Route::put('restore/purchase/{id}',[PurchaseController::class, 'restorePurchase'])->name('restore.purchase');
+    Route::get('/admin/dashboard/purchase-chart/{year}',[DashboardController::class,'purchaseChart']);
+    Route::get('/admin/dashboard/purchase-summary/{year}', [DashboardController::class, 'purchaseSummary']);
+    Route::get('/admin/dashboard/sales-chart/{year}', [DashboardController::class, 'salesChart']);
+    Route::get('/admin/dashboard/sales-summary/{year}', [DashboardController::class, 'salesSummary']);
 
     Route::get('purchase/product/search',[PurchaseController::class,'PurchaseProductSearch'])->name('purchase.product.search');
     Route::get('/admin/dashboard/purchase-chart/{year}',[DashboardController::class,'purchaseChart']);
@@ -173,4 +177,9 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('delete/return/sale/{id}',[SaleReturnController::class,'deleteReturnSale'])->name('delete.return.sale');
     Route::get('inactive/return/sale',[SaleReturnController::class,'inactiveReturnSales'])->name('inactive.return.sale');
     Route::put('restore/sale/return/{id}',[SaleReturnController::class,'restore'])->name('restore.return.sale');
+
+    // Due
+    Route::get('view/due/sale', [SaleController::class, 'DueSale'])->name('due.sale');
+
+
 });

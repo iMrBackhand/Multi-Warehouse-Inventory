@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AddProductValidation;
 use App\Models\Brand;
 use App\Models\Product;
 use App\Models\ProductCategory;
@@ -45,7 +46,7 @@ class ProductController extends Controller
         ));
     }
 
-    public function store(Request $request)
+    public function store(AddProductValidation $request)
     {
         // Step 1: Save product first
         $product = new Product();
@@ -91,7 +92,7 @@ class ProductController extends Controller
                 Storage::disk('public')->delete($path);
             }
         }
-        public function update(Request $request, $id)
+        public function update(AddProductValidation $request, $id)
         {
             // Find Product
             $product = Product::findOrFail($id);

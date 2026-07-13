@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\Product;
 use App\Models\Purchase;
+use App\Models\Sale;
 use App\Models\Supplier;
 use App\Models\User;
 use App\Models\Warehouse;
@@ -15,7 +16,6 @@ class DashboardController extends Controller
     public function index()
     {
 
-        // default monthly data
         $monthlyTotals = array_fill(0,12,0);
 
         $purchases = Purchase::where('status','Received')->get();
@@ -25,7 +25,6 @@ class DashboardController extends Controller
             $monthlyTotals[$month-1] += (float)$purchase->grand_total;
         }
 
-        // trend ng Total Purchase (this month vs last month), base sa "Received" status
         $thisMonthTotal = Purchase::where('status','Received')
             ->whereMonth('purchase_date', now()->month)
             ->whereYear('purchase_date', now()->year)
@@ -46,7 +45,6 @@ class DashboardController extends Controller
             $purchaseTrend = 100;
         }
 
-        // available years para sa filter
         $availableYears = Purchase::selectRaw('YEAR(purchase_date) as year')
             ->groupBy('year')
             ->orderBy('year','desc')
@@ -83,13 +81,11 @@ class DashboardController extends Controller
             return $item;
         });
 
-        // Recent Purchases (pinaka-huling 6 na records)
         $recentPurchases = Purchase::with('warehouse')
             ->orderBy('purchase_date', 'desc')
             ->limit(6)
             ->get();
 
-        // Low Stock Alert (products na <= 10 na lang ang quantity)
         $lowStockProducts = Product::where('product_quantity', '<=', 10)
             ->orderBy('product_quantity', 'asc')
             ->limit(6)
@@ -101,6 +97,7 @@ class DashboardController extends Controller
 
             'totalUsers'=>User::count(),
             'totalPurchase'=>Purchase::where('status','Received')->sum('grand_total'),
+            'totalSales'=>Sale::where('status','Sale')->sum('grand_total'),
             'pendingPurchase'=>Purchase::where('status','Pending')->sum('grand_total'),
             'totalSuppliers'=>Supplier::count(),
             'totalBrands'=>Brand::count(),
@@ -117,8 +114,6 @@ class DashboardController extends Controller
 
     }
 
-
-    // AJAX chart data
     public function purchaseChart($year)
     {
         $monthly = Purchase::where('status','Received')
@@ -143,6 +138,35 @@ class DashboardController extends Controller
 
         return response()->json([
             'totalPurchase' => number_format($totalPurchase, 2)
+        ]);
+    }
+
+    // AJAX chart data para sa Total Sales
+    public function salesChart($year)
+    {
+        $monthly = Sale::where('status','Sale')
+            ->whereYear('sale_date',$year)
+            ->selectRaw('MONTH(sale_date) month, SUM(grand_total) total')
+            ->groupBy('month')
+            ->pluck('total','month');
+
+        $data=[];
+
+        for($i=1;$i<=12;$i++){
+            $data[] = $monthly[$i] ?? 0;
+        }
+
+        return response()->json($data);
+    }
+
+    public function salesSummary($year)
+    {
+        $totalSales = Sale::where('status','Sale')
+            ->whereYear('sale_date', $year)
+            ->sum('grand_total');
+
+        return response()->json([
+            'totalSales' => number_format($totalSales, 2)
         ]);
     }
 

@@ -109,9 +109,10 @@
 
         <div class="modal-body">
 
+            <x-error-component />
           <div class="mb-3">
             <label>Supplier Name</label>
-            <input type="text" name="supplier_name" class="form-control" required>
+            <input type="text" name="supplier_name" class="form-control" >
           </div>
 
           <div class="mb-3">
@@ -133,7 +134,7 @@
 
         <div class="modal-footer">
           <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary">Save Supplier</button>
+          <button type="submit" class="btn btn-secondary">Save Supplier</button>
         </div>
 
       </form>
@@ -141,4 +142,11 @@
     </div>
   </div>
 </div>
+@if ($errors->any())
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    new bootstrap.Modal(document.getElementById('addSupplierModal')).show();
+});
+</script>
+@endif
 @endsection

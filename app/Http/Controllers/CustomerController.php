@@ -42,7 +42,7 @@ class CustomerController extends Controller
             return view('admin.customer.edit-customer', compact('customer'));
         }
 
-        public function updateCustomer(Request $request)
+        public function updateCustomer(CustomerAddRequest $request)
         {
             $customer = new Customer();
             $customer->customer_name=$request->customer_name;
