@@ -283,9 +283,45 @@ class SaleReturnController extends Controller
                 }
             }
 
-                public function view($id)
-                {
-                    $sale = SaleReturn::with(['warehouse', 'customer', 'saleReturnItems.product'])->findOrFail($id);
-                    return view('admin.return-sale.view-return-sale', compact('sale'));
-                }
+            public function view($id)
+            {
+                $sale = SaleReturn::with(['warehouse', 'customer', 'saleReturnItems.product'])->findOrFail($id);
+                return view('admin.return-sale.view-return-sale', compact('sale'));
+            }
+
+            public function deleteReturnSale($id)
+            {
+                SaleReturn::findOrFail($id)->delete();
+                  $notification = array(
+                'message' => 'Return Sale Succesfully Archive',
+                'alert-type' =>'danger'
+                 );
+                return redirect()->route('allreturn.sales')->with($notification);
+            }
+
+            public function inactiveReturnSales(Request $request)
+            {
+                $sales = SaleReturn::with('warehouse')
+                ->onlyTrashed()
+                ->when($request->search, function ($query) use ($request) {
+                    $query->whereHas('warehouse', function ($q) use ($request) {
+                        $q->where('warehouse_name', 'like', '%' . $request->search . '%');
+                    });
+                })
+                ->orderBy('id', 'asc')
+                ->get();
+
+            return view('admin.return-sale.inactive-sale', compact('sales'));
+            }
+
+            public function restore($id)
+            {
+            SaleReturn::withTrashed()->findOrFail($id)->restore();
+            $notification = array(
+                    'message' => 'Return Sale Succesfully Restore',
+                    'alert-type' =>'success'
+                );
+            return redirect()->route('allreturn.sales')->with($notification);
+            }
+
     }

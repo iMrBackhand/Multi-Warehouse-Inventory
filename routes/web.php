@@ -170,4 +170,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('edit/return/sale/{id}',[SaleReturnController::class,'editReturnSales'])->name('editreturn.sales');
     Route::put('update/return/sale/{id}',[SaleReturnController::class,'updateReturnSales'])->name('update.return.sales');
     Route::get('return-sales/{id}/view', [SaleReturnController::class, 'view'])->name('viewreturn.sales');
+    Route::delete('delete/return/sale/{id}',[SaleReturnController::class,'deleteReturnSale'])->name('delete.return.sale');
+    Route::get('inactive/return/sale',[SaleReturnController::class,'inactiveReturnSales'])->name('inactive.return.sale');
+    Route::put('restore/sale/return/{id}',[SaleReturnController::class,'restore'])->name('restore.return.sale');
 });

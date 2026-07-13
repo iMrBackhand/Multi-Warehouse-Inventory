@@ -34,6 +34,7 @@
                                         <tr>
                                             <th>SI</th>
                                             <th>Warehouse</th>
+                                            <th>Customers</th>
                                             <th>Status</th>
                                             <th>Grand Total</th>
                                             <th>Amount Paid</th>
@@ -46,9 +47,8 @@
                                         @forelse ($sales as $sale)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-
                                                 <td>{{ $sale->warehouse->warehouse_name ?? 'N/A' }}</td>
-
+                                                <td>{{ $sale->customer->customer_name ?? 'N/A' }}</td>
                                                 <td>
                                                     <span class="badge bg-{{ $sale->status == 'Completed' ? 'success' : ($sale->status == 'Pending' ? 'warning' : 'secondary') }}">
                                                         {{ $sale->status }}

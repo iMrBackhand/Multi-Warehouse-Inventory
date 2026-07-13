@@ -10,12 +10,9 @@
                     </div>
 
                     <div class="text-end">
-                        <a href="{{ route('addreturn.sale') }}" class="btn btn-sm"
-                            style="background-color: #6f42c1; color: #fff;">
-                            Add Return Sale
-                        </a>
-                             <a href="{{ route('inactive.return.sale') }}" class="btn btn-sm text-white" style="background-color:#6c757d;">
-                                InActive Sale
+
+                             <a href="{{ route('allreturn.sales') }}" class="btn btn-sm text-white" style="background-color:#6c757d;">
+                                Back
                         </a>
                     </div>
                 </div>
@@ -71,32 +68,17 @@
 
                                                 <td>{{ $sale->created_at->format('M d, Y') }}</td>
 
-                                               <td class="text-nowrap">
-                                                    <a href="{{ route('viewreturn.sales',$sale->id) }}"
-                                                        class="btn btn-sm"
-                                                        style="background-color:#0dcaf0; padding:4px 6px;"
-                                                        title="View">
-                                                        <i data-feather="eye" style="width:10px; height:10px; color:#fff;"></i>
-                                                    </a>
 
-                                                    <a href="{{ route('editreturn.sales',$sale->id) }}"
-                                                        class="btn btn-sm btn-success "
-                                                        style="padding:4px 6px;"
-                                                        title="Edit">
-                                                        <i data-feather="edit" style="width:10px; height:10px; color:#fff;"></i>
-                                                    </a>
+                                            <td>
+                                                <form action="{{ route('restore.return.sale',$sale->id) }}" method="POST" style="display: inline">
+                                                    @csrf
+                                                    @method('PUT')
 
-                                                    <form action="{{ route('delete.return.sale',$sale->id) }}" method="POST" style="display:inline;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit"
-                                                            class="btn btn-sm btn-danger archive-form"
-                                                            style="padding:4px 6px;"
-                                                            title="Delete">
-                                                            <i data-feather="trash-2" style="width:10px; height:10px; color:#fff;"></i>
-                                                        </button>
-                                                    </form>
-                                                </td>
+                                                    <button type="submit" class="btn btn-sm btn-success restore-form" id="restore-btn" data-item="Return Sale">
+                                                        Restore
+                                                    </button>
+                                                </form>
+                                            </td>
                                             </tr>
                                         @empty
                                             <tr>
