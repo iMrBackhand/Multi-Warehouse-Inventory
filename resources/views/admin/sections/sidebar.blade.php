@@ -17,8 +17,10 @@
                                 <span class="logo-sm">
                                     <img src="{{ asset('backend/assets/images/logo-sm.png') }}" alt="" height="22">
                                 </span>
-                                <span class="logo-lg">
-                                    <img src="{{ asset('backend/assets/images/11g.png') }}" alt="" height="60">
+                               <span class="logo-lg">
+                                    <a href="{{ route('dashboard') }}">
+                                        <img src="{{ asset('backend/assets/images/11g.png') }}" alt="Logo" height="60">
+                                    </a>
                                 </span>
                             </a>
                         </div>
@@ -169,12 +171,14 @@
                                 <a href="#sidebarDue" data-bs-toggle="collapse">
                                     <i data-feather="alert-circle"></i>
                                     <span> Due Setup </span>
-                                    {{-- <span class="menu-arrow"></span> --}}
                                 </a>
                                 <div class="collapse" id="sidebarDue">
                                     <ul class="nav-second-level">
                                         <li>
-                                            <a href="#" class="tp-link">All Customer</a>
+                                            <a href="{{ route('due.sale') }}" class="tp-link">Sales Due</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="tp-link">Sales Return Due</a>
                                         </li>
                                     </ul>
                                 </div>

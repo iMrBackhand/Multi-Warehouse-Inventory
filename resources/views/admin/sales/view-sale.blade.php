@@ -219,7 +219,7 @@
                                             <td class="text-center">
                                                 <span class="badge bg-light text-dark border">{{ $item->quantity }}</span>
                                             </td>
-                                            <td class="text-end">₱ {{ number_format($item->price, 2) }}</td>
+                                            <td class="text-end">₱ {{ number_format($item->net_unit_cost, 2) }}</td>
                                             <td class="text-end pe-3 fw-semibold">₱ {{ number_format($item->subtotal, 2) }}</td>
                                         </tr>
                                     @empty

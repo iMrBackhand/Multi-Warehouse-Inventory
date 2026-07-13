@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductCategoryRequest;
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 
@@ -18,7 +19,7 @@ class ProductCategoriesController extends Controller
             return view('admin.category.categories',compact('product_categories'));
         }
 
-        public function createCategory(Request $request)
+        public function createCategory(ProductCategoryRequest $request)
         {
             $category = new ProductCategory();
             $category->category_name=$request->category_name;
@@ -33,7 +34,7 @@ class ProductCategoriesController extends Controller
             return redirect()->route('categories')->with($notification);
         }
 
-        public function updateCategory(Request $request, $id)
+        public function updateCategory(ProductCategoryRequest $request, $id)
         {
             $category = ProductCategory::findOrFail($id);
             $category->category_name=$request->category_name;

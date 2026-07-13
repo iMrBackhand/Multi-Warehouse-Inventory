@@ -324,4 +324,6 @@ class SaleReturnController extends Controller
             return redirect()->route('allreturn.sales')->with($notification);
             }
 
+
+            
     }

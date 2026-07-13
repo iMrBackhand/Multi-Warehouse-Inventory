@@ -1,0 +1,58 @@
+.badge-soft {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.badge-soft-success {
+    background-color: #d1f5ea;
+    color: #0f8a5f;
+}
+.badge-soft-warning {
+    background-color: #fff3cd;
+    color: #997404;
+}
+.badge-soft-primary {
+    background-color: #6f42c115;
+    color: #6f42c1;
+}
+.badge-soft-info {
+    background-color: #cff4fc;
+    color: #087990;
+}
+.badge-soft-danger {
+    background-color: #f8d7da;
+    color: #b02a37;
+}
+.badge-soft-secondary {
+    background-color: #e9ecef;
+    color: #495057;
+}
+
+.recent-purchases-table tbody tr {
+    transition: background-color 0.12s ease;
+}
+.recent-purchases-table tbody tr:hover {
+    background-color: #6f42c108;
+}
+.recent-purchases-table thead th {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: #8a8a8a;
+    font-weight: 600;
+    border-bottom-width: 1px;
+}
+
+.recent-view-all {
+    color: #6f42c1;
+    transition: gap 0.12s ease;
+}
+.recent-view-all:hover {
+    color: #59339b;
+}
+
+.low-stock-item {
+    border-bottom: 1px solid #f1f1f1;
+}

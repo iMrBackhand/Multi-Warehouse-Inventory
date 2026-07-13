@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SaleValidation;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleItem;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class SaleController extends Controller
 {
@@ -50,88 +53,123 @@ class SaleController extends Controller
 
         public function storeSale(Request $request)
         {
-            $sale = new Sale();
+            // Basic sanity check: make sure related arrays match in length
+            $request->validate([
+                'product_id'    => 'required|array|min:1',
+                'quantity'      => 'required|array|size:' . count($request->product_id ?? []),
+                'unit_cost'     => 'required|array|size:' . count($request->product_id ?? []),
+                'item_discount' => 'nullable|array',
+                'sale_date'     => 'required|date',
+                'warehouse_id'  => 'required',
+                'customer_id'   => 'required',
+                'status'        => 'required|string',
+            ]);
 
-            $sale->sale_date = $request->sale_date;
-            $sale->warehouse_id = $request->warehouse_id;
-            $sale->customer_id = $request->customer_id;
+            try {
+                DB::transaction(function () use ($request) {
 
-            $itemDiscountsTotal = 0;
-            if ($request->has('item_discount')) {
-            foreach ($request->item_discount as $discount) {
-                $itemDiscountsTotal += floatval($discount);
-                }
-            }
-            $orderDiscount = floatval($request->discount ?? 0);
+                    // Lock the products we're about to touch, to avoid overselling
+                    // under concurrent requests.
+                    $products = Product::whereIn('id', $request->product_id)
+                        ->lockForUpdate()
+                        ->get()
+                        ->keyBy('id');
 
-            $sale->discount = $itemDiscountsTotal + $orderDiscount;
-            $sale->shipping = floatval($request->shipping ?? 0);
-            $sale->status   = $request->status;
-            $sale->note     = $request->note;
+                    // If this is an actual "Sale" (stock-deducting), validate stock first
+                    if ($request->status === 'Sale') {
+                        foreach ($request->product_id as $key => $productId) {
+                            $qty = floatval($request->quantity[$key] ?? 0);
+                            $product = $products->get($productId);
 
-            $subtotal = 0;
-
-            foreach ($request->product_id as $key => $productId) {
-
-                $qty          = floatval($request->quantity[$key] ?? 0);
-                $cost         = floatval($request->unit_cost[$key] ?? 0);
-                $itemDiscount = floatval($request->item_discount[$key] ?? 0);
-
-                $subtotal += ($qty * $cost) - $itemDiscount;
-            }
-
-            $sale->grand_total = max(
-                0,
-                $subtotal - $orderDiscount + $sale->shipping
-            );
-
-            $paidAmount = floatval($request->paid_amount ?? 0);
-            $dueAmount = max(0, $sale->grand_total - $paidAmount);
-
-            $sale->paid_amount = $paidAmount;
-            $sale->due_amount = $dueAmount;
-            $sale->save();
-
-            // para sa insert sa table an saleItem
-            foreach ($request->product_id as $key => $productId) {
-                $product = Product::find($productId);
-
-                $qty          = floatval($request->quantity[$key] ?? 0);
-                $cost         = floatval($request->unit_cost[$key] ?? 0);
-                $itemDiscount = floatval($request->item_discount[$key] ?? 0);
-                $itemSubtotal = ($qty * $cost) - $itemDiscount;
-
-                $purchaseItem = new SaleItem();
-
-                $purchaseItem->sale_id   = $sale->id;
-                $purchaseItem->product_id    = $productId;
-                $purchaseItem->net_unit_cost = $cost;
-                $purchaseItem->stock         = $product ? $product->product_quantity : 0;
-                $purchaseItem->quantity      = $qty;
-                $purchaseItem->discount      = $itemDiscount;
-                $purchaseItem->subtotal      = $itemSubtotal;
-
-                $purchaseItem->save();
-
-            }
-                if ($request->status === 'Sale') {
-
-                foreach ($request->product_id as $key => $productId) {
-
-                        $product = Product::find($productId);
-
-                    if ($product) {
-
-                        $qty = intval($request->quantity[$key] ?? 0);
-
-                        $product->product_quantity = $product->product_quantity - $qty;
-                        $product->save();
+                            if (!$product || $product->product_quantity < $qty) {
+                                abort(422, 'Insufficient stock for product: ' . ($product->product_name ?? $productId));
+                            }
+                        }
                     }
-                }
+
+                    $sale = new Sale();
+
+                    $sale->sale_date    = $request->sale_date;
+                    $sale->warehouse_id = $request->warehouse_id;
+                    $sale->customer_id  = $request->customer_id;
+
+                    $itemDiscountsTotal = 0;
+                    if ($request->has('item_discount')) {
+                        foreach ($request->item_discount as $discount) {
+                            $itemDiscountsTotal += floatval($discount);
+                        }
+                    }
+                    $orderDiscount = floatval($request->discount ?? 0);
+
+                    $sale->discount = $itemDiscountsTotal + $orderDiscount;
+                    $sale->shipping = floatval($request->shipping ?? 0);
+                    $sale->status   = $request->status;
+                    $sale->note     = $request->note;
+
+                    $subtotal = 0;
+
+                    foreach ($request->product_id as $key => $productId) {
+                        $qty          = floatval($request->quantity[$key] ?? 0);
+                        $cost         = floatval($request->unit_cost[$key] ?? 0);
+                        $itemDiscount = floatval($request->item_discount[$key] ?? 0);
+
+                        $subtotal += ($qty * $cost) - $itemDiscount;
+                    }
+
+                    $sale->grand_total = max(0, $subtotal - $orderDiscount + $sale->shipping);
+
+                    $paidAmount = floatval($request->paid_amount ?? 0);
+                    $dueAmount  = max(0, $sale->grand_total - $paidAmount);
+
+                    $sale->paid_amount = $paidAmount;
+                    $sale->due_amount  = $dueAmount;
+                    $sale->save();
+
+                    // Insert sale items
+                    foreach ($request->product_id as $key => $productId) {
+                        $product = $products->get($productId);
+
+                        $qty          = floatval($request->quantity[$key] ?? 0);
+                        $cost         = floatval($request->unit_cost[$key] ?? 0);
+                        $itemDiscount = floatval($request->item_discount[$key] ?? 0);
+                        $itemSubtotal = ($qty * $cost) - $itemDiscount;
+
+                        $saleItem = new SaleItem();
+
+                        $saleItem->sale_id       = $sale->id;
+                        $saleItem->product_id    = $productId;
+                        $saleItem->net_unit_cost = $cost;
+                        $saleItem->stock         = $product ? $product->product_quantity : 0;
+                        $saleItem->quantity      = $qty;
+                        $saleItem->discount      = $itemDiscount;
+                        $saleItem->subtotal      = $itemSubtotal;
+
+                        $saleItem->save();
+                    }
+
+                    // Deduct stock only for confirmed sales
+                    if ($request->status === 'Sale') {
+                        foreach ($request->product_id as $key => $productId) {
+                            $product = $products->get($productId);
+                            $qty     = floatval($request->quantity[$key] ?? 0);
+
+                            if ($product) {
+                                $product->product_quantity -= $qty;
+                                $product->save();
+                            }
+                        }
+                    }
+                });
+            } catch (\Illuminate\Validation\ValidationException $e) {
+                throw $e;
+            } catch (\Throwable $e) {
+                return redirect()->back()->withInput()->with([
+                    'message'    => $e->getMessage() ?: 'Something went wrong while saving the sale.',
+                    'alert-type' => 'error',
+                ]);
             }
 
-
-              $notification = [
+            $notification = [
                 'message'    => 'Sale Successfully Inserted',
                 'alert-type' => 'success',
             ];
@@ -141,8 +179,25 @@ class SaleController extends Controller
 
         public function deleteSales($id)
         {
-            Sale::findOrFail($id)->delete();
-             $notification = array(
+            DB::transaction(function () use ($id) {
+                $sale = Sale::with('saleItems')->findOrFail($id);
+
+                // If this sale had already deducted stock, restore it before archiving.
+                if ($sale->status === 'Sale') {
+                    foreach ($sale->saleItems as $item) {
+                        $product = Product::lockForUpdate()->find($item->product_id);
+
+                        if ($product) {
+                            $product->product_quantity += $item->quantity;
+                            $product->save();
+                        }
+                    }
+                }
+
+                $sale->delete();
+            });
+
+            $notification = array(
                 'message' => 'Sale Succesfully Archive',
                 'alert-type' =>'error'
             );
@@ -166,7 +221,24 @@ class SaleController extends Controller
 
         public function restoreSales($id)
         {
-            Sale::withTrashed()->findOrFail($id)->restore();
+            DB::transaction(function () use ($id) {
+                $sale = Sale::withTrashed()->with('saleItems')->findOrFail($id);
+                $sale->restore();
+
+                // If this sale was a confirmed "Sale" (stock was previously restored on delete),
+                // deduct the stock again to keep inventory in sync.
+                if ($sale->status === 'Sale') {
+                    foreach ($sale->saleItems as $item) {
+                        $product = Product::lockForUpdate()->find($item->product_id);
+
+                        if ($product) {
+                            $product->product_quantity -= $item->quantity;
+                            $product->save();
+                        }
+                    }
+                }
+            });
+
             $notification = array(
                     'message' => 'Purchase Succesfully Restore',
                     'alert-type' =>'success'
@@ -183,44 +255,40 @@ class SaleController extends Controller
             return view('admin.sales.edit-sale',compact('sales','warehouses','customers'));
         }
 
-        public function updateSales(Request $request, $id)
-        {
+public function updateSales(SaleValidation $request, $id)
+{
+    $sale = Sale::with('saleItems')->findOrFail($id);
 
-            $sale = Sale::with('saleItems')->findOrFail($id);
+    // Kapag completed na, hindi na puwedeng i-edit
+    if ($sale->status === 'Sale') {
+        return redirect()->route('all.sales')->with([
+            'message' => 'This sale has already been completed and can no longer be edited.',
+            'alert-type' => 'error'
+        ]);
+    }
 
-            // Lock kapag Sale na (naibenta na / naibawas na sa stock)
-            if ($sale->status === 'Sale') {
-                return redirect()->route('all.sales')->with([
-                    'message' => 'This sale has already been completed and can no longer be edited.',
-                    'alert-type' => 'error'
-                ]);
-            }
+    try {
+        DB::transaction(function () use ($request, $sale) {
 
-            // Save old status
-            $oldStatus = $sale->status;
+            $sale->sale_date = $request->sale_date;
+            $sale->shipping  = floatval($request->shipping ?? 0);
+            $sale->discount  = floatval($request->discount ?? 0);
+            $sale->status    = $request->status;
+            $sale->note      = $request->note;
 
-            $sale->sale_date    = $request->sale_date;
-            $sale->shipping     = $request->shipping;
-            $sale->discount     = $request->discount;
-            $sale->status       = $request->status;
-            $sale->note         = $request->note;
-            $sale->grand_total  = $request->grand_total;
-            $sale->paid_amount  = $request->paid_amount;
-            $sale->due_amount   = $request->grand_total - $request->paid_amount;
-
-            $sale->save();
-
+            // Update Sale Items
             if ($request->has('sale_item_id')) {
-
                 foreach ($request->sale_item_id as $key => $itemId) {
 
                     $saleItem = SaleItem::find($itemId);
 
-                    if (!$saleItem) continue;
+                    if (!$saleItem || $saleItem->sale_id != $sale->id) {
+                        continue;
+                    }
 
-                    $saleItem->quantity      = $request->quantity[$key];
-                    $saleItem->discount      = $request->item_discount[$key];
-                    $saleItem->net_unit_cost = $request->unit_cost[$key];
+                    $saleItem->quantity      = floatval($request->quantity[$key] ?? 0);
+                    $saleItem->discount      = floatval($request->item_discount[$key] ?? 0);
+                    $saleItem->net_unit_cost = floatval($request->unit_cost[$key] ?? 0);
 
                     $saleItem->subtotal =
                         ($saleItem->net_unit_cost * $saleItem->quantity)
@@ -230,39 +298,64 @@ class SaleController extends Controller
                 }
             }
 
-            // Kung na-"Sale" na dati pero binago na sa ibang status, ibalik ang stock
-            if ($oldStatus === 'Sale') {
+            // Recompute totals
+            $itemsSubtotal = $sale->saleItems()->sum('subtotal');
 
-                foreach ($sale->saleItems as $item) {
+            $sale->grand_total = max(
+                0,
+                $itemsSubtotal - $sale->discount + $sale->shipping
+            );
 
-                    $product = Product::find($item->product_id);
+            $paidAmount = floatval($request->paid_amount ?? 0);
 
-                    if ($product) {
-                        $product->product_quantity += $item->quantity;
-                        $product->save();
-                    }
-                }
+            $sale->paid_amount = $paidAmount;
+            $sale->due_amount  = max(0, $sale->grand_total - $paidAmount);
+
+            // Huwag gawing Sale kung may balance pa
+            if ($sale->status === 'Sale' && $sale->due_amount > 0) {
+                abort(422, 'This item is not paid.');
             }
 
-            // Kung naging "Sale" na ngayon, ibawas sa stock
+            $sale->save();
+
+            // Deduct stock kapag Sale na
             if ($sale->status === 'Sale') {
 
                 foreach ($sale->saleItems as $item) {
 
-                    $product = Product::find($item->product_id);
+                    $product = Product::lockForUpdate()->find($item->product_id);
 
-                    if (!$product) continue;
+                    if (!$product) {
+                        continue;
+                    }
+
+                    if ($product->product_quantity < $item->quantity) {
+                        abort(422, 'Insufficient stock for product: ' . $product->product_name);
+                    }
 
                     $product->product_quantity -= $item->quantity;
                     $product->save();
                 }
             }
 
-            return redirect()->route('all.sales')->with([
-                'message' => 'Sale Successfully Updated',
-                'alert-type' => 'success'
-            ]);
-        }
+        });
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        throw $e;
+
+    } catch (\Throwable $e) {
+
+        return redirect()->back()->withInput()->with([
+            'message'    => $e->getMessage() ?: 'Something went wrong while updating the sale.',
+            'alert-type' => 'error',
+        ]);
+    }
+
+    return redirect()->route('all.sales')->with([
+        'message'    => 'Sale Successfully Updated',
+        'alert-type' => 'success'
+    ]);
+}
 
         public function viewSales($id)
         {
@@ -274,4 +367,17 @@ class SaleController extends Controller
 
             return view('admin.sales.view-sale',compact('sale'));
         }
+
+        public function DueSale()
+        {
+            $sales = Sale::with(['customer','warehouse'])
+            ->select('id','customer_id','warehouse_id','due_amount')
+            ->where('due_amount','>',0)
+            ->latest()
+            ->get();
+
+            return view('admin.due.due-sale',compact('sales'));
+        }
+
+
 }

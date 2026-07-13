@@ -42,7 +42,23 @@
                     </div>
                 </div>
             </div>
-
+        <div class="col-md-6 col-xl-3">
+                <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #0dcaf0 !important;">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <span class="fs-13 text-muted text-uppercase fw-semibold" style="letter-spacing:.5px;">Total Sales</span>
+                            <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                style="width:38px; height:38px; background-color:#cff4fc;">
+                                <i data-feather="trending-up" style="width:17px; height:17px; color:#0dcaf0;"></i>
+                            </div>
+                        </div>
+                      <div class="fw-bold" id="totalSalesCard" style="font-size:26px; color:#2b2b2b;">
+                            ₱{{ number_format($totalSales,2) }}
+                        </div>
+                        <div class="fs-12 text-muted mt-1">Completed sales</div>
+                    </div>
+                </div>
+        </div>
             <div class="col-md-6 col-xl-3">
                 <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #ffc107 !important;">
                     <div class="card-body">
@@ -61,23 +77,7 @@
                 </div>
             </div>
 
-            <div class="col-md-6 col-xl-3">
-                <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #0dcaf0 !important;">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center justify-content-between mb-3">
-                            <span class="fs-13 text-muted text-uppercase fw-semibold" style="letter-spacing:.5px;">Total Brand</span>
-                            <div class="rounded-circle d-flex align-items-center justify-content-center"
-                                 style="width:38px; height:38px; background-color:#cff4fc;">
-                                <i data-feather="award" style="width:17px; height:17px; color:#0dcaf0;"></i>
-                            </div>
-                        </div>
-                        <div class="fw-bold" style="font-size:26px; color:#2b2b2b;">
-                            {{ $totalBrands }}
-                        </div>
-                        <div class="fs-12 text-muted mt-1">Active brands</div>
-                    </div>
-                </div>
-            </div>
+
 
             <div class="col-md-6 col-xl-3">
                 <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #20c997 !important;">
@@ -286,134 +286,10 @@
     </div>
 </div>
 
-<style>
-    .badge-soft {
-        display: inline-block;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-    }
-    .badge-soft-success  { background-color: #d1f5ea; color: #0f8a5f; }
-    .badge-soft-warning  { background-color: #fff3cd; color: #997404; }
-    .badge-soft-primary  { background-color: #6f42c115; color: #6f42c1; }
-    .badge-soft-info     { background-color: #cff4fc; color: #087990; }
-    .badge-soft-danger   { background-color: #f8d7da; color: #b02a37; }
-    .badge-soft-secondary{ background-color: #e9ecef; color: #495057; }
 
-    .recent-purchases-table tbody tr {
-        transition: background-color .12s ease;
-    }
-    .recent-purchases-table tbody tr:hover {
-        background-color: #6f42c108;
-    }
-    .recent-purchases-table thead th {
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: .4px;
-        color: #8a8a8a;
-        font-weight: 600;
-        border-bottom-width: 1px;
-    }
-
-    .recent-view-all {
-        color: #6f42c1;
-        transition: gap .12s ease;
-    }
-    .recent-view-all:hover {
-        color: #59339b;
-    }
-
-    .low-stock-item {
-        border-bottom: 1px solid #f1f1f1;
-    }
-</style>
 
     </div>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    let chart;
-
-    function loadPurchaseChart(year) {
-        fetch('/admin/dashboard/purchase-chart/' + year)
-            .then(response => response.json())
-            .then(data => {
-                if (chart) {
-                    chart.destroy();
-                }
-
-                let options = {
-                    series: [{
-                        name: "Total Purchase",
-                        data: data
-                    }],
-                    chart: {
-                        height: 350,
-                        type: "bar",
-                        toolbar: { show: false }
-                    },
-                    colors: ["#6f42c1"],
-                    plotOptions: {
-                        bar: {
-                            borderRadius: 8,
-                            columnWidth: "40%"
-                        }
-                    },
-                    fill: {
-                        type: "gradient",
-                        gradient: {
-                            shade: "light",
-                            type: "vertical",
-                            gradientToColors: ["#8b5fd9"],
-                            opacityFrom: 1,
-                            opacityTo: 0.85
-                        }
-                    },
-                    dataLabels: { enabled: false },
-                    xaxis: {
-                        categories: [
-                            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-                        ]
-                    },
-                    yaxis: {
-                        min: 0,
-                        forceNiceScale: true,
-                        labels: {
-                            formatter: function (value) {
-                                return "₱" + value.toLocaleString();
-                            }
-                        }
-                    },
-                    tooltip: {
-                        y: {
-                            formatter: function (value) {
-                                return "₱" + value.toLocaleString();
-                            }
-                        }
-                    },
-                    grid: { borderColor: "#f1f1f1" }
-                };
-
-                chart = new ApexCharts(document.querySelector("#purchase-received-chart"), options);
-                chart.render();
-
-                fetch('/admin/dashboard/purchase-summary/' + year)
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById("totalPurchaseCard").innerHTML = "₱" + data.totalPurchase;
-                    });
-            });
-    }
-
-    loadPurchaseChart(document.querySelector("#yearFilter").value);
-
-    document.querySelector("#yearFilter").addEventListener("change", function () {
-        loadPurchaseChart(this.value);
-    });
-});
-</script>
-
+ <script src="{{ asset('backend/assets/js/dashboard.js') }}"></script>
 @endsection

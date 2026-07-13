@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SupplierValidation;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 
@@ -20,7 +21,7 @@ class SupplierController extends Controller
             return view('admin.supplier.supplier',compact('suppliers'));
         }
 
-    public function store(Request $request)
+    public function store(SupplierValidation $request)
     {
         $supplier=new Supplier();
 
@@ -45,7 +46,7 @@ class SupplierController extends Controller
         return view('admin.supplier.edit-supplier',compact('supplier'));
     }
 
-    public function update(Request $request, $id)
+    public function update(SupplierValidation $request, $id)
     {
         $supplier = Supplier::findOrFail($id);
 

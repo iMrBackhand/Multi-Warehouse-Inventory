@@ -1,23 +1,6 @@
 @extends('admin.admin_master')
     @section('admin')
 
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show mx-3 mt-2" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-
-        @if ($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show mx-3 mt-2" role="alert">
-                <ul class="mb-0">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
 
         <div class="content">
             <div class="container-xxl">
@@ -129,6 +112,7 @@
 
                         {{-- BODY --}}
                         <div class="modal-body" style="overflow-y: auto; max-height: calc(90vh - 130px);">
+                             <x-error-component />
                             <div class="row">
 
                                 {{-- LEFT SIDE --}}
@@ -573,4 +557,11 @@
                 </div>
             </div>
         @endforeach
+@if ($errors->any())
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    new bootstrap.Modal(document.getElementById('addProductModal')).show();
+});
+</script>
+@endif
     @endsection

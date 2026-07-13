@@ -108,41 +108,36 @@
 </div>
 
 <!-- Add Brand Modal -->
-<div class="modal fade" id="addBrandModal" tabindex="-1" aria-labelledby="addBrandModalLabel" aria-hidden="true">
+<div class="modal fade" id="addBrandModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Add Brand</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
 
             <form action="{{ route('add.brand') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addBrandModalLabel">
-                        Add Brand
-                    </h5>
-
-                    <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-
                 <div class="modal-body">
+
+                    <x-error-component />
 
                     <div class="mb-3">
                         <label class="form-label">Brand Name</label>
 
                         <input type="text"
                             name="brand_name"
-                            id="brand_name"
                             class="form-control"
-                            placeholder="Enter Brand Name"
-                            >
+                            value="{{ old('brand_name') }}"
+                            placeholder="Enter Brand Name">
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Brand Image</label>
 
-                       <input type="file"
+                        <input type="file"
                             name="image"
                             class="form-control imageInput"
                             accept="image/*">
@@ -150,25 +145,23 @@
                         <img class="showImage"
                             src=""
                             width="100"
-                            style="object-fit:cover; display:none;"
+                            style="display:none;object-fit:cover;margin-top:10px;"
                             alt="Preview">
                     </div>
 
                 </div>
 
                 <div class="modal-footer">
-
                     <button type="button"
-                        class="btn btn-danger btn-sm"
+                        class="btn btn-danger"
                         data-bs-dismiss="modal">
                         Close
                     </button>
 
                     <button type="submit"
-                        class="btn btn-primary btn-sm">
+                        class="btn btn-primary">
                         Save Brand
                     </button>
-
                 </div>
 
             </form>
@@ -176,6 +169,42 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const imageInput = document.querySelector('.imageInput');
+    const showImage = document.querySelector('.showImage');
+
+    imageInput.addEventListener('change', function(e){
+
+        const file = e.target.files[0];
+
+        if(file){
+
+            const reader = new FileReader();
+
+            reader.onload = function(event){
+                showImage.src = event.target.result;
+                showImage.style.display = 'block';
+            }
+
+            reader.readAsDataURL(file);
+        }
+
+    });
+
+});
+</script>
+
+{{-- Auto-open modal kapag may validation errors --}}
+@if ($errors->any())
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    new bootstrap.Modal(document.getElementById('addBrandModal')).show();
+});
+</script>
+@endif
 
 <script>
 document.querySelector('.imageInput').addEventListener('change', function(e) {

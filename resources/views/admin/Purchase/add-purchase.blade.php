@@ -26,7 +26,7 @@
             <div class="d-md-flex align-items-center justify-content-between">
                 <h3 class="mb-0">Create Purchase</h3>
                 <div class="text-end my-2 mt-md-0">
-                    <a class="btn btn-sm btn-outline-primary" href="{{ route('return.purchase') }}">Back</a>
+                    <a class="btn btn-sm btn-outline-primary" href="{{ route('purchase') }}">Back</a>
                 </div>
             </div>
 
@@ -124,33 +124,33 @@
                                         </div>
 
                                <div class="row">
-    <div class="col-md-12">
-        <label class="form-label">
-            Order Items:
-            <span class="text-danger">*</span>
-        </label>
+                                    <div class="col-md-12">
+                                        <label class="form-label">
+                                            Order Items:
+                                            <span class="text-danger">*</span>
+                                        </label>
 
-        <div class="table-responsive">
-            <table id="purchaseTable" class="table table-striped table-bordered w-100">
-                <thead>
-                    <tr>
-                        <th style="width:25%">Product</th>
-                        <th style="width:10%">Cost</th>
-                        <th style="width:8%">Stock</th>
-                        <th style="width:12%">Qty</th>
-                        <th style="width:10%">Discount</th>
-                        <th style="width:10%">Subtotal</th>
-                        <th style="width:5%">Action</th>
-                    </tr>
-                </thead>
+                                        <div class="table-responsive">
+                                            <table id="purchaseTable" class="table table-striped table-bordered w-100">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="width:25%">Product</th>
+                                                        <th style="width:10%">Cost</th>
+                                                        <th style="width:8%">Stock</th>
+                                                        <th style="width:12%">Qty</th>
+                                                        <th style="width:10%">Discount</th>
+                                                        <th style="width:10%">Subtotal</th>
+                                                        <th style="width:5%">Action</th>
+                                                    </tr>
+                                                </thead>
 
-                <tbody>
+                                                <tbody>
 
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
 
                                         <div class="row">
                                             <div class="col-md-6 ms-auto">
