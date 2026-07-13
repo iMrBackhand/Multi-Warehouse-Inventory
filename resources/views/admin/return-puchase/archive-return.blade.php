@@ -30,6 +30,7 @@
                                     <thead>
                                         <tr>
                                             <th>SI</th>
+                                            <th>Supplier</th>
                                             <th>Warehouse</th>
                                             <th>Status</th>
                                             <th>Grand Total</th>
@@ -42,6 +43,7 @@
                                         @forelse ($purchases as $index => $purchase)
                                             <tr>
                                                 <td>{{ $index + 1 }}</td>
+                                                <td>{{ $purchase->supplier->supplier_name ?? 'N/A' }}</td>
                                                 <td>{{ $purchase->warehouse->warehouse_name ?? 'N/A' }}</td>
                                                 <td>
                                                     <span class="badge

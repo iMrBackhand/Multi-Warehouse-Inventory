@@ -34,6 +34,7 @@
                                         <tr>
                                             <th>SI</th>
                                             <th>Warehouse</th>
+                                            <th>Supplier</th>
                                             <th>Status</th>
                                             <th>Grand Total</th>
                                             <th>Payment</th>
@@ -46,6 +47,7 @@
                                             <tr>
                                                 <td>{{ $index + 1 }}</td>
                                                 <td>{{ $purchase->warehouse->warehouse_name ?? 'N/A' }}</td>
+                                                <td>{{ $purchase->supplier->supplier_name ?? 'N/A' }}</td>
                                                 <td>
                                                     <span class="badge
                                                         @if($purchase->status == 'Received') bg-success
@@ -79,7 +81,7 @@
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit"
-                                                            class="btn btn-sm btn-danger"
+                                                            class="btn btn-sm btn-danger archive-form"
                                                             style="padding:4px 6px;"
                                                             title="Delete">
                                                             <i data-feather="trash-2" style="width:10px; height:10px; color:#fff;"></i>
