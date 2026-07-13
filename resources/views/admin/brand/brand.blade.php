@@ -61,23 +61,31 @@
                                                 style="object-fit: cover; border-radius: 4px;">
                                         @endif
                                     </td>
+                                    <td class="text-nowrap">
+                                        <div class="d-flex gap-1">
 
-                             <td class="text-nowrap">
-                                <div class="d-flex gap-2">
-                                    <a href="{{ route('brand.view', $brand->id) }}"
-                                    class="btn btn-sm btn-success">
-                                        Edit
-                                    </a>
+                                            <!-- Edit -->
+                                            <a href="{{ route('brand.view', $brand->id) }}"
+                                                class="btn btn-sm btn-success"
+                                                style="padding:4px 6px;"
+                                                title="Edit">
+                                                <i data-feather="edit" style="width:10px; height:10px; color:#fff;"></i>
+                                            </a>
 
-                                <form action="{{ route('brand.delete', $brand->id) }}" method="POST" class="m-0">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" class="btn btn-sm btn-danger archive-form">
-                                        Archive
-                                    </button>
-                                </form>
-                                </div>
-                            </td>
+                                            <!-- Archive -->
+                                            <form action="{{ route('brand.delete', $brand->id) }}" method="POST" class="m-0">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button"
+                                                    class="btn btn-sm btn-danger archive-form"
+                                                    style="padding:4px 6px;"
+                                                    title="Archive">
+                                                    <i data-feather="archive" style="width:10px; height:10px; color:#fff;"></i>
+                                                </button>
+                                            </form>
+
+                                        </div>
+                                    </td>
                                     </tr>
                                 @empty
                                     <tr>

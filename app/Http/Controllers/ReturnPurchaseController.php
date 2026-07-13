@@ -229,9 +229,7 @@ class ReturnPurchaseController extends Controller
         }
     }
 
-/**
- * Update the main return purchase record.
- */
+
         private function applyPurchaseDetails(ReturnPurchase $purchase, Request $request, string $newStatus): void
         {
             $purchase->purchase_date = $request->purchase_date;
@@ -243,9 +241,7 @@ class ReturnPurchaseController extends Controller
             $purchase->save();
         }
 
-/**
- * Sync line items (quantity, discount, cost, subtotal) from the request.
- */
+
         private function syncPurchaseItems(ReturnPurchase $purchase, Request $request): void
         {
             if (!$request->has('purchase_item_id')) {
@@ -269,10 +265,7 @@ class ReturnPurchaseController extends Controller
             $purchase->load('returnPurchaseItems');
         }
 
-        /**
-         * Deduct returned quantities from product stock.
-         * Throws if any product does not have enough stock.
-         */
+
         private function deductStockForReturn($items): void
         {
             foreach ($items as $item) {
