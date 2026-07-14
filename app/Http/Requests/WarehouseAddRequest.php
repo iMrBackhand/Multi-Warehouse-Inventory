@@ -25,7 +25,7 @@ class WarehouseAddRequest extends FormRequest
          return [
             'warehouse_name' => 'required|string|max:255|unique:warehouses,warehouse_name',
             'email'          => 'required|email|unique:warehouses,email',
-                
+            'phone'          => 'required|string|max:20',
             'city'           => 'required|string|max:255',
         ];
     }
