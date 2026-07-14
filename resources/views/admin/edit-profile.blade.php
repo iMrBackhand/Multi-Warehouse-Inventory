@@ -11,7 +11,7 @@
                             </div>
                         </div>
                             <div class="d-flex align-items-center">
-                                                    <img src="{{ $profileData->photo ? asset('storage/'.$profileData->photo) : url('upload/no_image.png') }}"
+                                                    <img src="{{ $profileData->photo ? asset('storage/'.$profileData->photo) : url('backend/assets/images/users/user-12.jpg') }}"
                                                     class="rounded-circle avatar-xxl img-thumbnail float-start"
                                                     alt="image profile">
 

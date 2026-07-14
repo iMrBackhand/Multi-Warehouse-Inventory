@@ -10,6 +10,7 @@ use App\Models\Supplier;
 use App\Models\Warehouse;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
     class PurchaseController extends Controller
     {
@@ -247,12 +248,37 @@ use Illuminate\Http\Request;
 
         public function deletePurchase($id)
         {
-            Purchase::findOrFail($id)->delete();
-             $notification = array(
-                'message' => 'Purchase Succesfully Archive',
-                'alert-type' =>'error'
-            );
-            return redirect()->route('purchase')->with($notification);
+            DB::transaction(function () use ($id) {
+
+                $purchase = Purchase::with('purchaseItems')->findOrFail($id);
+
+                // Kapag Received lang saka babawasan ang stock
+                if ($purchase->status === 'Received') {
+
+                    foreach ($purchase->purchaseItems as $item) {
+
+                        $product = Product::find($item->product_id);
+
+                        if ($product) {
+                            $product->product_quantity -= $item->quantity;
+
+                            // Para hindi maging negative
+                            if ($product->product_quantity < 0) {
+                                $product->product_quantity = 0;
+                            }
+
+                            $product->save();
+                        }
+                    }
+                }
+
+                $purchase->delete();
+            });
+
+            return redirect()->route('purchase')->with([
+                'message' => 'Purchase Successfully Archived',
+                'alert-type' => 'success'
+            ]);
         }
 
         public function archivedPurchase(Request $request)
@@ -272,13 +298,33 @@ use Illuminate\Http\Request;
 
         public function restorePurchase($id)
         {
-            Purchase::withTrashed()->findOrFail($id)->restore();
-            $notification = array(
-                    'message' => 'Purchase Succesfully Restore',
-                    'alert-type' =>'success'
-                );
-            return redirect()->route('purchase')->with($notification);
-        }
+            DB::transaction(function () use ($id) {
 
+                $purchase = Purchase::withTrashed()
+                    ->with('purchaseItems')
+                    ->findOrFail($id);
+
+                $purchase->restore();
+
+                if ($purchase->status === 'Received') {
+
+                    foreach ($purchase->purchaseItems as $item) {
+
+                        $product = Product::find($item->product_id);
+
+                        if ($product) {
+                            $product->product_quantity += $item->quantity;
+                            $product->save();
+                        }
+                    }
+                }
+
+            });
+
+            return redirect()->route('purchase')->with([
+                'message' => 'Purchase Successfully Restored',
+                'alert-type' => 'success'
+            ]);
+        }
 
     }

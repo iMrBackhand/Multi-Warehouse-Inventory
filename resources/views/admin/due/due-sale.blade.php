@@ -46,17 +46,17 @@
                                                 <td>{{ $sale->warehouse->warehouse_name ?? 'N/A' }}</td>
                                                 <td>{{ $sale->customer->customer_name ?? 'N/A' }}</td>
                                                 <td>
-                                                    <span class="badge text-white" style="background-color: #6f42c1;">
+                                                    <span class="badge text-white" style="background-color: #af0000;">
                                                         ₱{{ number_format($sale->due_amount, 2) }}
                                                     </span>
                                                 </td>
                                                <td class="text-nowrap">
-                                               <a href="{{ route('edit.sale', $sale->id) }}"
-                                                    class="btn btn-sm text-white"
-                                                    style="background-color:#0dcaf0;"
-                                                    title="Pay Now">
-                                                        Pay Now
-                                                </a>
+                                             <a href="{{ route('gcash.pay',$sale->id) }}"
+                                                class="btn btn-sm text-white"
+                                                style="background-color:#0dcaf0;"
+                                                title="Pay Now">
+                                                    Pay Now
+                                            </a>
                                                 </td>
                                             </tr>
                                         @empty

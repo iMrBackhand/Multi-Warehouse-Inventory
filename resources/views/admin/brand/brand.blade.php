@@ -50,7 +50,7 @@
 
                                 @forelse ($brands as $brand)
                                     <tr>
-                                        <td>{{ $brand->id }}</td>
+                                        <td>{{ $loop->iteration }}</td>
                                         <td>{{ $brand->brand_name }}</td>
 
                                     <td>
@@ -111,7 +111,7 @@
 <div class="modal fade" id="addBrandModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-
+            <x-error-component />
             <div class="modal-header">
                 <h5 class="modal-title">Add Brand</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>

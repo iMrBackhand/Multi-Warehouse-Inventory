@@ -33,7 +33,12 @@ class CustomerController extends Controller
             $customer->address=$request->address;
             $customer->save();
 
-            return redirect()->route('customers');
+            $notification = array(
+                'message' => 'Customer Succesfully updated',
+                'alert-type' =>'success'
+            );
+
+            return redirect()->route('customers')->with($notification);
         }
 
         public function editCustomer($id)

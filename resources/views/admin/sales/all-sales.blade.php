@@ -35,10 +35,10 @@
                                             <th>SI</th>
                                             <th>Warehouse</th>
                                             <th>Customers</th>
-                                            <th>Status</th>
                                             <th>Grand Total</th>
                                             <th>Amount Paid</th>
                                             <th>Remaining Balance</th>
+                                            <th>Status</th>
                                             <th>Created</th>
                                             <th>Action</th>
                                         </tr>
@@ -49,11 +49,7 @@
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $sale->warehouse->warehouse_name ?? 'N/A' }}</td>
                                                 <td>{{ $sale->customer->customer_name ?? 'N/A' }}</td>
-                                                <td>
-                                                    <span class="badge bg-{{ $sale->status == 'Completed' ? 'success' : ($sale->status == 'Pending' ? 'warning' : 'secondary') }}">
-                                                        {{ $sale->status }}
-                                                    </span>
-                                                </td>
+
 
                                                 <td>₱{{ number_format($sale->grand_total, 2) }}</td>
 
@@ -64,8 +60,13 @@
                                                 </td>
 
                                                 <td>
-                                                    <span class="badge text-white" style="background-color: #6f42c1;">
+                                                    <span class="badge text-white" style="background-color: #a8121f;">
                                                         ₱{{ number_format($sale->due_amount, 2) }}
+                                                    </span>
+                                                </td>
+                                                  <td>
+                                                    <span class="badge bg-{{ $sale->status == 'Completed' ? 'success' : ($sale->status == 'Pending' ? 'warning' : 'secondary') }}">
+                                                        {{ $sale->status }}
                                                     </span>
                                                 </td>
 
@@ -100,7 +101,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="7" class="text-center">No records found.</td>
+                                                <td colspan="9" class="text-center">No records found.</td>
                                             </tr>
                                         @endforelse
                                     </tbody>

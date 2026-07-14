@@ -1,12 +1,12 @@
 <?php
 
+use App\Http\Controllers\GcashPaymentController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FeaturesController;
-use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductCategoriesController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
@@ -42,6 +42,9 @@ require __DIR__.'/auth.php';
     Route::get('admin/verify', [AdminController::class, 'ShowVerification'])->name('custom.verification.form');
     Route::post('admin/verify', [AdminController::class, 'VerificationVerify'])->name('custom.verification.verify');
     Route::post('admin/resend-otp', [AdminController::class, 'resendOtp'])->name('admin.resend.otp');
+
+    Route::post('/webhooks/paymongo', [GcashPaymentController::class, 'webhook'])->name('gcash.webhook');
+
 
 
 Route::middleware(['auth'])->group(function () {
@@ -180,6 +183,12 @@ Route::middleware(['auth'])->group(function () {
 
     // Due
     Route::get('view/due/sale', [SaleController::class, 'DueSale'])->name('due.sale');
+
+    // payment
+    Route::get('/sales/{sale}/pay-gcash', [GcashPaymentController::class, 'create'])->name('gcash.pay');
+    Route::get('/payment/success', [GcashPaymentController::class, 'success'])->name('gcash.success');
+    Route::get('/payment/failed', [GcashPaymentController::class, 'failed'])->name('gcash.failed');
+
 
 
 });

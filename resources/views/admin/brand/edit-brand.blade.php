@@ -32,7 +32,7 @@
             <form action="{{ route('update.brand' , $brand->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
-
+                        <x-error-component/>
                         <!-- Brand Name -->
                         <div class="mb-3">
                             <label class="form-label">Brand Name</label>

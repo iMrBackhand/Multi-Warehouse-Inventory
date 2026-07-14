@@ -13,23 +13,33 @@ class BrandSeeder extends Seeder
      */
     public function run(): void
     {
-        $brands = [
-            'Nike',
-            'Adidas',
-            'Puma',
-            'New Balance',
-            'Converse',
-            'Vans',
-            'Reebok',
-            'ASICS',
-            'Under Armour',
-            'Fila',
+            $brands = [
+            'Racing Boy (RCB)',
+            'UMA Racing',
+            'YSS',
+            'MTRT',
+            'Mutarru',
+            'NHK',
+            'NGK',
+            'DID',
+            'RK',
+            'SKF',
+            'Koyo',
+            'Nissin',
+            'Brembo',
+            'Mikuni',
+            'Keihin',
+            'Yuasa',
+            'GS Battery',
+            'Bosch',
+            'Aspira',
+            'Federal',
         ];
 
         foreach ($brands as $brand) {
             Brand::create([
                 'brand_name' => $brand,
-                'image' => 'brands/default.jpg',
+                'image' => 'backend/assets/images/users/no.avif',
             ]);
         }
     }
