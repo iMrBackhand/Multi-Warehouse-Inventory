@@ -26,7 +26,7 @@
             <div class="d-md-flex align-items-center justify-content-between">
                 <h3 class="mb-0">Add Return Purchase</h3>
                 <div class="text-end my-2 mt-md-0">
-                    <a class="btn btn-sm btn-outline-primary" href="{{ route('return.purchase') }}">Back</a>
+                    <a class="btn btn-sm btn-outline-primary" href="{{ route('allreturn.sales') }}">Back</a>
                 </div>
             </div>
 

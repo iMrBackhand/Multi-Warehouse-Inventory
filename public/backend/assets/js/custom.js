@@ -3,9 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let warehouseDropdown = document.getElementById("warehouse_id");
     let product_list = document.getElementById("product_list");
     let warehouseError = document.getElementById("warehouse_error");
-    let orderItemsTableBody = document.querySelector(
-        "table.table-bordered tbody",
-    );
+    let orderItemsTableBody = document.querySelector("#purchaseTable tbody");
 
     let inputDiscount = document.getElementById("inputDiscount");
     let inputShipping = document.getElementById("inputShipping");
@@ -114,13 +112,18 @@ document.addEventListener("DOMContentLoaded", function () {
         let existingRow = orderItemsTableBody.querySelector(
             `tr[data-id="${id}"]`,
         );
+
         if (existingRow) {
             let qtyInput = existingRow.querySelector(".qty-input");
+
             qtyInput.value = parseInt(qtyInput.value) + 1;
+
             updateRowSubtotal(existingRow);
             calculateTotals();
+
             product_list.innerHTML = "";
             productSearchInput.value = "";
+
             return;
         }
 
@@ -131,12 +134,22 @@ document.addEventListener("DOMContentLoaded", function () {
         let discount = parseFloat(el.dataset.discount) || 0;
 
         let row = document.createElement("tr");
+
         row.setAttribute("data-id", id);
 
         row.innerHTML = `
         <td>
             ${code} - ${name}
-            <input type="hidden" name="product_id[]" value="${id}">
+
+            <input
+                type="hidden"
+                name="product_id[]"
+                value="${id}">
+
+            <input
+                type="hidden"
+                name="purchase_item_id[]"
+                value="">
         </td>
 
         <td>
@@ -156,7 +169,9 @@ document.addEventListener("DOMContentLoaded", function () {
         <td>
             <div class="input-group input-group-sm" style="width:120px">
 
-                <button type="button" class="btn btn-outline-secondary qty-minus">
+                <button
+                    type="button"
+                    class="btn btn-outline-secondary qty-minus">
                     -
                 </button>
 
@@ -168,7 +183,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     min="1"
                     readonly>
 
-                <button type="button" class="btn btn-outline-secondary qty-plus">
+                <button
+                    type="button"
+                    class="btn btn-outline-secondary qty-plus">
                     +
                 </button>
 
@@ -190,17 +207,21 @@ document.addEventListener("DOMContentLoaded", function () {
         </td>
 
         <td>
-            <button type="button" class="btn btn-sm btn-danger remove-item">
+            <button
+                type="button"
+                class="btn btn-sm btn-danger remove-item">
                 <i class="fas fa-trash"></i>
             </button>
         </td>
     `;
+
         if (!warehouseLocked) {
             selectedWarehouse = warehouseDropdown.value;
             warehouseLocked = true;
         }
 
         orderItemsTableBody.appendChild(row);
+
         updateRowSubtotal(row);
         calculateTotals();
 

@@ -10,7 +10,6 @@ use App\Models\SaleItem;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
 
 class SaleController extends Controller
 {
@@ -39,7 +38,6 @@ class SaleController extends Controller
 
             return response()->json($products);
         }
-        // End of method
 
         public function addSale()
         {
@@ -53,7 +51,6 @@ class SaleController extends Controller
 
         public function storeSale(Request $request)
         {
-            // Basic sanity check: make sure related arrays match in length
             $request->validate([
                 'product_id'    => 'required|array|min:1',
                 'quantity'      => 'required|array|size:' . count($request->product_id ?? []),
@@ -68,14 +65,11 @@ class SaleController extends Controller
             try {
                 DB::transaction(function () use ($request) {
 
-                    // Lock the products we're about to touch, to avoid overselling
-                    // under concurrent requests.
                     $products = Product::whereIn('id', $request->product_id)
                         ->lockForUpdate()
                         ->get()
                         ->keyBy('id');
 
-                    // If this is an actual "Sale" (stock-deducting), validate stock first
                     if ($request->status === 'Sale') {
                         foreach ($request->product_id as $key => $productId) {
                             $qty = floatval($request->quantity[$key] ?? 0);
@@ -182,7 +176,6 @@ class SaleController extends Controller
             DB::transaction(function () use ($id) {
                 $sale = Sale::with('saleItems')->findOrFail($id);
 
-                // If this sale had already deducted stock, restore it before archiving.
                 if ($sale->status === 'Sale') {
                     foreach ($sale->saleItems as $item) {
                         $product = Product::lockForUpdate()->find($item->product_id);
@@ -225,8 +218,6 @@ class SaleController extends Controller
                 $sale = Sale::withTrashed()->with('saleItems')->findOrFail($id);
                 $sale->restore();
 
-                // If this sale was a confirmed "Sale" (stock was previously restored on delete),
-                // deduct the stock again to keep inventory in sync.
                 if ($sale->status === 'Sale') {
                     foreach ($sale->saleItems as $item) {
                         $product = Product::lockForUpdate()->find($item->product_id);

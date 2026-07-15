@@ -43,6 +43,7 @@ require __DIR__.'/auth.php';
     Route::post('admin/verify', [AdminController::class, 'VerificationVerify'])->name('custom.verification.verify');
     Route::post('admin/resend-otp', [AdminController::class, 'resendOtp'])->name('admin.resend.otp');
 
+    // paymongo
     Route::post('/webhooks/paymongo', [GcashPaymentController::class, 'webhook'])->name('gcash.webhook');
 
 
@@ -188,7 +189,5 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/sales/{sale}/pay-gcash', [GcashPaymentController::class, 'create'])->name('gcash.pay');
     Route::get('/payment/success', [GcashPaymentController::class, 'success'])->name('gcash.success');
     Route::get('/payment/failed', [GcashPaymentController::class, 'failed'])->name('gcash.failed');
-
-
 
 });

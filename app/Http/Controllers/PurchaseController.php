@@ -35,7 +35,7 @@ use Illuminate\Support\Facades\DB;
             $warehouse_id = $request->input('warehouse_id');
 
             $products = Product::where(function ($q) use ($query) {
-                $q->where('product_name', 'like', "%{$query}%")   // <-- dapat product_name, hindi name
+                $q->where('product_name', 'like', "%{$query}%")
                 ->orWhere('code', 'like', "%{$query}%");
             })
             ->when($warehouse_id, function ($q) use ($warehouse_id) {
@@ -68,7 +68,6 @@ use Illuminate\Support\Facades\DB;
                 }
             }
 
-            // Order Discount
             $orderDiscount = floatval($request->discount ?? 0);
 
             $purchase->discount = $itemDiscountsTotal + $orderDiscount;
@@ -76,7 +75,6 @@ use Illuminate\Support\Facades\DB;
             $purchase->status   = $request->status;
             $purchase->note     = $request->note;
 
-            // Compute Grand Total
             $subtotal = 0;
 
             foreach ($request->product_id as $key => $productId) {
@@ -93,12 +91,8 @@ use Illuminate\Support\Facades\DB;
                 $subtotal - $orderDiscount + $purchase->shipping
             );
 
-            // IMPORTANT: Save first to generate purchase ID
             $purchase->save();
 
-            /**
-             * Save Purchase Items (Manual Assignment)
-             */
             foreach ($request->product_id as $key => $productId) {
 
                 $product = Product::find($productId);
@@ -121,9 +115,6 @@ use Illuminate\Support\Facades\DB;
                 $purchaseItem->save();
             }
 
-            /**
-             * Update Product Stock only if Received
-             */
             if ($request->status === 'Received') {
 
                 foreach ($request->product_id as $key => $productId) {
@@ -159,81 +150,128 @@ use Illuminate\Support\Facades\DB;
             return view('admin.purchase.edit-purchase', compact('editData', 'warehouses', 'suppliers'));
         }
 
-        public function update(Request $request, $id)
-        {
-            $purchase = Purchase::with('purchaseItems')->findOrFail($id);
+public function update(Request $request, $id)
+{
+    // Check muna kung completed na ang purchase
+    $purchase = Purchase::findOrFail($id);
 
-            // Lock kapag Received na (optional rule mo)
-            if ($purchase->status === 'Received') {
-                return redirect()->route('purchase')->with([
-                    'message' => 'This purchase has already been received and can no longer be edited.',
-                    'alert-type' => 'error'
-                ]);
+    if ($purchase->status === 'Received') {
+        return redirect()->back()->with([
+            'message' => 'Purchase has already been completed.',
+            'alert-type' => 'error',
+        ]);
+    }
+
+    DB::transaction(function () use ($request, $purchase) {
+
+        $purchase->load('purchaseItems');
+
+        $oldStatus = $purchase->status;
+
+        $purchase->purchase_date = $request->purchase_date;
+        $purchase->shipping      = $request->shipping;
+        $purchase->discount      = $request->discount;
+        $purchase->status        = $request->status;
+        $purchase->note          = $request->note;
+        $purchase->grand_total   = $request->grand_total;
+        $purchase->save();
+
+        // Existing Purchase Items
+        $existingItems = $purchase->purchaseItems->keyBy('id');
+
+        $submittedIds = [];
+
+        foreach ($request->product_id as $key => $productId) {
+
+            $purchaseItemId = $request->purchase_item_id[$key] ?? null;
+
+            if ($purchaseItemId && isset($existingItems[$purchaseItemId])) {
+
+                // UPDATE EXISTING
+                $purchaseItem = $existingItems[$purchaseItemId];
+                $submittedIds[] = $purchaseItemId;
+
+            } else {
+
+                // ADD NEW ITEM
+                $purchaseItem = new PurchaseItem();
+                $purchaseItem->purchase_id = $purchase->id;
+                $purchaseItem->product_id  = $productId;
             }
 
-            // Save old status
-            $oldStatus = $purchase->status;
+            $purchaseItem->net_unit_cost = $request->unit_cost[$key];
+            $purchaseItem->quantity      = $request->quantity[$key];
+            $purchaseItem->discount      = $request->item_discount[$key];
 
-            $purchase->purchase_date = $request->purchase_date;
-            $purchase->shipping      = $request->shipping;
-            $purchase->discount      = $request->discount;
-            $purchase->status        = $request->status;
-            $purchase->note          = $request->note;
-            $purchase->grand_total   = $request->grand_total;
+            $purchaseItem->subtotal =
+                ($purchaseItem->net_unit_cost * $purchaseItem->quantity)
+                - $purchaseItem->discount;
 
-            $purchase->save();
+            $product = Product::find($productId);
 
-            if ($request->has('purchase_item_id')) {
+            $purchaseItem->stock = $product
+                ? $product->product_quantity
+                : 0;
 
-                foreach ($request->purchase_item_id as $key => $itemId) {
+            $purchaseItem->save();
+        }
 
-                    $purchaseItem = PurchaseItem::find($itemId);
+        // Delete removed items
+        foreach ($existingItems as $item) {
 
-                    if (!$purchaseItem) continue;
-
-                    $purchaseItem->quantity      = $request->quantity[$key];
-                    $purchaseItem->discount      = $request->item_discount[$key];
-                    $purchaseItem->net_unit_cost = $request->unit_cost[$key];
-
-                    $purchaseItem->subtotal =
-                        ($purchaseItem->net_unit_cost * $purchaseItem->quantity)
-                        - $purchaseItem->discount;
-
-                    $purchaseItem->save();
-                }
+            if (!in_array($item->id, $submittedIds)) {
+                $item->delete();
             }
+        }
 
-            if ($oldStatus === 'Received') {
+        /*
+        |--------------------------------------------------------------------------
+        | STOCK ADJUSTMENT
+        |--------------------------------------------------------------------------
+        */
 
-                foreach ($purchase->purchaseItems as $item) {
+        if ($oldStatus === 'Received') {
 
-                    $product = Product::find($item->product_id);
+            foreach ($purchase->purchaseItems as $item) {
 
-                    if ($product) {
-                        $product->product_quantity -= $item->quantity;
-                        $product->save();
+                $product = Product::find($item->product_id);
+
+                if ($product) {
+
+                    $product->product_quantity -= $item->quantity;
+
+                    if ($product->product_quantity < 0) {
+                        $product->product_quantity = 0;
                     }
+
+                    $product->save();
                 }
             }
+        }
 
-            if ($purchase->status === 'Received') {
+        $purchase->load('purchaseItems');
 
-                foreach ($purchase->purchaseItems as $item) {
+        if ($purchase->status === 'Received') {
 
-                    $product = Product::find($item->product_id);
+            foreach ($purchase->purchaseItems as $item) {
 
-                    if (!$product) continue;
+                $product = Product::find($item->product_id);
+
+                if ($product) {
 
                     $product->product_quantity += $item->quantity;
                     $product->save();
                 }
             }
-
-            return redirect()->route('purchase')->with([
-                'message' => 'Purchase Successfully Updated',
-                'alert-type' => 'success'
-            ]);
         }
+
+    });
+
+    return redirect()->route('purchase')->with([
+        'message' => 'Purchase Successfully Updated',
+        'alert-type' => 'success'
+    ]);
+}
     // End of method
         public function ViewPurchase($id)
         {
