@@ -124,12 +124,47 @@
                                 </a>
                                 <div class="collapse" id="sidebarProduct">
                                     <ul class="nav-second-level">
+
                                         <li>
-                                            <a href="{{ route('categories') }}" class="tp-link">All Category</a>
+                                            <a href="{{ route('categories') }}" class="tp-link">
+                                                All Category
+                                            </a>
                                         </li>
+
                                         <li>
-                                            <a href="{{ route('product') }}" class="tp-link">All Product</a>
+                                            <a href="{{ route('product') }}" class="tp-link">
+                                                All Product
+                                            </a>
                                         </li>
+
+                                        {{-- All Warehouses --}}
+                                        <li>
+                                            <a data-bs-toggle="collapse"
+                                            href="#warehouseMenu"
+                                            role="button"
+                                            aria-expanded="false"
+                                            aria-controls="warehouseMenu"
+                                            class="tp-link">
+
+                                                All Warehouses
+                                            </a>
+
+                                            <div class="collapse" id="warehouseMenu">
+                                                <ul class="nav-third-level">
+
+                                                    @foreach ($warehouses as $warehouse)
+                                                        <li>
+                                                            <a href="{{ route('warehouse.products', $warehouse->id) }}"
+                                                            class="tp-link">
+                                                                {{ $warehouse->warehouse_name }}
+                                                            </a>
+                                                        </li>
+                                                    @endforeach
+
+                                                </ul>
+                                            </div>
+                                        </li>
+
                                     </ul>
                                 </div>
 
@@ -192,7 +227,7 @@
                                 <div class="collapse" id="sidebarTransfer">
                                     <ul class="nav-second-level">
                                         <li>
-                                            <a href="#" class="tp-link">All Customer</a>
+                                            <a href="{{ route('all.transfer') }}" class="tp-link">All Transfer</a>
                                         </li>
                                     </ul>
                                 </div>

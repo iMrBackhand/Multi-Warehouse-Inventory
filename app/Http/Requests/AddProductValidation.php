@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class AddProductValidation extends FormRequest
 {
@@ -22,11 +23,13 @@ class AddProductValidation extends FormRequest
      */
     public function rules(): array
     {
+
          $productId = $this->route('id');
 
         return [
-            'product_name' => 'required|string|max:255|unique:products,product_name,' . $productId,
-            'code'         => 'required|string|max:100|unique:products,code,' . $productId,
+         'product_name' => 'required',
+
+            'code' => 'required',
 
             'category_id'  => 'required|exists:product_categories,id',
             'brand_id'     => 'required|exists:brands,id',

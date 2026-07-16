@@ -189,16 +189,42 @@ class ProductController extends Controller
     }
     // End of Method
 
-    public function view($id)
-{
-    $product = Product::with([
-        'warehouse',
-        'supplier',
-        'category',
-        'brand',
-        'images'
-    ])->findOrFail($id);
+        public function view($id)
+        {
+            $product = Product::with([
+                'warehouse',
+                'supplier',
+                'category',
+                'brand',
+                'images'
+            ])->findOrFail($id);
 
-    return view('admin.product.view-product', compact('product'));
-}
+            return view('admin.product.view-product', compact('product'));
+        }
+
+        public function warehouseProducts(Warehouse $warehouse)
+        {
+            $products = Product::with([
+                'images',
+                'warehouse',
+                'supplier',
+                'brand',
+                'category'
+            ])
+            ->where('warehouse_id', $warehouse->id)
+            ->get();
+
+            $categories = ProductCategory::all();
+            $brands = Brand::all();
+            $suppliers = Supplier::all();
+            $warehouses = Warehouse::all();
+
+            return view('admin.product.all-product', compact(
+                'products',
+                'categories',
+                'brands',
+                'suppliers',
+                'warehouses'
+            ));
+        }
 }

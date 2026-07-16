@@ -508,19 +508,13 @@
 
                                             <select class="form-select" name="status">
 
-                                                <option value="1"
-                                                    {{ $product->status == 1 ? 'selected' : '' }}>
+                                            <option value="1" {{ $product->status == 'Active' ? 'selected' : '' }}>
+                                                Active
+                                            </option>
 
-                                                    Active
-
-                                                </option>
-
-                                                <option value="0"
-                                                    {{ $product->status == 0 ? 'selected' : '' }}>
-
-                                                    Inactive
-
-                                                </option>
+                                            <option value="0" {{ $product->status == 'Inactive' ? 'selected' : '' }}>
+                                                Inactive
+                                            </option>
 
                                             </select>
 

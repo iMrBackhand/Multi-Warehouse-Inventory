@@ -160,7 +160,6 @@ class SaleReturnController extends Controller
                 $oldStatus = $saleReturn->status;
                 $newStatus = $request->status;
 
-                // Lock completed records
                 if ($oldStatus === 'return') {
                     return redirect()->route('allreturn.sales')->with([
                         'message' => 'This return sale is already completed and locked.',
@@ -185,7 +184,6 @@ class SaleReturnController extends Controller
 
                 try {
 
-                    // Update Header
                     $saleReturn->sale_date    = $request->sale_date;
                     $saleReturn->warehouse_id = $request->warehouse_id;
                     $saleReturn->customer_id  = $request->customer_id;
@@ -325,5 +323,5 @@ class SaleReturnController extends Controller
             }
 
 
-            
+
     }

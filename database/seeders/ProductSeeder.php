@@ -57,9 +57,9 @@ class ProductSeeder extends Seeder
                 'supplier_id' => $supplier?->id,
                 'warehouse_id' => $warehouse?->id,
 
-                'price' => rand(150,5000),
+                'price' => rand(150,2000),
                 'stock_alert' => 10,
-                'product_quantity' => rand(20,100),
+                'product_quantity' => rand(20,40),
                 'discount' => 0,
                 'status' => 'Pending',
                 'active' => 1,

@@ -17,6 +17,7 @@ use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SaleReturnController;
 use App\Http\Controllers\SliderController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\TransferController;
 use App\Http\Controllers\WarehouseController;
 use Illuminate\Support\Facades\Route;
 
@@ -190,4 +191,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/payment/success', [GcashPaymentController::class, 'success'])->name('gcash.success');
     Route::get('/payment/failed', [GcashPaymentController::class, 'failed'])->name('gcash.failed');
 
+    // Transfer
+    Route::get('all/transfer',[TransferController::class, 'index'])->name('all.transfer');
+    Route::get('add/transfer/form',[TransferController::class, 'addTransferView'])->name('add.transfer');
+    Route::post('/transfer/store', [TransferController::class, 'storeTransfer'])->name('transfer.storeTransfer');
+    Route::patch('/transfer/{transfer}/received', [TransferController::class, 'markReceived'])->name('transfer.markReceived');
+
+    Route::get('/products/warehouse/{warehouse}', [ProductController::class, 'warehouseProducts'])
+    ->name('warehouse.products');
 });

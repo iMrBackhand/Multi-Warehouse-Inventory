@@ -15,10 +15,6 @@ document.addEventListener("DOMContentLoaded", function () {
     let form = document.querySelector("form");
     let selectedWarehouse = "";
     let warehouseLocked = false;
-    let paidAmountInput = document.querySelector('input[name="paid_amount"]');
-    let dueAmountDisplay = document.getElementById("dueAmount");
-    let dueAmountHidden = document.querySelector('input[name="due_amount"]');
-    let fullPaidInput = document.getElementById("fullPaidInput");
 
     productSearchInput.addEventListener("keyup", function () {
         let query = this.value.trim();
@@ -115,11 +111,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (existingRow) {
             let qtyInput = existingRow.querySelector(".qty-input");
+            let stock =
+                parseFloat(
+                    existingRow.querySelector(".stock-cell").textContent,
+                ) || 0;
+            let newQty = parseInt(qtyInput.value) + 1;
 
-            qtyInput.value = parseInt(qtyInput.value) + 1;
-
-            updateRowSubtotal(existingRow);
-            calculateTotals();
+            if (newQty > stock) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Insufficient Stock",
+                    text: `Only ${stock} unit(s) available for this product.`,
+                });
+            } else {
+                qtyInput.value = newQty;
+                updateRowSubtotal(existingRow);
+                calculateTotals();
+            }
 
             product_list.innerHTML = "";
             productSearchInput.value = "";
@@ -133,6 +141,18 @@ document.addEventListener("DOMContentLoaded", function () {
         let stock = parseFloat(el.dataset.stock) || 0;
         let discount = parseFloat(el.dataset.discount) || 0;
 
+        if (stock < 1) {
+            Swal.fire({
+                icon: "warning",
+                title: "Out of Stock",
+                text: "This product has no available stock in the selected warehouse.",
+            });
+
+            product_list.innerHTML = "";
+            productSearchInput.value = "";
+            return;
+        }
+
         let row = document.createElement("tr");
 
         row.setAttribute("data-id", id);
@@ -145,11 +165,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 type="hidden"
                 name="product_id[]"
                 value="${id}">
-
-            <input
-                type="hidden"
-                name="purchase_item_id[]"
-                value="">
         </td>
 
         <td>
@@ -181,6 +196,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     name="quantity[]"
                     value="1"
                     min="1"
+                    max="${stock}"
                     readonly>
 
                 <button
@@ -238,8 +254,20 @@ document.addEventListener("DOMContentLoaded", function () {
             let row = e.target.closest("tr");
 
             if (e.target.classList.contains("qty-input")) {
-                if (parseFloat(e.target.value) < 1 || isNaN(e.target.value)) {
+                let stock =
+                    parseFloat(row.querySelector(".stock-cell").textContent) ||
+                    0;
+                let val = parseInt(e.target.value);
+
+                if (isNaN(val) || val < 1) {
                     e.target.value = 1;
+                } else if (val > stock) {
+                    e.target.value = stock;
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Insufficient Stock",
+                        text: `Only ${stock} unit(s) available.`,
+                    });
                 }
             }
 
@@ -272,10 +300,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
             let qty = parseInt(qtyInput.value) || 1;
 
-            qtyInput.value = qty + 1;
-
-            updateRowSubtotal(row);
-            calculateTotals();
+            if (qty + 1 > stock) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Insufficient Stock",
+                    text: `Only ${stock} unit(s) available.`,
+                });
+            } else {
+                qtyInput.value = qty + 1;
+                updateRowSubtotal(row);
+                calculateTotals();
+            }
 
             return;
         }
@@ -335,24 +370,10 @@ document.addEventListener("DOMContentLoaded", function () {
         shippingDisplay.textContent = "Php " + shipping.toFixed(2);
         grandTotalDisplay.textContent = "Php " + grandTotal.toFixed(2);
         grandTotalHidden.value = grandTotal.toFixed(2);
-
-        let paid = parseFloat(paidAmountInput.value) || 0;
-
-        let due = grandTotal - paid;
-
-        if (due < 0) {
-            due = 0;
-        }
-
-        dueAmountDisplay.textContent = "Php " + due.toFixed(2);
-        dueAmountHidden.value = due.toFixed(2);
-
-        fullPaidInput.value = paid >= grandTotal ? "Yes" : "No";
     }
 
     inputDiscount.addEventListener("input", calculateTotals);
     inputShipping.addEventListener("input", calculateTotals);
-    paidAmountInput.addEventListener("input", calculateTotals);
 
     orderItemsTableBody.querySelectorAll("tr").forEach((row) => {
         updateRowSubtotal(row);
@@ -370,6 +391,19 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!warehouseDropdown.value) {
             e.preventDefault();
             alert("Please select a warehouse.");
+            return false;
+        }
+
+        let toWarehouse = document.getElementById("to_warehouse_id");
+        if (!toWarehouse.value) {
+            e.preventDefault();
+            alert("Please select a destination warehouse.");
+            return false;
+        }
+
+        if (toWarehouse.value === warehouseDropdown.value) {
+            e.preventDefault();
+            alert("From and To warehouse cannot be the same.");
             return false;
         }
 

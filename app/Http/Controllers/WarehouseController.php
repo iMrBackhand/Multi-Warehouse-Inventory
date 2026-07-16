@@ -22,7 +22,6 @@ class WarehouseController extends Controller
         }
 
 
-    // For inserting data
     public function store(WarehouseAddRequest $request)
     {
         $warehouse = new Warehouse();
@@ -66,7 +65,6 @@ class WarehouseController extends Controller
         return redirect('warehouse')->with($notification);
     }
 
-    // controller para sa view ng mga nadalete or na archived na data
     public function archived(Request $request)
         {
             $warehouses = Warehouse::onlyTrashed()->when($request->search,function($query)use($request){
