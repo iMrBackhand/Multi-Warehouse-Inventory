@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Mr.Admin',
             'email' => 'admin@gmail.com',
             'password' => bcrypt('admin123'),
+            'role' => 'Super Admin',
         ]);
 
         // All seeders in one call (clean way)

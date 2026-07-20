@@ -1,6 +1,6 @@
 <?php
 
-    namespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
 use App\Http\Requests\PurchaseAddRequest;
 use App\Models\Product;

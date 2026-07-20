@@ -1,18 +1,20 @@
 <?php
 
-use App\Http\Controllers\GcashPaymentController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FeaturesController;
+use App\Http\Controllers\GcashPaymentController;
 use App\Http\Controllers\ProductCategoriesController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReturnPurchaseController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SaleReturnController;
 use App\Http\Controllers\SliderController;
@@ -196,7 +198,41 @@ Route::middleware(['auth'])->group(function () {
     Route::get('add/transfer/form',[TransferController::class, 'addTransferView'])->name('add.transfer');
     Route::post('/transfer/store', [TransferController::class, 'storeTransfer'])->name('transfer.storeTransfer');
     Route::patch('/transfer/{transfer}/received', [TransferController::class, 'markReceived'])->name('transfer.markReceived');
+    Route::get('view/transfer/{id}',[TransferController::class,'viewTransfer'])->name('view.transfer');
 
     Route::get('/products/warehouse/{warehouse}', [ProductController::class, 'warehouseProducts'])
     ->name('warehouse.products');
+
+    // reports
+    Route::get('all/reports',[ReportController::class,'index'])->name('all.reports');
+    Route::get('sales/export',[ReportController::class, 'exportSales'])->name('sales.export');
+    Route::get('purchase/export', [ReportController::class, 'exportPurchase'])->name('purchase.export');
+    Route::get('purchase/export', [ReportController::class, 'exportPurchase'])->name('purchase.export');
+    Route::get('sale-return/export', [ReportController::class, 'exportSaleReturn'])->name('salereturn.export');
+    Route::get('purchase-return/export', [ReportController::class, 'exportPurchaseReturn'])->name('purchasereturn.export');
+
+    // // Permission
+    // Route::get('all/permission',[RoleController::class,'allPermission'])->name('all.permission');
+    // Route::post('all/storePermission',[RoleController::class,'storePermission'])->name('store.permission');
+    // Route::put('update/permission/{id}',[RoleController::class,'updatePermission'])->name('update.permission');
+    // Route::delete('delete/permission/{id}', [RoleController::class, 'deletePermission'])->name('delete.permission');
+
+    // Role
+    // Route::get('all/roles',[RoleController::class, 'allRoles'])->name('all.roles');
+    // Route::post('add/roles',[RoleController::class, 'storeRoles'])->name('add.roles');
+    // Route::put('update/role/{id}',[RoleController::class, 'updateRole'])->name('store.roles');
+    // Route::delete('delete/role/{id}',[RoleController::class, 'deleteRole'])->name('delete.role');
+    // Route::get('all/in/role/permission',[RoleController::class, 'AddRolePermission'])->name('addinrole.permission');
+    // Route::post('/store-permission', [RoleController::class, 'storeRolePermission'])->name('storerole.permission');
+    // Route::get('all/roles/in/permissions',[RoleController::class, 'allRolesPermission'])->name('all.roles.permission');
+    // Route::get('/edit-role-permission/{id}', [RoleController::class, 'editRolePermission'])->name('editrole.permission');
+    // Route::post('/update-role-permission/{id}', [RoleController::class, 'updateRolePermission'])->name('updaterole.permission');
+    // Route::delete('/delete-role-permission/{id}', [RoleController::class, 'deleteRolePermission'])->name('deleterole.permission');
+
+    // Admin
+    // Route::get('all/admin',[RoleController::class, 'allAdmin'])->name('all.admin');
+    // Route::post('/store-admin', [RoleController::class, 'storeAdmin'])->name('store.admin');
+    // Route::get('/edit-admin/{id}', [RoleController::class, 'editAdmin'])->name('edit.admin');
+    // Route::delete('/delete-admin/{id}', [RoleController::class, 'deleteAdmin'])->name('delete.admin');
+    // Route::put('/update-admin/{id}', [RoleController::class, 'updateAdmin'])->name('update.admin');
 });

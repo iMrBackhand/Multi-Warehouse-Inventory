@@ -12,6 +12,11 @@ document.addEventListener("DOMContentLoaded", function () {
     let grandTotalDisplay = document.getElementById("grandTotal");
     let grandTotalHidden = document.querySelector('input[name="grand_total"]');
 
+    // NEW: paid / due amount elements
+    let paidAmountInput = document.querySelector('input[name="paid_amount"]');
+    let dueAmountDisplay = document.getElementById("dueAmount");
+    let dueAmountHidden = document.querySelector('input[name="due_amount"]');
+
     let form = document.querySelector("form");
     let selectedWarehouse = "";
     let warehouseLocked = false;
@@ -109,25 +114,16 @@ document.addEventListener("DOMContentLoaded", function () {
             `tr[data-id="${id}"]`,
         );
 
+        // Kapag existing na sa table, dagdagan lang ng 1 ang quantity.
+        // WALANG stock check dito dahil Purchase ang nagdadagdag ng stock,
+        // hindi dapat limitado ng kasalukuyang (current) stock.
         if (existingRow) {
             let qtyInput = existingRow.querySelector(".qty-input");
-            let stock =
-                parseFloat(
-                    existingRow.querySelector(".stock-cell").textContent,
-                ) || 0;
-            let newQty = parseInt(qtyInput.value) + 1;
+            let newQty = (parseInt(qtyInput.value) || 0) + 1;
 
-            if (newQty > stock) {
-                Swal.fire({
-                    icon: "warning",
-                    title: "Insufficient Stock",
-                    text: `Only ${stock} unit(s) available for this product.`,
-                });
-            } else {
-                qtyInput.value = newQty;
-                updateRowSubtotal(existingRow);
-                calculateTotals();
-            }
+            qtyInput.value = newQty;
+            updateRowSubtotal(existingRow);
+            calculateTotals();
 
             product_list.innerHTML = "";
             productSearchInput.value = "";
@@ -141,17 +137,10 @@ document.addEventListener("DOMContentLoaded", function () {
         let stock = parseFloat(el.dataset.stock) || 0;
         let discount = parseFloat(el.dataset.discount) || 0;
 
-        if (stock < 1) {
-            Swal.fire({
-                icon: "warning",
-                title: "Out of Stock",
-                text: "This product has no available stock in the selected warehouse.",
-            });
-
-            product_list.innerHTML = "";
-            productSearchInput.value = "";
-            return;
-        }
+        // NOTE: Sadyang inalis na ang "Out of Stock" block dito.
+        // Sa Purchase, dapat kayang idagdag ang isang product kahit 0 pa
+        // (o wala pang record) ang current stock nito sa warehouse,
+        // dahil layunin mismo ng pag-purchase na magdagdag ng stock.
 
         let row = document.createElement("tr");
 
@@ -195,9 +184,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     class="form-control text-center qty-input"
                     name="quantity[]"
                     value="1"
-                    min="1"
-                    max="${stock}"
-                    readonly>
+                    min="1">
 
                 <button
                     type="button"
@@ -254,20 +241,12 @@ document.addEventListener("DOMContentLoaded", function () {
             let row = e.target.closest("tr");
 
             if (e.target.classList.contains("qty-input")) {
-                let stock =
-                    parseFloat(row.querySelector(".stock-cell").textContent) ||
-                    0;
+                // Purchase quantity ay hindi dapat limitado ng current stock.
+                // Basta valid positive number lang ang kailangan.
                 let val = parseInt(e.target.value);
 
                 if (isNaN(val) || val < 1) {
                     e.target.value = 1;
-                } else if (val > stock) {
-                    e.target.value = stock;
-                    Swal.fire({
-                        icon: "warning",
-                        title: "Insufficient Stock",
-                        text: `Only ${stock} unit(s) available.`,
-                    });
                 }
             }
 
@@ -295,22 +274,13 @@ document.addEventListener("DOMContentLoaded", function () {
         if (plusBtn) {
             let row = plusBtn.closest("tr");
             let qtyInput = row.querySelector(".qty-input");
-            let stock =
-                parseFloat(row.querySelector(".stock-cell").textContent) || 0;
 
             let qty = parseInt(qtyInput.value) || 1;
 
-            if (qty + 1 > stock) {
-                Swal.fire({
-                    icon: "warning",
-                    title: "Insufficient Stock",
-                    text: `Only ${stock} unit(s) available.`,
-                });
-            } else {
-                qtyInput.value = qty + 1;
-                updateRowSubtotal(row);
-                calculateTotals();
-            }
+            // Walang stock cap dito para sa Purchase.
+            qtyInput.value = qty + 1;
+            updateRowSubtotal(row);
+            calculateTotals();
 
             return;
         }
@@ -370,10 +340,21 @@ document.addEventListener("DOMContentLoaded", function () {
         shippingDisplay.textContent = "Php " + shipping.toFixed(2);
         grandTotalDisplay.textContent = "Php " + grandTotal.toFixed(2);
         grandTotalHidden.value = grandTotal.toFixed(2);
+
+        // NEW: compute and display due amount based on paid amount
+        let paid = parseFloat(paidAmountInput.value) || 0;
+        let due = grandTotal - paid;
+        if (due < 0) due = 0;
+
+        dueAmountDisplay.textContent = "Php " + due.toFixed(2);
+        dueAmountHidden.value = due.toFixed(2);
     }
 
     inputDiscount.addEventListener("input", calculateTotals);
     inputShipping.addEventListener("input", calculateTotals);
+
+    // NEW: recalculate due amount whenever paid amount changes
+    paidAmountInput.addEventListener("input", calculateTotals);
 
     orderItemsTableBody.querySelectorAll("tr").forEach((row) => {
         updateRowSubtotal(row);
@@ -391,19 +372,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!warehouseDropdown.value) {
             e.preventDefault();
             alert("Please select a warehouse.");
-            return false;
-        }
-
-        let toWarehouse = document.getElementById("to_warehouse_id");
-        if (!toWarehouse.value) {
-            e.preventDefault();
-            alert("Please select a destination warehouse.");
-            return false;
-        }
-
-        if (toWarehouse.value === warehouseDropdown.value) {
-            e.preventDefault();
-            alert("From and To warehouse cannot be the same.");
             return false;
         }
 

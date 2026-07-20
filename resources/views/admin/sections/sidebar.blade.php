@@ -35,26 +35,14 @@
                                     <span>Dashboard</span>
                                 </a>
 
-                                {{-- <div class="collapse" id="sidebarDashboards">
-                                    <ul class="nav-second-level">
-                                        <li>
-                                            <a href="index.html" class="tp-link">Analytical</a>
-                                        </li>
-                                        <li>
-                                            <a href="ecommerce.html" class="tp-link">E-commerce</a>
-                                        </li>
-                                    </ul>
-                                </div> --}}
+
                             </li>
 
-                            <!-- <li>
-                                <a href="landing.html" target="_blank">
-                                    <i data-feather="globe"></i>
-                                    <span> Landing </span>
-                                </a>
-                            </li> -->
+
 
                             <li class="menu-title">Pages</li>
+
+
 
                             <li>
                                 <a href="#sidebarAuth" data-bs-toggle="collapse">
@@ -71,6 +59,7 @@
                                 </div>
                             </li>
 
+
                             <li>
                                 <a href="#sidebarWarehouse" data-bs-toggle="collapse">
                                     <i data-feather="archive"></i>
@@ -82,7 +71,6 @@
                                         <li>
                                             <a href="{{ route('warehouse') }}" class="tp-link">All Warehouse</a>
                                         </li>
-
                                     </ul>
                                 </div>
                             </li>
@@ -210,10 +198,7 @@
                                 <div class="collapse" id="sidebarDue">
                                     <ul class="nav-second-level">
                                         <li>
-                                            <a href="{{ route('due.sale') }}" class="tp-link">Sales Due</a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="tp-link">Sales Return Due</a>
+                                            <a href="{{ route('due.sale') }}" class="tp-link">All Sales Due</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -232,7 +217,7 @@
                                     </ul>
                                 </div>
                             </li>
-                            <li>
+                    <li>
                                 <a href="#sidebarReport" data-bs-toggle="collapse">
                                     <i data-feather="file-text"></i>
                                     <span> Report Setup </span>
@@ -240,7 +225,7 @@
                                 <div class="collapse" id="sidebarReport">
                                     <ul class="nav-second-level">
                                         <li>
-                                            <a href="#" class="tp-link">All Customer</a>
+                                            <a href="{{ route('all.reports') }}" class="tp-link">All Reports</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -249,165 +234,39 @@
 
                             <li class="menu-title mt-2">General</li>
 
-                            <li>
-                                <a href="widgets.html" class="tp-link">
-                                    <i data-feather="aperture"></i>
-                                    <span> Widgets </span>
+                            {{-- <li>
+                                <a href="#permission" data-bs-toggle="collapse">
+                                     <i data-feather="shield"></i>
+                                    <span> Role & Permission </span>
                                 </a>
-                            </li>
-
-                            <li>
-                                <a href="#sidebarAdvancedUI" data-bs-toggle="collapse">
-                                    <i data-feather="cpu"></i>
-                                    <span> Extended UI </span>
-                                    <span class="menu-arrow"></span>
-                                </a>
-                                <div class="collapse" id="sidebarAdvancedUI">
+                                <div class="collapse" id="permission">
                                     <ul class="nav-second-level">
                                         <li>
-                                            <a href="extended-carousel.html" class="tp-link">Carousel</a>
+                                            <a href="{{ route('all.permission') }}" class="tp-link">All Permission</a>
                                         </li>
                                         <li>
-                                            <a href="extended-notifications.html" class="tp-link">Notifications</a>
+                                            <a href="{{ route('all.roles') }}" class="tp-link">All Roles</a>
                                         </li>
-                                        <li>
-                                            <a href="extended-offcanvas.html" class="tp-link">Offcanvas</a>
-                                        </li>
-                                        <li>
-                                            <a href="extended-range-slider.html" class="tp-link">Range Slider</a>
+                                         <li>
+                                            <a href="{{ route('all.roles.permission') }}" class="tp-link">All Role in Permission</a>
                                         </li>
                                     </ul>
                                 </div>
                             </li>
-
-
-
                             <li>
-                                <a href="#sidebarForms" data-bs-toggle="collapse">
-                                    <i data-feather="briefcase"></i>
-                                    <span> Forms </span>
-                                    <span class="menu-arrow"></span>
+                                <a href="#admin-manage" data-bs-toggle="collapse">
+                                      <i data-feather="users"></i>
+                                    <span> Admin Manage</span>
                                 </a>
-                                <div class="collapse" id="sidebarForms">
+                                <div class="collapse" id="admin-manage">
                                     <ul class="nav-second-level">
                                         <li>
-                                            <a href="forms-elements.html" class="tp-link">General Elements</a>
+                                            <a href="{{ route('all.admin') }}" class="tp-link">All Admin</a>
                                         </li>
-                                        <li>
-                                            <a href="forms-validation.html" class="tp-link">Validation</a>
-                                        </li>
-                                        <li>
-                                            <a href="forms-quilljs.html" class="tp-link">Quilljs Editor</a>
-                                        </li>
-                                        <li>
-                                            <a href="forms-pickers.html" class="tp-link">Picker</a>
-                                        </li>
+
                                     </ul>
                                 </div>
-                            </li>
-
-                            <li>
-                                <a href="#sidebarTables" data-bs-toggle="collapse">
-                                    <i data-feather="table"></i>
-                                    <span> Tables </span>
-                                    <span class="menu-arrow"></span>
-                                </a>
-                                <div class="collapse" id="sidebarTables">
-                                    <ul class="nav-second-level">
-                                        <li>
-                                            <a href="tables-basic.html" class="tp-link">Basic Tables</a>
-                                        </li>
-                                        <li>
-                                            <a href="tables-datatables.html" class="tp-link">Data Tables</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-
-                            <li>
-                                <a href="#sidebarCharts" data-bs-toggle="collapse">
-                                    <i data-feather="pie-chart"></i>
-                                    <span> Apex Charts </span>
-                                    <span class="menu-arrow"></span>
-                                </a>
-                                <div class="collapse" id="sidebarCharts">
-                                    <ul class="nav-second-level">
-                                        <li>
-                                            <a href='charts-line.html'>Line</a>
-                                        </li>
-                                        <li>
-                                            <a href='charts-area.html'>Area</a>
-                                        </li>
-                                        <li>
-                                            <a href='charts-column.html'>Column</a>
-                                        </li>
-                                        <li>
-                                            <a href='charts-bar.html'>Bar</a>
-                                        </li>
-                                        <li>
-                                            <a href='charts-mixed.html'>Mixed</a>
-                                        </li>
-                                        <li>
-                                            <a href='charts-timeline.html'>Timeline</a>
-                                        </li>
-                                        <li>
-                                            <a href='charts-rangearea.html'>Range Area</a>
-                                        </li>
-                                        <li>
-                                            <a href='charts-funnel.html'>Funnel</a>
-                                        </li>
-                                        <li>
-                                            <a href='charts-candlestick.html'>Candlestick</a>
-                                        </li>
-                                        <li>
-                                            <a href='charts-boxplot.html'>Boxplot</a>
-                                        </li>
-                                        <li>
-                                            <a href='charts-bubble.html'>Bubble</a>
-                                        </li>
-                                        <li>
-                                            <a href='charts-scatter.html'>Scatter</a>
-                                        </li>
-                                        <li>
-                                            <a href='charts-heatmap.html'>Heatmap</a>
-                                        </li>
-                                        <li>
-                                            <a href='charts-treemap.html'>Treemap</a>
-                                        </li>
-                                        <li>
-                                            <a href='charts-pie.html'>Pie</a>
-                                        </li>
-                                        <li>
-                                            <a href='charts-radialbar.html'>Radialbar</a>
-                                        </li>
-                                        <li>
-                                            <a href='charts-radar.html'>Radar</a>
-                                        </li>
-                                        <li>
-                                            <a href='charts-polararea.html'>Polar</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-
-                            <li>
-                                <a href="#sidebarMaps" data-bs-toggle="collapse">
-                                    <i data-feather="map"></i>
-                                    <span> Maps </span>
-                                    <span class="menu-arrow"></span>
-                                </a>
-                                <div class="collapse" id="sidebarMaps">
-                                    <ul class="nav-second-level">
-                                        <li>
-                                            <a href="maps-google.html" class="tp-link">Google Maps</a>
-                                        </li>
-                                        <li>
-                                            <a href="maps-vector.html" class="tp-link">Vector Maps</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-
+                            </li> --}}
                         </ul>
 
                     </div>
