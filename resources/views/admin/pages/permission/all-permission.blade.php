@@ -131,6 +131,7 @@
                 <option value="Report" {{ old('group_name') == 'Report' ? 'selected' : '' }}>Report</option>
                 <option value="Role And Permission" {{ old('group_name') == 'Role And Permission' ? 'selected' : '' }}>Role And Permission</option>
                 <option value="Admin Manage" {{ old('group_name') == 'Admin Manage' ? 'selected' : '' }}>Admin Manage</option>
+                <option value="Activity Log" {{ old('group_name') == 'Activity Log' ? 'selected' : '' }}>Activity Log</option>
             </select>
         </div>
 

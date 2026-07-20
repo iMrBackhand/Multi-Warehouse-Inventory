@@ -9,15 +9,21 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Test user
-        User::factory()->create([
+        $this->call([
+            PermissionSeeder::class,
+            RoleSeeder::class,
+        ]);
+
+        $admin = User::factory()->create([
             'name' => 'Mr.Admin',
             'email' => 'admin@gmail.com',
             'password' => bcrypt('admin123'),
             'role' => 'Super Admin',
         ]);
 
-        // All seeders in one call (clean way)
+        $admin->assignRole('Super Admin');
+
+
         $this->call([
             SupplierSeeder::class,
             CustomerSeeder::class,

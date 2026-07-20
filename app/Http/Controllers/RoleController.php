@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 
 class RoleController extends Controller
@@ -127,16 +128,15 @@ class RoleController extends Controller
             $data = [];
 
             foreach ($request->permissions as $permission_id) {
-
                 $data[] = [
                     'role_id' => $request->role_id,
                     'permission_id' => $permission_id,
                 ];
-
             }
 
             DB::table('role_has_permissions')->insert($data);
 
+            app()[PermissionRegistrar::class]->forgetCachedPermissions(); // idagdag din dito
 
             $notification = [
                 'message' => 'Role Permission Successfully Added',
@@ -173,8 +173,9 @@ class RoleController extends Controller
             ]);
 
             $role = Role::findOrFail($id);
-
             $role->permissions()->sync($request->permissions ?? []);
+
+            app()[PermissionRegistrar::class]->forgetCachedPermissions(); // idagdag ito
 
             return redirect()->route('all.roles.permission')->with('success', 'Role permissions updated successfully.');
         }
@@ -183,6 +184,8 @@ class RoleController extends Controller
         {
             $role = Role::findOrFail($id);
             $role->delete();
+
+            app()[PermissionRegistrar::class]->forgetCachedPermissions(); // idagdag din dito
 
             return redirect()->route('all.roles.permission')->with('success', 'Role deleted successfully.');
         }
@@ -244,6 +247,8 @@ class RoleController extends Controller
         $admin->save();
 
         $admin->syncRoles($role);
+
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
         return redirect()->back()->with([
             'message' => 'Admin Successfully Updated',
             'alert-type' => 'success'

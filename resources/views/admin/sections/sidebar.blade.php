@@ -233,42 +233,60 @@
                                 </div>
                             </li>
 
-
+                        @can('permission.view')
                             <li class="menu-title mt-2">General</li>
+
 
                             <li>
                                 <a href="#permission" data-bs-toggle="collapse">
-                                     <i data-feather="shield"></i>
-                                    <span> Role & Permission </span>
+                                    <i data-feather="shield"></i>
+                                    <span>Role & Permission</span>
                                 </a>
+
                                 <div class="collapse" id="permission">
                                     <ul class="nav-second-level">
-                                        <li>
-                                            <a href="{{ route('all.permission') }}" class="tp-link">All Permission</a>
-                                        </li>
+
+
+
+                                        @can('role.view')
                                         <li>
                                             <a href="{{ route('all.roles') }}" class="tp-link">All Roles</a>
                                         </li>
-                                         <li>
+                                        @endcan
+
+                                        @can('role.permission.assign')
+                                        <li>
                                             <a href="{{ route('all.roles.permission') }}" class="tp-link">All Role in Permission</a>
                                         </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li>
-                                <a href="#admin-manage" data-bs-toggle="collapse">
-                                      <i data-feather="users"></i>
-                                    <span> Admin Manage</span>
-                                </a>
-                                <div class="collapse" id="admin-manage">
-                                    <ul class="nav-second-level">
+                                        @endcan
+                                          @can('permission.view')
                                         <li>
-                                            <a href="{{ route('all.admin') }}" class="tp-link">All Admin</a>
+                                            <a href="{{ route('all.permission') }}" class="tp-link">All Permission</a>
                                         </li>
+                                        @endcan
 
                                     </ul>
                                 </div>
                             </li>
+                            @endcan
+
+                  @can('admin.view')
+                    <li>
+                        <a href="{{ route('all.admin') }}">
+                            <i data-feather="users"></i>
+                            <span>Admin Manage</span>
+                        </a>
+                    </li>
+                    @endcan
+
+                    @can('activity-log.view')
+                    <li>
+                        <a href="{{ route('activity.log') }}">
+                            <i data-feather="activity"></i>
+                            <span>Activity Log</span>
+                        </a>
+                    </li>
+                    @endcan
                         </ul>
 
                     </div>

@@ -90,11 +90,11 @@
                             </div>
                                         </form>
 
-                                        <div class="saprator my-4"><span>or sign in with</span></div>
+                                        {{-- <div class="saprator my-4"><span>or sign in with</span></div> --}}
 
-                                        <div class="text-center text-muted mb-4">
+                                        {{-- <div class="text-center text-muted mb-4">
                                             <p class="mb-0">Don't have an account ?<a class='text-primary ms-2 fw-medium' href="{{ route('register') }}">Sign up</a></p>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                 </div>
                             </div>

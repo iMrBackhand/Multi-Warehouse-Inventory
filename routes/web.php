@@ -22,6 +22,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TransferController;
 use App\Http\Controllers\WarehouseController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ActivityLogController;
 
 
 
@@ -234,32 +235,39 @@ Route::middleware(['auth'])->group(function () {
     Route::get('all/reports',[ReportController::class,'index'])->name('all.reports');
     Route::get('sales/export',[ReportController::class, 'exportSales'])->name('sales.export');
     Route::get('purchase/export', [ReportController::class, 'exportPurchase'])->name('purchase.export');
-    Route::get('purchase/export', [ReportController::class, 'exportPurchase'])->name('purchase.export');
     Route::get('sale-return/export', [ReportController::class, 'exportSaleReturn'])->name('salereturn.export');
     Route::get('purchase-return/export', [ReportController::class, 'exportPurchaseReturn'])->name('purchasereturn.export');
 
-    // // Permission
-    Route::get('all/permission',[RoleController::class,'allPermission'])->name('all.permission');
-    Route::post('all/storePermission',[RoleController::class,'storePermission'])->name('store.permission');
-    Route::put('update/permission/{id}',[RoleController::class,'updatePermission'])->name('update.permission');
-    Route::delete('delete/permission/{id}', [RoleController::class, 'deletePermission'])->name('delete.permission');
+    Route::controller(RoleController::class)->group(function () {
 
-    // Role
-    Route::get('all/roles',[RoleController::class, 'allRoles'])->name('all.roles');
-    Route::post('add/roles',[RoleController::class, 'storeRoles'])->name('add.roles');
-    Route::put('update/role/{id}',[RoleController::class, 'updateRole'])->name('store.roles');
-    Route::delete('delete/role/{id}',[RoleController::class, 'deleteRole'])->name('delete.role');
-    Route::get('all/in/role/permission',[RoleController::class, 'AddRolePermission'])->name('addinrole.permission');
-    Route::post('/store-permission', [RoleController::class, 'storeRolePermission'])->name('storerole.permission');
-    Route::get('all/roles/in/permissions',[RoleController::class, 'allRolesPermission'])->name('all.roles.permission');
-    Route::get('/edit-role-permission/{id}', [RoleController::class, 'editRolePermission'])->name('editrole.permission');
-    Route::post('/update-role-permission/{id}', [RoleController::class, 'updateRolePermission'])->name('updaterole.permission');
-    Route::delete('/delete-role-permission/{id}', [RoleController::class, 'deleteRolePermission'])->name('deleterole.permission');
+        // Permission
+        Route::get('permission/all', 'allPermission')->middleware('permission:permission.view')->name('all.permission');
+        Route::post('permission/store', 'storePermission')->middleware('permission:permission.create')->name('store.permission');
+        Route::put('permission/update/{id}', 'updatePermission')->middleware('permission:permission.edit')->name('update.permission');
+        Route::delete('permission/delete/{id}', 'deletePermission')->middleware('permission:permission.delete')->name('delete.permission');
 
-    // Admin
-    Route::get('all/admin',[RoleController::class, 'allAdmin'])->name('all.admin');
-    Route::post('/store-admin', [RoleController::class, 'storeAdmin'])->name('store.admin');
-    Route::get('/edit-admin/{id}', [RoleController::class, 'editAdmin'])->name('edit.admin');
-    Route::delete('/delete-admin/{id}', [RoleController::class, 'deleteAdmin'])->name('delete.admin');
-    Route::put('/update-admin/{id}', [RoleController::class, 'updateAdmin'])->name('update.admin');
+        // Role
+        Route::get('role/all', 'allRoles')->middleware('permission:role.view')->name('all.roles');
+        Route::post('role/store', 'storeRoles')->middleware('permission:role.create')->name('add.roles');
+        Route::put('role/update/{id}', 'updateRole')->middleware('permission:role.edit')->name('store.roles');
+        Route::delete('role/delete/{id}', 'deleteRole')->middleware('permission:role.delete')->name('delete.role');
+
+        Route::get('role/permission/add', 'AddRolePermission')->middleware('permission:role.permission.assign')->name('addinrole.permission');
+        Route::post('role/permission/store', 'storeRolePermission')->middleware('permission:role.permission.assign')->name('storerole.permission');
+        Route::get('role/permission/all', 'allRolesPermission')->middleware('permission:role.permission.assign')->name('all.roles.permission');
+        Route::get('role/permission/edit/{id}', 'editRolePermission')->middleware('permission:role.permission.assign')->name('editrole.permission');
+        Route::post('role/permission/update/{id}', 'updateRolePermission')->middleware('permission:role.permission.assign')->name('updaterole.permission');
+        Route::delete('role/permission/delete/{id}', 'deleteRolePermission')->middleware('permission:role.permission.assign')->name('deleterole.permission');
+
+        // Admin
+        Route::get('admin/all', 'allAdmin')->middleware('permission:admin.view')->name('all.admin');
+        Route::post('admin/store', 'storeAdmin')->middleware('permission:admin.create')->name('store.admin');
+        Route::get('admin/edit/{id}', 'editAdmin')->middleware('permission:admin.edit')->name('edit.admin');
+        Route::put('admin/update/{id}', 'updateAdmin')->middleware('permission:admin.edit')->name('update.admin');
+        Route::delete('admin/delete/{id}', 'deleteAdmin')->middleware('permission:admin.delete')->name('delete.admin');
+
+    });
+
+
+        Route::get('activity/log', [ActivityLogController::class, 'index'])->middleware('permission:activity-log.view')->name('activity.log');
 });
