@@ -64,13 +64,15 @@
                                     <td class="text-nowrap">
                                         <div class="d-flex gap-1">
 
+                                            @can('brand.update')
                                             <!-- Edit -->
-                                            <a href="{{ route('brand.view', $brand->id) }}"
+                                            <a href="{{ route('brand.edit', $brand->id) }}"
                                                 class="btn btn-sm btn-success"
                                                 style="padding:4px 6px;"
                                                 title="Edit">
                                                 <i data-feather="edit" style="width:10px; height:10px; color:#fff;"></i>
                                             </a>
+                                            @endcan
 
                                             <!-- Archive -->
                                             <form action="{{ route('brand.delete', $brand->id) }}" method="POST" class="m-0">

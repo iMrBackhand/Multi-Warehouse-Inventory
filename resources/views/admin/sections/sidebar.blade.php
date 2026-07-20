@@ -44,20 +44,22 @@
 
 
 
-                            <li>
-                                <a href="#sidebarAuth" data-bs-toggle="collapse">
-                                    <i data-feather="tag"></i>
-                                    <span> Brand Manage </span>
-                                    {{-- <span class="menu-arrow"></span> --}}
-                                </a>
-                                <div class="collapse" id="sidebarAuth">
-                                    <ul class="nav-second-level">
-                                        <li>
-                                            <a href="{{ route('brand') }}" class="tp-link">All Brand</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
+                            @canany(['brand.view', 'brand.create', 'brand.update', 'brand.delete'])
+                                <li>
+                                    <a href="#sidebarAuth" data-bs-toggle="collapse">
+                                        <i data-feather="tag"></i>
+                                        <span>Brand Manage</span>
+                                    </a>
+
+                                    <div class="collapse" id="sidebarAuth">
+                                        <ul class="nav-second-level">
+                                            <li>
+                                                <a href="{{ route('brand') }}" class="tp-link">All Brand</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                             @endcanany
 
 
                             <li>
@@ -234,7 +236,7 @@
 
                             <li class="menu-title mt-2">General</li>
 
-                            {{-- <li>
+                            <li>
                                 <a href="#permission" data-bs-toggle="collapse">
                                      <i data-feather="shield"></i>
                                     <span> Role & Permission </span>
@@ -266,7 +268,7 @@
 
                                     </ul>
                                 </div>
-                            </li> --}}
+                            </li>
                         </ul>
 
                     </div>
