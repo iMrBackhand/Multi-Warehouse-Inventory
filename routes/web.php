@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminProfileController;
+use App\Http\Controllers\BackupController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
@@ -22,7 +24,6 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TransferController;
 use App\Http\Controllers\WarehouseController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ActivityLogController;
 
 
 
@@ -270,4 +271,9 @@ Route::middleware(['auth'])->group(function () {
 
 
         Route::get('activity/log', [ActivityLogController::class, 'index'])->middleware('permission:activity-log.view')->name('activity.log');
+
+
 });
+
+Route::middleware(['auth'])->get('/admin/backup-database', [BackupController::class, 'downloadDatabase'])
+    ->name('backup.database');

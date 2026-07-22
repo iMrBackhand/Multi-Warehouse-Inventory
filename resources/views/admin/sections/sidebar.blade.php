@@ -287,7 +287,15 @@
                         </a>
                     </li>
                     @endcan
-                        </ul>
+
+                    <li>
+                        <a href="{{ route('backup.database') }}">
+                            <i data-feather="hard-drive"></i>
+                            <span>Backup Database</span>
+                        </a>
+                    </li>
+
+                    </ul>
 
                     </div>
                     <!-- End Sidebar -->
