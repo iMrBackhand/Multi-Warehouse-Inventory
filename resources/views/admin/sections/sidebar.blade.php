@@ -19,7 +19,7 @@
                                 </span>
                                <span class="logo-lg">
                                     <a href="{{ route('dashboard') }}">
-                                        <img src="{{ asset('backend/assets/images/11g.png') }}" alt="Logo" height="60">
+                                        <img src="{{ asset('backend/assets/images/dss.png') }}" alt="Logo" height="50">
                                     </a>
                                 </span>
                             </a>

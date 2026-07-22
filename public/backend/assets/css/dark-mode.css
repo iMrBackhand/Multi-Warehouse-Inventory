@@ -1,0 +1,177 @@
+[data-bs-theme="dark"] {
+    --bs-body-bg: #1a1d21;
+    --bs-body-color: #e9ecef;
+    --bs-border-color: #32343a;
+}
+
+[data-bs-theme="dark"] body {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+}
+
+/* Topbar */
+[data-bs-theme="dark"] .topbar-custom {
+    background-color: #24262b !important;
+    border-bottom: 1px solid #32343a;
+}
+
+[data-bs-theme="dark"] .topbar-search .form-control {
+    background-color: #2d2f34 !important;
+    color: #e9ecef;
+    border-color: #3a3c42 !important;
+}
+
+/* Sidebar */
+[data-bs-theme="dark"] .left-side-menu,
+[data-bs-theme="dark"] #sidebar-menu {
+    background-color: #1f2126 !important;
+    border-right: 1px solid #32343a;
+}
+
+[data-bs-theme="dark"] .side-nav .side-nav-link {
+    color: #adb5bd;
+}
+
+[data-bs-theme="dark"] .side-nav .side-nav-link:hover,
+[data-bs-theme="dark"] .side-nav .side-nav-link.active {
+    color: #fff;
+    background-color: #2d2f34;
+}
+
+/* Content */
+[data-bs-theme="dark"] .content-page {
+    background-color: #1a1d21;
+}
+
+/* Cards */
+[data-bs-theme="dark"] .card {
+    background-color: #24262b;
+    border-color: #32343a;
+    color: #e9ecef;
+}
+
+/* Tables / DataTables */
+[data-bs-theme="dark"] .table {
+    color: #e9ecef;
+    border-color: #32343a;
+}
+
+[data-bs-theme="dark"] .table thead th {
+    background-color: #2d2f34;
+    border-color: #3a3c42;
+}
+
+[data-bs-theme="dark"] .dataTables_wrapper .dataTables_length,
+[data-bs-theme="dark"] .dataTables_wrapper .dataTables_filter,
+[data-bs-theme="dark"] .dataTables_wrapper .dataTables_info,
+[data-bs-theme="dark"] .dataTables_wrapper .dataTables_paginate {
+    color: #e9ecef;
+}
+
+/* Forms */
+[data-bs-theme="dark"] .form-control,
+[data-bs-theme="dark"] .form-select {
+    background-color: #2d2f34 !important;
+    color: #e9ecef;
+    border-color: #3a3c42 !important;
+}
+
+/* Dropdowns */
+[data-bs-theme="dark"] .dropdown-menu {
+    background-color: #24262b;
+    border-color: #32343a;
+    color: #e9ecef;
+}
+
+[data-bs-theme="dark"] .dropdown-item {
+    color: #e9ecef;
+}
+
+[data-bs-theme="dark"] .dropdown-item:hover,
+[data-bs-theme="dark"] .dropdown-item:focus {
+    background-color: #2d2f34;
+    color: #fff;
+}
+
+/* Modals */
+[data-bs-theme="dark"] .modal-content {
+    background-color: #24262b;
+    color: #e9ecef;
+}
+
+/* Footer */
+[data-bs-theme="dark"] .footer {
+    background-color: #1a1d21;
+    color: #adb5bd;
+    border-top: 1px solid #32343a;
+}
+
+/* Text utilities */
+[data-bs-theme="dark"] .text-dark {
+    color: #e9ecef !important;
+}
+
+/* ==========================================================================
+   FORCE ALL TEXT TO BE LIGHT/WHITE IN DARK MODE
+   ========================================================================== */
+
+[data-bs-theme="dark"] * {
+    color: #e9ecef !important;
+}
+
+/* Exceptions: buttons at badges na may sariling background color
+   dapat hindi sumunod sa force-white, para hindi mawala yung text */
+[data-bs-theme="dark"] .btn,
+[data-bs-theme="dark"] .badge,
+[data-bs-theme="dark"] .alert {
+    color: inherit !important;
+}
+
+/* Pero ang mga default/outline buttons (walang malakas na bg color)
+   dapat kitang-kita pa rin ang text */
+[data-bs-theme="dark"] .btn-light,
+[data-bs-theme="dark"] .btn-outline-light,
+[data-bs-theme="dark"] .btn-outline-secondary {
+    color: #e9ecef !important;
+}
+
+/* Links dapat may distinct color, hindi puro white lang */
+[data-bs-theme="dark"] a {
+    color: #8ab4f8 !important;
+}
+
+[data-bs-theme="dark"] a:hover {
+    color: #a8c7fa !important;
+}
+
+/* Status badges (soft/subtle variants) - dapat manatili ang sariling text color nila */
+[data-bs-theme="dark"] .badge-soft-success,
+[data-bs-theme="dark"] .badge-soft-danger,
+[data-bs-theme="dark"] .badge-soft-warning,
+[data-bs-theme="dark"] .badge-soft-info,
+[data-bs-theme="dark"] .badge-soft-primary,
+[data-bs-theme="dark"] .badge-soft-secondary,
+[data-bs-theme="dark"] .badge[class*="bg-"] {
+    color: inherit !important;
+}
+
+/* Kung hindi pa rin gumana, i-force ang specific colors */
+[data-bs-theme="dark"] .badge-soft-success {
+    background-color: #b2f0e2 !important;
+    color: #0a5c46 !important;
+}
+
+[data-bs-theme="dark"] .badge-soft-danger {
+    background-color: #f8d7da !important;
+    color: #842029 !important;
+}
+
+[data-bs-theme="dark"] .badge-soft-warning {
+    background-color: #fff3cd !important;
+    color: #664d03 !important;
+}
+
+[data-bs-theme="dark"] .badge-soft-info {
+    background-color: #cff4fc !important;
+    color: #055160 !important;
+}

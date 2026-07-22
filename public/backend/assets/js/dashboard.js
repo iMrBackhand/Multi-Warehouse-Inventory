@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
     let chart;
 
-    function loadPurchaseChart(year) {
-        fetch("/admin/dashboard/purchase-chart/" + year)
+    function loadSalesChart(year) {
+        fetch("/admin/dashboard/sales-chart/" + year)
             .then((response) => response.json())
             .then((data) => {
                 if (chart) {
@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 let options = {
                     series: [
                         {
-                            name: "Total Purchase",
+                            name: "Total Sales",
                             data: data,
                         },
                     ],
@@ -75,33 +75,33 @@ document.addEventListener("DOMContentLoaded", function () {
                 };
 
                 chart = new ApexCharts(
-                    document.querySelector("#purchase-received-chart"),
+                    document.querySelector("#sales-chart"),
                     options,
                 );
                 chart.render();
 
-                fetch("/admin/dashboard/purchase-summary/" + year)
+                fetch("/admin/dashboard/sales-summary/" + year)
                     .then((response) => response.json())
                     .then((data) => {
-                        document.getElementById("totalPurchaseCard").innerHTML =
-                            "₱" + data.totalPurchase;
+                        document.getElementById("totalSalesCard").innerHTML =
+                            "₱" + data.totalSales;
                     });
             });
     }
 
-    // BAGO: mag-fetch ng sales summary base sa year, i-update yung Total Sales card
-    function loadSalesSummary(year) {
-        fetch("/admin/dashboard/sales-summary/" + year)
+    // Mag-fetch ng purchase summary base sa year, i-update yung Total Purchase card
+    function loadPurchaseSummary(year) {
+        fetch("/admin/dashboard/purchase-summary/" + year)
             .then((response) => response.json())
             .then((data) => {
-                document.getElementById("totalSalesCard").innerHTML =
-                    "₱" + data.totalSales;
+                document.getElementById("totalPurchaseCard").innerHTML =
+                    "₱" + data.totalPurchase;
             });
     }
 
     function loadYearData(year) {
-        loadPurchaseChart(year);
-        loadSalesSummary(year);
+        loadSalesChart(year);
+        loadPurchaseSummary(year);
     }
 
     loadYearData(document.querySelector("#yearFilter").value);

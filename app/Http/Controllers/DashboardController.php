@@ -45,10 +45,27 @@ class DashboardController extends Controller
             $purchaseTrend = 100;
         }
 
-        $availableYears = Purchase::selectRaw('YEAR(purchase_date) as year')
+        // Years na may Purchase records
+        $purchaseYears = Purchase::selectRaw('YEAR(purchase_date) as year')
             ->groupBy('year')
-            ->orderBy('year','desc')
             ->pluck('year');
+
+        // Years na may Sale records
+        $saleYears = Sale::selectRaw('YEAR(sale_date) as year')
+            ->groupBy('year')
+            ->pluck('year');
+
+        // I-combine, alisin ang duplicates, i-sort pababa (pinakabago muna)
+        $availableYears = $purchaseYears
+            ->merge($saleYears)
+            ->unique()
+            ->sortDesc()
+            ->values();
+
+        // Kung walang record sa Purchase o Sale, gamitin na lang current year para hindi mag-empty ang dropdown
+        if ($availableYears->isEmpty()) {
+            $availableYears = collect([now()->year]);
+        }
 
         // status table
         $statuses = Purchase::select('status')

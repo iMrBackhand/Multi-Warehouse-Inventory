@@ -1,6 +1,111 @@
 @extends('admin.admin_master')
 @section('admin')
 
+<style>
+    /* ===== Global polish ===== */
+    .content .card {
+        border-radius: 14px !important;
+        transition: box-shadow .2s ease, transform .2s ease;
+    }
+    .content .card.shadow-sm,
+    .content .card.shadow {
+        box-shadow: 0 2px 10px rgba(20, 20, 43, .06) !important;
+    }
+    .content .card:hover {
+        box-shadow: 0 8px 24px rgba(20, 20, 43, .10) !important;
+    }
+    .content .card-header {
+        border-bottom: 1px solid #f0f0f5 !important;
+        padding: 1rem 1.25rem;
+    }
+    .content .card-title {
+        font-weight: 600;
+        letter-spacing: .2px;
+    }
+
+    /* ===== Top KPI cards ===== */
+    .kpi-icon {
+        transition: transform .2s ease;
+    }
+    .card:hover .kpi-icon {
+        transform: scale(1.08);
+    }
+
+    /* ===== Empty / low-content states center nicely ===== */
+    .card-fill-center {
+        min-height: 220px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    /* ===== Status rows ===== */
+    .status-row {
+        padding: 6px 0;
+    }
+    .status-row .progress {
+        background-color: #f2f2f7;
+    }
+    .status-row .progress-bar {
+        transition: width .6s ease;
+    }
+
+    /* ===== Recent purchases table ===== */
+    .recent-purchases-table thead th {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        color: #9a9aab;
+        font-weight: 600;
+        border-bottom: 1px solid #f0f0f5;
+        padding-top: .9rem;
+        padding-bottom: .9rem;
+    }
+    .recent-purchases-table tbody tr {
+        transition: background-color .15s ease;
+    }
+    .recent-purchases-table tbody tr:hover {
+        background-color: #faf9fd;
+    }
+    .recent-purchases-table td {
+        padding-top: .85rem;
+        padding-bottom: .85rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #f5f5f9;
+    }
+    .recent-view-all {
+        color: #6f42c1;
+    }
+    .recent-view-all:hover {
+        color: #55329a;
+    }
+
+    /* ===== Badges ===== */
+    .badge-soft {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: .2px;
+    }
+    .badge-soft-success { background:#d1f5ea; color:#0f8a63; }
+    .badge-soft-warning { background:#fff3cd; color:#997404; }
+    .badge-soft-primary { background:#e6ddfb; color:#6f42c1; }
+    .badge-soft-info     { background:#cff4fc; color:#087990; }
+    .badge-soft-danger   { background:#fde2e2; color:#c62828; }
+    .badge-soft-secondary{ background:#eceef1; color:#5c6069; }
+
+    /* ===== Low stock rows ===== */
+    .low-stock-item {
+        padding: 6px 0;
+        border-bottom: 1px dashed #f0f0f5;
+    }
+    .low-stock-item:last-child {
+        border-bottom: none;
+    }
+</style>
+
 <div class="content">
     <div class="container-xxl">
 
@@ -17,54 +122,56 @@
                 <div class="card border-0 shadow h-100" style="background: linear-gradient(135deg, #6f42c1 0%, #8b5fd9 100%);">
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between mb-3">
-                            <span class="fs-13 text-uppercase fw-semibold" style="color:#ffffffcc; letter-spacing:.5px;">Total Purchase</span>
-                            <div class="rounded-circle d-flex align-items-center justify-content-center"
+                            <span class="fs-13 text-uppercase fw-semibold" style="color:#ffffffcc; letter-spacing:.5px;">Total Sales</span>
+                            <div class="rounded-circle d-flex align-items-center justify-content-center kpi-icon"
                                  style="width:38px; height:38px; background-color:#ffffff25;">
-                                <i data-feather="shopping-bag" style="width:17px; height:17px; color:#fff;"></i>
+                                <i data-feather="trending-up" style="width:17px; height:17px; color:#fff;"></i>
                             </div>
                         </div>
-                        <div class="fw-bold text-white" id="totalPurchaseCard" style="font-size:28px;">
+                        <div class="fw-bold text-white" id="totalSalesCard" style="font-size:28px;">
+                            ₱{{ number_format($totalSales,2) }}
+                        </div>
+                        <div class="fs-12 mt-1" style="color:#ffffffcc;">Completed sales</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-xl-3">
+                <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #0dcaf0 !important;">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <span class="fs-13 text-muted text-uppercase fw-semibold" style="letter-spacing:.5px;">Total Purchase</span>
+                            <div class="rounded-circle d-flex align-items-center justify-content-center kpi-icon"
+                                style="width:38px; height:38px; background-color:#cff4fc;">
+                                <i data-feather="shopping-bag" style="width:17px; height:17px; color:#0dcaf0;"></i>
+                            </div>
+                        </div>
+                        <div class="fw-bold" id="totalPurchaseCard" style="font-size:26px; color:#2b2b2b;">
                             ₱{{ number_format($totalPurchase,2) }}
                         </div>
-                        <div class="fs-12 mt-1 d-flex align-items-center" style="color:#ffffffcc;">
+                        <div class="fs-12 text-muted mt-1 d-flex align-items-center">
                             @if($purchaseTrend > 0)
                                 <i data-feather="trending-up" style="width:13px; height:13px;" class="me-1"></i>
                                 <span class="fw-semibold">{{ number_format(abs($purchaseTrend), 1) }}%</span>
-                                <span class="ms-1" style="color:#ffffffaa;">vs last month</span>
+                                <span class="ms-1">vs last month</span>
                             @elseif($purchaseTrend < 0)
                                 <i data-feather="trending-down" style="width:13px; height:13px;" class="me-1"></i>
                                 <span class="fw-semibold">{{ number_format(abs($purchaseTrend), 1) }}%</span>
-                                <span class="ms-1" style="color:#ffffffaa;">vs last month</span>
+                                <span class="ms-1">vs last month</span>
                             @else
-                                <span style="color:#ffffffaa;">No change vs last month</span>
+                                <span>No change vs last month</span>
                             @endif
                         </div>
                     </div>
                 </div>
             </div>
-        <div class="col-md-6 col-xl-3">
-                <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #0dcaf0 !important;">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center justify-content-between mb-3">
-                            <span class="fs-13 text-muted text-uppercase fw-semibold" style="letter-spacing:.5px;">Total Sales</span>
-                            <div class="rounded-circle d-flex align-items-center justify-content-center"
-                                style="width:38px; height:38px; background-color:#cff4fc;">
-                                <i data-feather="trending-up" style="width:17px; height:17px; color:#0dcaf0;"></i>
-                            </div>
-                        </div>
-                      <div class="fw-bold" id="totalSalesCard" style="font-size:26px; color:#2b2b2b;">
-                            ₱{{ number_format($totalSales,2) }}
-                        </div>
-                        <div class="fs-12 text-muted mt-1">Completed sales</div>
-                    </div>
-                </div>
-        </div>
+
             <div class="col-md-6 col-xl-3">
                 <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #ffc107 !important;">
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between mb-3">
                             <span class="fs-13 text-muted text-uppercase fw-semibold" style="letter-spacing:.5px;">Total Pending</span>
-                            <div class="rounded-circle d-flex align-items-center justify-content-center"
+                            <div class="rounded-circle d-flex align-items-center justify-content-center kpi-icon"
                                  style="width:38px; height:38px; background-color:#fff3cd;">
                                 <i data-feather="clock" style="width:17px; height:17px; color:#ffc107;"></i>
                             </div>
@@ -77,14 +184,12 @@
                 </div>
             </div>
 
-
-
             <div class="col-md-6 col-xl-3">
                 <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #20c997 !important;">
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between mb-3">
                             <span class="fs-13 text-muted text-uppercase fw-semibold" style="letter-spacing:.5px;">Warehouse</span>
-                            <div class="rounded-circle d-flex align-items-center justify-content-center"
+                            <div class="rounded-circle d-flex align-items-center justify-content-center kpi-icon"
                                  style="width:38px; height:38px; background-color:#d1f5ea;">
                                 <i data-feather="home" style="width:17px; height:17px; color:#20c997;"></i>
                             </div>
@@ -109,9 +214,9 @@
                             <div class="d-flex align-items-center">
                                 <div class="rounded-circle d-flex align-items-center justify-content-center me-2"
                                      style="width:34px; height:34px; background: linear-gradient(135deg, #6f42c1, #8b5fd9);">
-                                    <i data-feather="shopping-cart" style="width:15px; height:15px; color:#fff;"></i>
+                                    <i data-feather="trending-up" style="width:15px; height:15px; color:#fff;"></i>
                                 </div>
-                                <h5 class="card-title mb-0">Total Purchase</h5>
+                                <h5 class="card-title mb-0">Total Sales</h5>
                             </div>
 
                             <select id="yearFilter" class="form-select form-select-sm" style="width:120px">
@@ -123,7 +228,7 @@
                     </div>
 
                     <div class="card-body">
-                        <div id="purchase-received-chart" class="apex-charts"></div>
+                        <div id="sales-chart" class="apex-charts"></div>
                     </div>
                 </div>
             </div>
@@ -135,30 +240,80 @@
                         <h5 class="card-title mb-0">Purchases by Status</h5>
                     </div>
 
-                    <div class="card-body">
-                        @forelse($purchasesByStatus as $item)
-                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                <div class="d-flex align-items-center" style="min-width:90px;">
-                                    <span class="rounded-circle me-2 bg-{{ $item->color }}" style="width:8px; height:8px; display:inline-block;"></span>
-                                    <span class="fs-14 fw-medium">{{ $item->status }}</span>
-                                </div>
-                                <div class="flex-grow-1 mx-3">
-                                    <div class="progress" style="height:8px; border-radius:10px;">
-                                        <div class="progress-bar bg-{{ $item->color }}"
-                                             style="width:{{ $item->percentage }}%; border-radius:10px;">
-                                        </div>
-                                    </div>
-                                </div>
-                                <span class="fs-14 fw-semibold" style="min-width:28px; text-align:right;">
-                                    {{ $item->total_count }}
-                                </span>
-                            </div>
-                        @empty
+                    @if($purchasesByStatus->count() > 0)
+                        @php
+                            $statusColorMap = [
+                                'success'   => '#20c997',
+                                'warning'   => '#ffc107',
+                                'primary'   => '#6f42c1',
+                                'info'      => '#0dcaf0',
+                                'danger'    => '#dc3545',
+                                'secondary' => '#6c757d',
+                            ];
+                        @endphp
+
+                        <div class="card-body d-flex align-items-center justify-content-center">
+                            <div id="status-pie-chart" class="w-100"></div>
+                        </div>
+
+                        <script>
+                            (function () {
+                                var statusLabels = @json($purchasesByStatus->pluck('status'));
+                                var statusSeries = @json($purchasesByStatus->pluck('total_count'));
+                                var statusColors = @json($purchasesByStatus->map(fn($i) => $statusColorMap[$i->color] ?? '#6c757d'));
+
+                                function renderStatusPie() {
+                                    var statusPieEl = document.querySelector('#status-pie-chart');
+                                    if (!statusPieEl) return;
+
+                                    if (!window.ApexCharts) {
+                                        // Library not ready yet (loaded at bottom of page) — retry shortly.
+                                        return setTimeout(renderStatusPie, 100);
+                                    }
+
+                                    var statusPieOptions = {
+                                        chart: {
+                                            type: 'pie',
+                                            height: 300,
+                                        },
+                                        series: statusSeries,
+                                        labels: statusLabels,
+                                        colors: statusColors,
+                                        dataLabels: {
+                                            enabled: true,
+                                            style: { fontSize: '12px', fontWeight: 600 },
+                                            dropShadow: { enabled: false }
+                                        },
+                                        stroke: { width: 2, colors: ['#fff'] },
+                                        legend: {
+                                            position: 'bottom',
+                                            fontSize: '13px',
+                                            markers: { width: 8, height: 8, radius: 8 },
+                                            itemMargin: { horizontal: 8, vertical: 4 }
+                                        },
+                                        tooltip: {
+                                            y: { formatter: function (val) { return val + ' purchase(s)'; } }
+                                        }
+                                    };
+
+                                    new ApexCharts(statusPieEl, statusPieOptions).render();
+                                }
+
+                                if (document.readyState === 'complete') {
+                                    renderStatusPie();
+                                } else {
+                                    window.addEventListener('load', renderStatusPie);
+                                }
+                            })();
+                        </script>
+                    @else
+                        <div class="card-body card-fill-center">
                             <div class="text-center text-muted py-4">
-                                No purchase data yet
+                                <i data-feather="pie-chart" style="width:28px; height:28px; opacity:.35;"></i>
+                                <div class="mt-2 fs-13">No purchase data yet</div>
                             </div>
-                        @endforelse
-                    </div>
+                        </div>
+                    @endif
                 </div>
             </div>
 
@@ -254,9 +409,9 @@
                         @endif
                     </div>
 
-                    <div class="card-body">
+                    <div class="card-body {{ $lowStockProducts->count() == 0 ? 'card-fill-center' : '' }}">
                         @forelse ($lowStockProducts as $product)
-                            <div class="d-flex align-items-center justify-content-between low-stock-item {{ !$loop->last ? 'mb-3 pb-3' : '' }}">
+                            <div class="d-flex align-items-center justify-content-between low-stock-item {{ !$loop->last ? 'mb-1' : '' }}">
                                 <div class="d-flex align-items-center">
                                     <div class="rounded-circle d-flex align-items-center justify-content-center me-2 flex-shrink-0"
                                          style="width:34px; height:34px; background-color:{{ $product->product_quantity <= 5 ? '#dc354515' : '#ffc10715' }};">
@@ -286,10 +441,5 @@
     </div>
 </div>
 
-
-
-    </div>
-</div>
-
- <script src="{{ asset('backend/assets/js/dashboard.js') }}"></script>
+<script src="{{ asset('backend/assets/js/dashboard.js') }}"></script>
 @endsection
